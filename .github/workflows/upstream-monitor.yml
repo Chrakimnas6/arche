@@ -106,7 +106,7 @@ jobs:
           # Build the prompt
           cat > /tmp/analysis_prompt.json << 'PROMPT_EOF'
           {
-            "model": "claude-haiku-4-5-20251001",
+            "model": "claude-sonnet-4-6",
             "max_tokens": 4096,
             "messages": [
               {
@@ -186,7 +186,7 @@ jobs:
           Be conservative — only recommend UPDATE for changes that meaningfully improve our skills or principles. Infrastructure, telemetry, web-specific, and framework-specific changes should be skipped."""
 
           payload = {
-              "model": "claude-haiku-4-5-20251001",
+              "model": "claude-sonnet-4-6",
               "max_tokens": 4096,
               "messages": [{"role": "user", "content": prompt}]
           }
@@ -256,7 +256,7 @@ jobs:
           ${ANALYSIS}
 
           ---
-          *Analyzed by Claude Haiku. Review recommendations and apply changes manually or with Claude Code.*
+          *Analyzed by Claude Sonnet. Review recommendations and apply changes manually or with Claude Code.*
           EOF
 
           gh pr create \
