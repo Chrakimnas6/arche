@@ -1,6 +1,8 @@
-# Vibe Coding Setup
+# Arché (ἀρχή)
 
 A minimal, model/tool-agnostic template for bootstrapping software projects with AI coding agent support. Works with Claude Code, Codex, and other AI coding tools.
+
+*The first principle — a foundation that exists to be superseded.*
 
 ## Quick Start
 
