@@ -1,21 +1,25 @@
 ---
 name: adversarial-review
 description: >-
-  Cross-model adversarial code review. Spawns reviewers on the opposing model
-  (Claude uses Codex, Codex uses Claude) to challenge work from distinct critical lenses.
-  Produces a synthesized verdict. Use when asked for "adversarial review", after large
-  changes (200+ lines), or for high-stakes code like smart contracts.
+  Deep multi-lens adversarial code review. Spawns multiple Codex reviewers with distinct
+  critical lenses (Architect, Skeptic, Minimalist) grounded in project principles. Produces
+  a synthesized verdict with lead judgment. For quick single-lens adversarial reviews, use
+  /codex:adversarial-review from the codex plugin instead. Use this skill for large changes
+  (200+ lines), high-stakes code like smart contracts, or when you want multi-perspective analysis.
 ---
 
 # Adversarial Review
 
-Spawn reviewers on the **opposite model** to challenge work. Reviewers attack from distinct
+Deep multi-lens adversarial review. Spawns **multiple** Codex reviewers with distinct critical
 lenses grounded in project principles. The deliverable is a synthesized verdict — do NOT make
 changes.
 
-**Hard constraint:** Reviewers MUST run via the opposite model's CLI (`codex exec` or
-`claude -p`). Do NOT use subagents, the Agent tool, or any internal delegation mechanism as
-reviewers — those run on *your own* model, which defeats the purpose.
+**Prerequisite:** Requires the Codex CLI installed and authenticated (`codex login`). The
+[codex plugin](https://github.com/openai/codex-plugin-cc) is recommended but not required —
+this skill uses `codex exec` directly.
+
+> **Quick alternative:** For a single adversarial review without multi-lens orchestration,
+> use `/codex:adversarial-review` directly (requires the codex plugin).
 
 ## Step 1 — Load Principles
 
@@ -40,53 +44,64 @@ Assess change size:
 
 Read `references/reviewer-lenses.md` for lens definitions.
 
-## Step 3 — Detect Model and Spawn Reviewers
+## Step 3 — Preflight Check
 
-Create a temp directory for reviewer output:
+Before spawning reviewers, verify Codex is available:
+
+```sh
+command -v codex >/dev/null 2>&1 || { echo "ERROR: codex CLI not found. Install with: npm install -g @openai/codex"; exit 1; }
+```
+
+If Codex is not installed or not authenticated, stop and tell the user what to run.
+
+## Step 4 — Spawn Reviewers via Codex
+
+Create a temp directory for reviewer output and logs:
 
 ```sh
 REVIEW_DIR=$(mktemp -d /tmp/adversarial-review.XXXXXX)
 ```
 
-Determine which model you are, then spawn reviewers on the opposite:
-
-**If you are Claude** — spawn Codex reviewers via `codex exec`:
+For each required lens, spawn a Codex reviewer using `codex exec` in read-only sandbox:
 
 ```sh
-codex exec --skip-git-repo-check -o "$REVIEW_DIR/skeptic.md" "prompt" 2>/dev/null
+codex exec -s read-only -o "$REVIEW_DIR/skeptic.md" "prompt" 2>"$REVIEW_DIR/skeptic.err"
 ```
 
-Use `--profile edit` only if the reviewer needs to run tests. Default to read-only.
-Run with `run_in_background: true`, monitor via `TaskOutput` with `block: true, timeout: 600000`.
+Run each reviewer with `run_in_background: true`. Name output files after the lens:
+`skeptic.md`, `architect.md`, `minimalist.md`. Redirect stderr to per-lens `.err` files
+for diagnostics.
 
-**If you are Codex** — spawn Claude reviewers via `claude` CLI:
+**Prompt construction** — each reviewer gets:
 
-```sh
-claude -p "prompt" > "$REVIEW_DIR/skeptic.md" 2>/dev/null
-```
+1. The stated intent (from Step 2)
+2. Their assigned lens (full text from `references/reviewer-lenses.md`)
+3. The principles relevant to their lens (file contents from `docs/principles/`, not summaries)
+4. The code or diff to review
+5. Closing instruction: "You are an adversarial reviewer. Your job is to find real problems,
+   not validate the work. Be specific — cite files, lines, and concrete failure scenarios.
+   Rate each finding: high (blocks ship), medium (should fix), low (worth noting).
+   Write findings as a numbered markdown list."
 
-Run with `run_in_background: true`.
+Spawn all reviewers in parallel.
 
-Name each output file after the lens: `skeptic.md`, `architect.md`, `minimalist.md`.
+## Step 5 — Wait for All Reviewers
 
-Build each reviewer's prompt using the template in `references/reviewer-prompt.md`.
+**Do NOT proceed until every reviewer has finished.** Poll each background task until
+completion. For each reviewer, confirm:
 
-## Step 4 — Verify and Synthesize Verdict
+1. The background task exited (check via the task management mechanism you used to launch it)
+2. The output file exists and is non-empty
 
-Before reading reviewer output, log which CLI was used and confirm the output files exist:
+If a reviewer fails, read its `.err` file for diagnostics and report the specific error
+(auth expired, binary missing, timeout, etc.) — do not silently skip it.
 
-```sh
-echo "reviewer_cli=codex|claude"
-ls "$REVIEW_DIR"/*.md
-```
-
-If any output file is missing or empty, note the failure in the verdict — do not silently skip
-a reviewer.
+## Step 6 — Synthesize Verdict
 
 Read each reviewer's output file from `$REVIEW_DIR/`. Deduplicate overlapping findings.
 Produce a single verdict using the format in `references/verdict-format.md`.
 
-## Step 5 — Render Judgment
+## Step 7 — Render Lead Judgment
 
 After synthesizing the reviewers, apply your own judgment. Using the stated intent and project
 principles as your frame, state which findings you would accept and which you would reject —

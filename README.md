@@ -60,7 +60,7 @@ Then fill in the project-specific sections in `AGENTS.md` (build commands, conve
 | **plan** | "plan this", "break this down" | Creates phased implementation plans in `docs/plans/` |
 | **tdd** | "use TDD", "red-green-refactor" | Enforces test-driven development with iron law discipline |
 | **review** | "review this PR", "check my diff" | Two-pass code review with scope drift detection |
-| **adversarial-review** | "adversarial review" | Spawns reviewers on the opposing model for cross-model analysis |
+| **adversarial-review** | "adversarial review" | Deep multi-lens review via Codex (Architect/Skeptic/Minimalist lenses) |
 | **investigate** | "debug this", "why is this broken" | 4-phase root cause debugging (no fixes without root cause) |
 | **careful** | Always active | Warns before destructive commands (rm -rf, force-push, etc.) |
 | **reflect** | "reflect", "what did we learn" | Captures session learnings back into AGENTS.md, skills, and docs |
@@ -78,11 +78,24 @@ Then fill in the project-specific sections in `AGENTS.md` (build commands, conve
 
 Copy `global/CLAUDE.md` to `~/.claude/CLAUDE.md` for your personal global settings, or use it as a starting point.
 
+## Recommended Plugin
+
+Install the [Codex plugin for Claude Code](https://github.com/openai/codex-plugin-cc) for seamless Codex integration:
+
+```bash
+/plugin marketplace add openai/codex-plugin-cc
+/plugin install codex@openai-codex
+/reload-plugins
+/codex:setup
+```
+
+This gives you `/codex:review`, `/codex:adversarial-review`, and `/codex:rescue` commands. The `adversarial-review` skill in this setup provides deeper multi-lens analysis using `codex exec` directly — the plugin is recommended but not required for the skill. Both paths require the Codex CLI (`npm install -g @openai/codex`) and authentication (`codex login`).
+
 ## Self-Updating
 
 A daily GitHub Action monitors upstream repos for changes and opens PRs with AI-analyzed recommendations when relevant updates are found. See `.github/workflows/upstream-monitor.yml`.
 
-Upstream sources: [poteto/noodle](https://github.com/poteto/noodle), [garrytan/gstack](https://github.com/garrytan/gstack), [mattpocock/skills](https://github.com/mattpocock/skills), [obra/superpowers](https://github.com/obra/superpowers).
+Upstream sources: [poteto/noodle](https://github.com/poteto/noodle), [garrytan/gstack](https://github.com/garrytan/gstack), [mattpocock/skills](https://github.com/mattpocock/skills), [obra/superpowers](https://github.com/obra/superpowers), [openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc).
 
 ## Customization
 
