@@ -64,7 +64,28 @@ Before reviewing code quality, check: **did they build what was requested -- not
    [If missing: list each unaddressed requirement]
    ```
 
-6. This is **INFORMATIONAL** -- does not block the review. Proceed to Step 3.
+6. **Investigation depth** — for each PARTIAL or NOT DONE requirement, investigate *why*:
+   - Check `git log origin/<base>..HEAD --oneline` for commits suggesting the work was started, attempted, or reverted
+   - Read the relevant code to understand what was built instead
+   - Classify the reason:
+     - **Scope cut** — evidence of intentional removal (revert commit, removed TODO)
+     - **Context exhaustion** — work started but stopped mid-way (partial implementation, no follow-up commits)
+     - **Misunderstood requirement** — something was built but doesn't match what was described
+     - **Blocked by dependency** — item depends on something not yet available
+     - **Genuinely forgotten** — no evidence of any attempt
+
+   Output for each:
+   ```
+   DISCREPANCY: {PARTIAL|NOT_DONE} | {requirement} | {what was actually delivered}
+   INVESTIGATION: {reason with evidence from git log / code}
+   IMPACT: {HIGH|MEDIUM|LOW} — {what breaks or degrades if undelivered}
+   ```
+
+7. **HIGH-impact gating** — if any discrepancy is HIGH impact, use AskUserQuestion:
+   - Show the investigation findings
+   - Options: A) Stop and implement missing items, B) Ship anyway + create P1 TODOs, C) Intentionally dropped — remove from scope
+
+   This is **INFORMATIONAL** unless HIGH-impact discrepancies are found (then it gates via AskUserQuestion). Proceed to Step 3.
 
 ---
 
@@ -120,6 +141,56 @@ Every finding MUST include a confidence score (1-10):
 Examples:
 `[P1] (confidence: 9/10) internal/store/user.go:42 -- SQL injection via string interpolation in query`
 `[P2] (confidence: 5/10) internal/api/handler/users.go:18 -- Possible N+1 query, verify with production logs`
+
+---
+
+## Step 4.5: Specialist Lenses
+
+After the two-pass review, re-examine the diff through domain-specific lenses based on what the diff touches. Only apply lenses that match — skip the rest.
+
+**Detect signals** from the diff (`git diff origin/<base> --stat` and file content):
+
+| Signal | Lens |
+|--------|------|
+| Auth, permissions, access control, tokens, sessions | **Security** |
+| DB migrations, schema changes, ALTER TABLE | **Data Safety** |
+| API routes, handlers, request/response contracts | **API Contract** |
+| DB queries, loops over collections, data fetching | **Performance** |
+
+### Security Lens
+
+When the diff touches auth/permissions/access control code:
+- Input validation at trust boundaries — are all external inputs validated before use?
+- Auth/authz bypass — can the new code path be reached without proper authentication?
+- Injection vectors beyond SQL — command injection, path traversal, SSRF
+- Cryptographic misuse — hardcoded secrets, weak algorithms, improper key management
+- Attack surface expansion — does this change expose new endpoints or capabilities?
+
+### Data Safety Lens
+
+When the diff touches migrations or schema:
+- Reversibility — can this migration be rolled back without data loss?
+- Data loss risk — dropping columns, narrowing types, adding NOT NULL without defaults
+- Lock duration — will ALTER TABLE lock production tables for an unacceptable duration?
+- Migration ordering — does this migration depend on another that may not have run?
+
+### API Contract Lens
+
+When the diff touches API routes or contracts:
+- Breaking changes — removed fields, type changes, new required parameters
+- Versioning consistency — does this follow the project's API versioning strategy?
+- Error response standardization — do new error cases follow existing patterns?
+- Backward compatibility — will existing clients break?
+
+### Performance Lens
+
+When the diff touches queries or data-fetching code:
+- N+1 queries — loops that issue a query per iteration
+- Missing indexes — new queries on columns without indexes
+- Algorithmic complexity — O(n²) patterns, unbounded iterations
+- Large payloads — endpoints returning unbounded result sets without pagination
+
+Specialist lens findings follow the same confidence calibration and finding format as Step 4. They flow into Step 6 (Fix-First) alongside the two-pass findings.
 
 ---
 
@@ -243,6 +314,28 @@ Before producing the final review output:
 - Never say "likely handled" or "probably tested" -- verify or flag as unknown
 
 **Rationalization prevention:** "This looks fine" is not a finding. Either cite evidence it IS fine, or flag it as unverified.
+
+---
+
+## Step 6e: PR Quality Score
+
+After all fixes are applied (or skipped), compute and display:
+
+```
+PR Quality Score: max(0, 10 - (critical_count * 2 + informational_count * 0.5))
+```
+
+Where `critical_count` and `informational_count` are the **remaining** findings after fixes. Cap at 10. Display alongside the summary.
+
+---
+
+## Step 7: Adversarial Review Nudge
+
+After the review is complete, always suggest running `/adversarial-review` regardless of diff size. LOC is not a proxy for risk — a 5-line auth change can be critical.
+
+```
+💡 Consider running /adversarial-review for cross-model analysis of this diff.
+```
 
 ---
 
