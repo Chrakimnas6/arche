@@ -93,7 +93,7 @@ This gives you `/codex:review`, `/codex:adversarial-review`, and `/codex:rescue`
 
 ## Self-Updating
 
-A daily GitHub Action monitors upstream repos for changes and opens PRs with AI-analyzed recommendations when relevant updates are found. See `.github/workflows/upstream-monitor.yml`.
+A daily Claude Code scheduled agent monitors upstream repos for changes. When relevant updates are found, it reads the actual source files, implements adaptations directly, and creates a PR with analysis. Managed via `/schedule` in Claude Code.
 
 Upstream sources: [poteto/noodle](https://github.com/poteto/noodle), [garrytan/gstack](https://github.com/garrytan/gstack), [mattpocock/skills](https://github.com/mattpocock/skills), [obra/superpowers](https://github.com/obra/superpowers), [openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc).
 
