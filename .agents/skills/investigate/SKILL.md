@@ -187,6 +187,16 @@ You MUST complete each phase before proceeding to the next.
 
    This is NOT a failed hypothesis - this is a wrong architecture.
 
+6. **Escalation Permission**
+
+   Bad work is worse than no work. It is always acceptable to stop and say "this is beyond what I can verify" or "I'm not confident in this result."
+
+   - If you are uncertain about a security-sensitive change, STOP and escalate
+   - If the scope of work exceeds what you can verify, STOP and escalate
+   - If a fix seems to work but you cannot explain *why*, that is not a fix
+
+   See [stop-on-ambiguity](../../docs/principles/stop-on-ambiguity.md).
+
 ## Red Flags - STOP and Follow Process
 
 If you catch yourself thinking:
