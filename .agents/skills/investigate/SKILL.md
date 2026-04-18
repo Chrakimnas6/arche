@@ -82,7 +82,13 @@ You MUST complete each phase before proceeding to the next.
    THEN investigate that specific component
    ```
 
-5. **Trace Data Flow**
+5. **Check Investigation History**
+   - Run `git log --oneline` on the affected files
+   - Are there recent fixes or investigations touching the same area?
+   - Recurring bugs in the same files are an architectural smell
+   - If the same area was fixed recently, the prior fix likely addressed symptoms, not root cause
+
+6. **Trace Data Flow**
 
    **WHEN error is deep in call stack:**
 
@@ -186,6 +192,19 @@ You MUST complete each phase before proceeding to the next.
    **Discuss with the user before attempting more fixes**
 
    This is NOT a failed hypothesis - this is a wrong architecture.
+
+## Ambiguity Protocol
+
+When you encounter high-stakes ambiguity during investigation or fixing:
+- Two plausible root causes or fix approaches for the same symptom
+- A fix that contradicts existing patterns and you're unsure which to follow
+- A destructive operation where the scope is unclear
+- Missing context that would change your approach significantly
+
+STOP. Name the ambiguity in one sentence. Present 2-3 options with tradeoffs.
+Ask the user. Do not guess on architectural or data model decisions.
+
+This does NOT apply to routine debugging, obvious fixes, or clear-cut issues.
 
 ## Red Flags - STOP and Follow Process
 
