@@ -82,7 +82,12 @@ You MUST complete each phase before proceeding to the next.
    THEN investigate that specific component
    ```
 
-5. **Trace Data Flow**
+5. **Check Investigation History**
+   - Search git log and any prior investigation notes for bugs in the same files
+   - Recurring bugs in the same area are an architectural smell, not just bad luck
+   - If prior investigations exist on these files, note the pattern — the root cause may be structural
+
+6. **Trace Data Flow**
 
    **WHEN error is deep in call stack:**
 
@@ -186,6 +191,13 @@ You MUST complete each phase before proceeding to the next.
    **Discuss with the user before attempting more fixes**
 
    This is NOT a failed hypothesis - this is a wrong architecture.
+
+## Circles Detection
+
+If you notice you're going in circles — repeating the same diagnostic, re-reading the same file, or trying variants of a failed fix — STOP and reassess. You are likely missing context or fighting the wrong abstraction. Step back and:
+- Re-read the error from scratch with fresh eyes
+- Question whether you're investigating the right layer
+- Consider whether the architecture itself is the problem (see Phase 4, step 5)
 
 ## Red Flags - STOP and Follow Process
 

@@ -20,6 +20,7 @@
 
 - [Prove It Works](./prove-it-works.md) — verify the real thing directly, not proxies or self-reports
 - [Fix Root Causes](./fix-root-causes.md) — never paper over symptoms, trace to root cause
+- [Confusion Protocol](./confusion-protocol.md) — STOP on high-stakes ambiguity, present options, ask
 
 ## Meta
 
