@@ -119,6 +119,7 @@ Apply the review against the diff in two passes:
 3. **Dead Code & Consistency** -- unreachable branches, inconsistent patterns across similar code.
 4. **Test Gaps** -- new code paths without tests (subsumes into the coverage analysis in Step 5).
 5. **Performance** -- N+1 queries, unbounded loops, missing pagination, large payloads.
+6. **AI Code Quality (advisory)** -- patterns common in AI-generated code: empty catch blocks that swallow errors, over-abstracted wrappers around single-use logic, defensive validation for impossible internal states, copy-paste patterns that should be a shared function.
 
 **Search-before-recommending:** When recommending a fix, verify it's current best practice for the framework version in use. Check if a built-in solution exists before recommending a workaround.
 
