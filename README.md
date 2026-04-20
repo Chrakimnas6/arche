@@ -39,10 +39,17 @@ Then fill in the project-specific sections in `AGENTS.md` (build commands, conve
 │   └── settings.json         # Tool hook configuration
 ├── .codex/
 │   └── config.toml           # Codex model config (gpt-5.4, high reasoning)
+├── .github/
+│   ├── upstream-monitor.md   # Scheduled agent prompt (daily upstream adoption)
+│   ├── upstream-shas.json    # Last-seen SHAs for monitored upstream repos
+│   └── workflows/ci.yml      # validate-setup + shellcheck + markdown-links
 ├── docs/
-│   ├── principles/           # 13 engineering principles
+│   ├── principles/           # 14 engineering principles
 │   ├── plans/                # Implementation plans (skill output)
 │   └── design/               # Design documents
+├── tests/
+│   ├── validate-setup.sh     # Structural invariants (runs in CI)
+│   └── test-adversarial-review.sh # Manual smoke test (requires codex CLI)
 └── global/
     └── CLAUDE.md             # Global config template for ~/.claude/CLAUDE.md
 ```
@@ -69,11 +76,11 @@ Then fill in the project-specific sections in `AGENTS.md` (build commands, conve
 
 ## Principles
 
-13 engineering principles in `docs/principles/`, covering:
+14 engineering principles in `docs/principles/`, covering:
 
 - **Core**: foundational thinking, redesign from first principles, subtract before you add, outcome-oriented execution, experience first, exhaust the design space
 - **Architecture**: boundary discipline, idempotent operations, migrate-then-delete, serialize shared state
-- **Verification**: prove it works, fix root causes
+- **Verification**: prove it works, fix root causes, stop on ambiguity
 - **Meta**: encode lessons in structure
 
 ## Global Config
@@ -95,7 +102,7 @@ This gives you `/codex:review`, `/codex:adversarial-review`, and `/codex:rescue`
 
 ## Self-Updating
 
-A daily Claude Code scheduled agent monitors upstream repos for changes. When relevant updates are found, it reads the actual source files, implements adaptations directly, and creates a PR with analysis. Managed via `/schedule` in Claude Code.
+A daily Claude Code scheduled agent monitors upstream repos for changes. When relevant updates are found, it reads the actual source files, implements adaptations directly, and opens or updates a rolling adoption PR. Managed via `/schedule` in Claude Code. Full routine prompt lives at [`.github/upstream-monitor.md`](./.github/upstream-monitor.md).
 
 Upstream sources: [poteto/noodle](https://github.com/poteto/noodle), [garrytan/gstack](https://github.com/garrytan/gstack), [mattpocock/skills](https://github.com/mattpocock/skills), [obra/superpowers](https://github.com/obra/superpowers), [openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc).
 
