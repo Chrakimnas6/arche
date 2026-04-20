@@ -19,3 +19,6 @@ If you need to wait for a long-running job, use sleep commands with manual expon
 When needing to read/explore a GitHub repo, first check if it's already cloned locally:
 - To find an existing local repo, run `ghq list --full-path | grep <repo-name>`
 - If not found, clone using `ghq get https://github.com/owner/repo` — repos are stored under `~/src/github.com/`
+
+## Fetching X/Twitter Content
+WebFetch fails on `x.com` / `twitter.com`. Use the `claude-in-chrome` MCP tools instead — the Chrome session is authenticated.
