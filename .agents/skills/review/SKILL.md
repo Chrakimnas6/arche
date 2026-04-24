@@ -282,6 +282,7 @@ Apply each fix directly. For each one, output a one-line summary:
 If there are ASK items remaining, present them in one batch:
 
 - List each item with a number, severity label, problem, and recommended fix
+- **State the stakes:** For each item, say what breaks or degrades if left unfixed — the user needs this to prioritize
 - For each item, provide options: A) Fix as recommended, B) Skip
 - Include an overall RECOMMENDATION
 
@@ -290,10 +291,12 @@ Example:
 I auto-fixed 5 issues. 2 need your input:
 
 1. [CRITICAL] internal/store/post.go:42 -- Race condition in status transition
+   Stakes: concurrent publishes can overwrite each other, losing edits silently
    Fix: Add `WHERE status = 'draft'` to the UPDATE
    -> A) Fix  B) Skip
 
 2. [INFORMATIONAL] internal/service/generator.go:88 -- LLM output not type-checked before DB write
+   Stakes: malformed JSON from the model silently corrupts stored records
    Fix: Add JSON schema validation
    -> A) Fix  B) Skip
 
