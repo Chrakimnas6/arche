@@ -43,4 +43,4 @@ Language-specific applications live in [docs/applications/](../applications/).
 
 ## Citations
 
-Majors, Fong-Jones, Miranda, *Observability Engineering* (O'Reilly, 2022) — high-cardinality structured events as the foundation of modern observability. Beyer, Jones, Petoff, Murphy, *Site Reliability Engineering* (O'Reilly, 2016) and *The Site Reliability Workbook* (O'Reilly, 2018) — SLI/SLO/error-budget framework; alert on user-visible symptoms. Brendan Gregg, *Systems Performance* (2nd ed., Pearson, 2020) — USE and RED methods for system observability.
+Majors, Fong-Jones, Miranda, *Observability Engineering* (O'Reilly, 2022) — high-cardinality structured events as the foundation of modern observability. Beyer, Jones, Petoff, Murphy, *Site Reliability Engineering* (O'Reilly, 2016) and *The Site Reliability Workbook* (O'Reilly, 2018) — SLI/SLO/error-budget framework; alert on user-visible symptoms. Brendan Gregg, *Systems Performance* (2nd ed., Pearson, 2020) — the USE method (utilization, saturation, errors) for resource-level observability. RED (rate, errors, duration) is Tom Wilkie's complementary service-level framing.
