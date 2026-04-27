@@ -46,4 +46,8 @@ When merging shallow modules into a deeper one, classify dependencies to determi
 
 [Exhaust the design space](./exhaust-the-design-space.md) applies when choosing *which* deep interface to build. Explore multiple interface designs before committing.
 
-See also [foundational-thinking](./foundational-thinking.md) -- data structures and interfaces first, optimize for option value.
+See also [foundational-thinking](./foundational-thinking.md) -- data structures and interfaces first, optimize for option value. Language-specific applications live in [docs/applications/](../applications/).
+
+## Citations
+
+Ousterhout, *A Philosophy of Software Design* (2nd ed., 2021) — the source of "deep modules" and the depth/shallow framing. Feathers, *Working Effectively with Legacy Code* (Prentice Hall, 2004) — seam vocabulary. Brooks, *The Mythical Man-Month* (1975) — "conceptual integrity is the most important consideration in system design."

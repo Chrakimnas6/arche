@@ -7,6 +7,8 @@ When integrating a change, don't bolt it onto the existing design. Instead, rede
 - Propagate the change through every reference -- types, docs, examples, rationale sections -- so nothing reads as a patch
 - The redesign should be thought of holistically but delivered incrementally
 
-This is the method for preserving [option value](./foundational-thinking.md) when integrating changes into an existing design.
+This is the method for preserving [option value](./foundational-thinking.md) when integrating changes into an existing design. Language-specific applications live in [docs/applications/](../applications/).
 
-In smart contracts, this matters doubly -- you cannot patch a deployed contract the way you patch a service. If a new requirement surfaces, redesign the contract interface as if that requirement existed from the start, rather than layering adapter logic on top.
+## Citations
+
+Brooks, *The Mythical Man-Month* (1975), chapter 11 "Plan to Throw One Away" — the first system you build is rarely the right one. Fowler, *Refactoring* (2nd ed., 2018) — refactor toward the design you'd choose now, in small steps.

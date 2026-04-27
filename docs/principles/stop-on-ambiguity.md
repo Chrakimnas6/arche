@@ -8,9 +8,9 @@ When you hit high-stakes ambiguity during implementation, stop. Name the ambigui
 - A request that contradicts existing patterns and you're unsure which to follow
 - A destructive or irreversible operation where the scope is unclear
 - Missing context that would change your approach significantly
-- Smart contract storage layout decisions where the wrong choice is permanent
+- Decisions where the wrong choice is permanent or expensive to reverse
 
-In these cases, guessing wrong is far more expensive than pausing to ask. Name the fork in the road, sketch the options, and let the human decide.
+In these cases, guessing wrong is far more expensive than pausing to ask. Name the fork in the road, sketch the options, and let the human decide. Language-specific applications (e.g., contract storage layout) live in [docs/applications/](../applications/).
 
 ## When It Doesn't
 
@@ -30,4 +30,8 @@ Bad work is worse than no work. It is always acceptable to stop and say "I'm not
 
 [Exhaust the design space](./exhaust-the-design-space.md) governs deliberate exploration at design time. This governs what to do when ambiguity surfaces unexpectedly during implementation. One is proactive exploration; the other is reactive detection.
 
-See also [exhaust-the-design-space](./exhaust-the-design-space.md), [fix-root-causes](./fix-root-causes.md)
+See also [exhaust-the-design-space](./exhaust-the-design-space.md), [fix-root-causes](./fix-root-causes.md).
+
+## Citations
+
+Toyota Production System: andon cord — "stop the line on any defect." See Liker, *The Toyota Way* (McGraw-Hill, 2004), and Imai, *Kaizen: The Key to Japan's Competitive Success* (McGraw-Hill, 1986) — the discipline of stopping when something is unclear. Hunt & Thomas, *The Pragmatic Programmer* (1999) — "Don't outrun your headlights"; if you're not sure, slow down and ask.

@@ -27,3 +27,7 @@ When you catch yourself writing the same instruction a second time:
 - **Acknowledging without recording.** "I'll keep that in mind" does not persist across sessions.
 - **Recording without routing.** A note about a lint rule that should exist is wasted unless the lint rule gets implemented.
 - **Fixing without generalizing.** Fixing one instance while leaving the recurring pattern intact.
+
+## Citations
+
+Hunt & Thomas, *The Pragmatic Programmer* (1999) — "DRY" extended to process: don't repeat yourself across instructions and reviews when a tool or check can enforce the rule. Fowler, *Refactoring* (2nd ed., 2018) — making the change easy by mechanizing the recurring transformation. Brooks, *The Mythical Man-Month* (1975) — "conceptual integrity" emerges from structures, not instructions.

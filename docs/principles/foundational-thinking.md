@@ -16,8 +16,6 @@ Get the data structures right before writing logic. The right structure makes do
 - Choose structures that match the dominant access pattern
 - A data structure change late in the project is a rewrite; early is a one-line diff
 
-In smart contracts this is especially critical -- storage layout decisions are permanent after deployment. Choosing the right mapping/struct shape up front avoids costly migrations or proxy rewrites.
-
 At the code level, simplicity preserves options:
 
 - **DRY at the structural level** (types, data models) -- but three similar lines of code is better than a premature abstraction
@@ -25,7 +23,7 @@ At the code level, simplicity preserves options:
 - **No placeholder source files** -- create files only when there's real code
 - **Well-tested** -- test behavior and edge cases, not line coverage
 
-**Concurrency corollary:** Before sharing state between actors, ask: "What happens if another actor modifies this concurrently?" If the answer isn't "nothing", isolate. In Go, prefer channels or clear ownership over shared mutable state. In smart contracts, consider reentrancy as the concurrency equivalent.
+**Concurrency corollary:** Before sharing state between actors, ask: "What happens if another actor modifies this concurrently?" If the answer isn't "nothing", isolate.
 
 ## Scaffold First
 
@@ -44,4 +42,8 @@ Subtraction ([subtract-before-you-add](./subtract-before-you-add.md)) comes befo
 
 Ask: "does this decision reduce my future options, or preserve them?"
 
-See also [redesign-from-first-principles](./redesign-from-first-principles.md)
+See also [redesign-from-first-principles](./redesign-from-first-principles.md). Language-specific applications live in [docs/applications/](../applications/).
+
+## Citations
+
+Brooks, *The Mythical Man-Month* (1975) — "Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I won't usually need your flowcharts; they'll be obvious." Hickey, "The Value of Values" (JaxConf, 2012) — values over places. Hunt & Thomas, *The Pragmatic Programmer* (1999) — "Don't outrun your headlights" + tracer bullets / scaffolding.

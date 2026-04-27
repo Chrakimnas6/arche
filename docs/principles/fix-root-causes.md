@@ -27,3 +27,7 @@ Never label an issue "pre-existing" to justify skipping it. If you touch a file,
 [Prove it works](./prove-it-works.md) says to check real state, not proxies. This extends that to debugging: check the real cause, not the proxied symptom.
 
 [Encode lessons in structure](./encode-lessons-in-structure.md) provides the encoding mechanism once a root cause is understood -- make it structurally impossible to recur.
+
+## Citations
+
+Imai, *Kaizen: The Key to Japan's Competitive Success* (McGraw-Hill, 1986) — Toyota's "5 Whys" methodology for tracing causes back to bedrock. Hunt & Thomas, *The Pragmatic Programmer* (1999) — "Programming by Coincidence" anti-pattern; debug deliberately. Agans, *Debugging: The 9 Indispensable Rules* (AMACOM, 2002) — "Understand the system" + "Make it fail" as systematic root-cause discipline.

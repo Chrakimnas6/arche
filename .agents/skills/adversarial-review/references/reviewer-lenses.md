@@ -23,7 +23,7 @@ Challenge correctness and completeness. Ask:
 - What does the author believe is true that isn't proven?
 - Where is "it works on my machine" masquerading as verification?
 
-Map findings to: `docs/principles/prove-it-works.md`, `docs/principles/fix-root-causes.md`, `docs/principles/serialize-shared-state-mutations.md`.
+Map findings to: `docs/principles/prove-it-works.md`, `docs/principles/fix-root-causes.md`, `docs/principles/serialize-shared-state-mutations.md`, `docs/principles/threat-modeling.md`, `docs/principles/observability.md`.
 
 ## Minimalist
 
@@ -35,4 +35,4 @@ Challenge necessity and complexity. Ask:
 - Where is configuration or flexibility added without a concrete second use case?
 - Is this the simplest possible path to the outcome, or is the path that felt most thorough?
 
-Map findings to: `docs/principles/subtract-before-you-add.md`, `docs/principles/outcome-oriented-execution.md`.
+Map findings to: `docs/principles/subtract-before-you-add.md`.

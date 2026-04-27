@@ -24,7 +24,6 @@ After completing any task, ask: **"How do I prove this actually works?"**
 ### Scripts / Tools
 1. Run scripts with real inputs and verify output
 2. Test error paths: bad input, missing files, timeouts
-3. For smart contracts: deploy to a local testnet and call the function -- reading the ABI is not verification
 
 ### General
 - If you can run it, run it
@@ -34,6 +33,14 @@ After completing any task, ask: **"How do I prove this actually works?"**
 
 When verifying delegated work, inspect the actual output artifact (`git diff --stat`, file contents, runtime behavior) -- never the delegate's summary of what they claim to have done. Agents report what they intended, not always what happened. Scope violations and silent failures are invisible in self-reports but obvious in artifacts.
 
+Language-specific applications (testnet deployment for contracts, integration test patterns in Go) live in [docs/applications/](../applications/).
+
 ## Relationship to Other Principles
 
-[Fix root causes](./fix-root-causes.md) extends this to debugging -- check the real cause, not the proxied symptom.
+[Fix root causes](./fix-root-causes.md) extends this to debugging — check the real cause, not the proxied symptom.
+
+[Observability](./observability.md) extends this to production — verify continuously through emitted signal, not just at task completion.
+
+## Citations
+
+Dijkstra, "The Humble Programmer" (Turing Award lecture, EWD 340, 1972) — "Program testing can be used to show the presence of bugs, but never to show their absence." Beck, *Test-Driven Development by Example* (Addison-Wesley, 2002) — automated tests as proof of behavior. Goodhart's Law (Goodhart, 1975; popularized by Strathern, 1997) — when a measure becomes a target, it ceases to be a good measure. Verify the real thing, not the proxy.
