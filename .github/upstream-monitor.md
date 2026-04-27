@@ -39,7 +39,7 @@ A new principle qualifies for `docs/principles/` ONLY if ALL FIVE of these are t
 2. **Paradigm-agnostic.** Works equally in Go, smart contracts, OOP, FP, distributed systems. If it only makes sense in one paradigm, it's not a principle — it's a pattern.
 3. **Actionable, not aphoristic.** Has concrete "do X / don't do Y" guidance and at least one heuristic readers can apply, not just an inspirational slogan.
 4. **No substantial overlap** with an existing principle in `docs/principles/index.md`. If it overlaps, either skip it or update the existing principle with the new framing.
-5. **Documented in a well-cited engineering book** (within the last 20 years is fine; APOSD, Pragmatic Programmer, A Philosophy of Software Design, Working Effectively with Legacy Code all qualify).
+5. **Broadly accepted in the software engineering community.** Multiple credible practitioners or books refer to the underlying idea — even if not by this exact phrase, and not necessarily in a single canonical book. A well-cited book (APOSD, Pragmatic Programmer, *Working Effectively with Legacy Code*) is strong evidence; multiple corroborating sources (papers, talks, RFCs, recent industry-standard texts) also count.
 
 If any criterion fails, the upstream pattern should be adopted as **skill content** — not a principle. Cite this decision in the PR body so the human reviewer can sanity-check.
 
