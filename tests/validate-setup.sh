@@ -207,7 +207,7 @@ fi
 section "9. Principles"
 # ---------------------------------------------------------------------------
 
-EXPECTED_PRINCIPLES="foundational-thinking redesign-from-first-principles subtract-before-you-add experience-first exhaust-the-design-space module-depth boundary-discipline make-operations-idempotent serialize-shared-state-mutations prove-it-works fix-root-causes stop-on-ambiguity encode-lessons-in-structure"
+EXPECTED_PRINCIPLES="foundational-thinking redesign-from-first-principles subtract-before-you-add experience-first exhaust-the-design-space module-depth boundary-discipline make-operations-idempotent serialize-shared-state-mutations threat-modeling observability prove-it-works fix-root-causes stop-on-ambiguity encode-lessons-in-structure"
 
 for p in $EXPECTED_PRINCIPLES; do
   f="docs/principles/$p.md"

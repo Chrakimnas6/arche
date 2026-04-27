@@ -44,7 +44,7 @@ Then fill in the project-specific sections in `AGENTS.md` (build commands, conve
 │   ├── upstream-shas.json    # Last-seen SHAs for monitored upstream repos
 │   └── workflows/ci.yml      # validate-setup + shellcheck + markdown-links
 ├── docs/
-│   ├── principles/           # 13 engineering principles
+│   ├── principles/           # 15 engineering principles
 │   ├── applications/         # Language overlays (Go, smart contracts)
 │   ├── plans/                # Implementation plans (skill output)
 │   └── design/               # Design documents
@@ -77,10 +77,10 @@ Then fill in the project-specific sections in `AGENTS.md` (build commands, conve
 
 ## Principles
 
-13 engineering principles in `docs/principles/`, covering:
+15 engineering principles in `docs/principles/`, covering:
 
 - **Core**: foundational thinking, redesign from first principles, subtract before you add, experience first, exhaust the design space
-- **Architecture**: module depth, boundary discipline, idempotent operations, serialize shared state
+- **Architecture**: module depth, boundary discipline, idempotent operations, serialize shared state, threat modeling, observability
 - **Verification**: prove it works, fix root causes, stop on ambiguity
 - **Meta**: encode lessons in structure
 

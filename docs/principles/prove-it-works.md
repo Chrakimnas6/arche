@@ -39,6 +39,8 @@ Language-specific applications (testnet deployment for contracts, integration te
 
 [Fix root causes](./fix-root-causes.md) extends this to debugging — check the real cause, not the proxied symptom.
 
+[Observability](./observability.md) extends this to production — verify continuously through emitted signal, not just at task completion.
+
 ## Citations
 
 Dijkstra, "The Humble Programmer" (Turing Award lecture, EWD 340, 1972) — "Program testing can be used to show the presence of bugs, but never to show their absence." Beck, *Test-Driven Development by Example* (Addison-Wesley, 2002) — automated tests as proof of behavior. Goodhart's Law (Goodhart, 1975; popularized by Strathern, 1997) — when a measure becomes a target, it ceases to be a good measure. Verify the real thing, not the proxy.

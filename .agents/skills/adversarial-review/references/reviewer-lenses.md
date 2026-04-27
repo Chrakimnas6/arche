@@ -23,7 +23,7 @@ Challenge correctness and completeness. Ask:
 - What does the author believe is true that isn't proven?
 - Where is "it works on my machine" masquerading as verification?
 
-Map findings to: `docs/principles/prove-it-works.md`, `docs/principles/fix-root-causes.md`, `docs/principles/serialize-shared-state-mutations.md`.
+Map findings to: `docs/principles/prove-it-works.md`, `docs/principles/fix-root-causes.md`, `docs/principles/serialize-shared-state-mutations.md`, `docs/principles/threat-modeling.md`, `docs/principles/observability.md`.
 
 ## Minimalist
 

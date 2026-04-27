@@ -14,6 +14,8 @@
 - [Boundary Discipline](./boundary-discipline.md) — validate at system boundaries, trust internal code
 - [Make Operations Idempotent](./make-operations-idempotent.md) — operations converge to correct state regardless of reruns
 - [Serialize Shared State Mutations](./serialize-shared-state-mutations.md) — enforce serialization structurally for concurrent access
+- [Threat Modeling](./threat-modeling.md) — enumerate adversarial actors and trust boundaries; build defenses into the design
+- [Observability](./observability.md) — design systems to emit structured signal so production behavior is queryable, not guessed
 
 ## Verification
 
