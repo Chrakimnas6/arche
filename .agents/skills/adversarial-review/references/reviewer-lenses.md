@@ -35,4 +35,4 @@ Challenge necessity and complexity. Ask:
 - Where is configuration or flexibility added without a concrete second use case?
 - Is this the simplest possible path to the outcome, or is the path that felt most thorough?
 
-Map findings to: `docs/principles/subtract-before-you-add.md`, `docs/principles/outcome-oriented-execution.md`.
+Map findings to: `docs/principles/subtract-before-you-add.md`.
