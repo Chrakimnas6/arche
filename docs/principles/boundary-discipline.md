@@ -8,38 +8,35 @@ Validation scattered throughout a codebase is noisy, redundant, and gives a fals
 
 ## The Pattern
 
-- **At boundaries** (CLI args, config files, external APIs, user input, RPC calls): validate, return `error`, handle defensively.
-- **Inside the system**: typed data, `return err` propagation, no re-validation. Trust the types.
-
-In smart contracts, the boundary is the external function signature. Validate all inputs (`require`, custom errors) at the top of external/public functions. Internal functions trust the data they receive.
+- **At boundaries** (CLI args, config files, external APIs, user input, RPC calls): validate, surface errors, handle defensively.
+- **Inside the system:** typed data, error propagation as values, no re-validation. Trust the types.
 
 ## Applications
 
-### Validation and Error Handling
+### Validation and error handling
 
-- All entry points return `(T, error)` -- errors handled at the boundary, not inside business logic.
-- No `panic()` in production Go code -- propagate with `return err`.
+- All boundary entry points return values + errors. Errors are handled at the boundary, never silently swallowed and never raised as global aborts in production paths.
 - Validate config at parse time (the config boundary), not inside business logic.
-- Store raw data at boundaries (`json.RawMessage`) -- parse lazily at use-site.
+- Store raw payloads at boundaries; parse lazily at use-site to keep the parse failure mode local.
 
-### Code Organization
+### Code organization
 
-Business logic lives in pure functions with no framework dependencies (`(Input) => (Output, error)`). The shell -- CLI routing, HTTP handlers, event dispatching -- is thin and mechanical.
+Business logic lives in pure functions with no framework dependencies. The shell — CLI routing, HTTP handlers, event dispatching — is thin and mechanical.
 
-- **Parse functions**: Pure `([]byte) => (State, error)` transforms. No framework dependencies.
-- **Computation**: Pure `(Input) => Output` transforms. No side effects.
-- **Orchestration**: Thin wiring that calls pure functions and handles I/O.
+- **Parse functions:** pure transforms from raw input to structured state. No framework dependencies.
+- **Computation:** pure transforms from input to output. No side effects.
+- **Orchestration:** thin wiring that calls pure functions and handles I/O.
 
-### Smart Contract Boundary Pattern
-
-- External functions: validate all inputs, check permissions, emit events.
-- Internal/private functions: pure computation, trust caller already validated.
-- View functions: read-only boundary -- no state validation needed beyond access control.
+Language-specific applications (Go error patterns, smart-contract external/internal split) live in [docs/applications/](../applications/).
 
 ## The Tests
 
-Before adding a validation check, ask: **"Is this data crossing a system boundary right now?"** If not, the validation is redundant -- trust the types.
+Before adding a validation check, ask: **"Is this data crossing a system boundary right now?"** If not, the validation is redundant — trust the types.
 
 Before putting logic in a handler, hook, or framework integration point, ask: **"Can this be a pure function that the shell just calls?"** If yes, extract it.
 
-See also [foundational-thinking](./foundational-thinking.md)
+See also [foundational-thinking](./foundational-thinking.md).
+
+## Citations
+
+Postel's Law (RFC 793, 1981) — "be conservative in what you do, be liberal in what you accept from others." Hunt & Thomas, *The Pragmatic Programmer* (1999) — design by contract, assertive programming. Eric Evans, *Domain-Driven Design* (2003) — bounded contexts and anti-corruption layers at integration boundaries.

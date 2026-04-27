@@ -8,10 +8,12 @@ CLI commands, lifecycle operations, and scheduling loops run in environments whe
 
 ## The Pattern
 
-- **Idempotent database migrations:** Use `CREATE TABLE IF NOT EXISTS` / `CREATE INDEX IF NOT EXISTS`. Check current schema state before applying changes so re-running the migration is always safe.
-- **Idempotent deploy scripts:** Check whether the desired version is already running before deploying. If a deploy crashed mid-rollout, re-running should detect partial state and converge to the target.
-- **Contract initialization guards:** Use the initializer pattern (`initialized` boolean + require check) so that `initialize()` cannot corrupt state if called again after deployment. In upgradeable proxies, use OpenZeppelin's `initializer` modifier to enforce single execution per version.
-- **Convergent startup:** Scan for existing processes/state, clean stale artifacts, adopt live resources -- converging to the correct state regardless of what the previous run left behind.
+- **Idempotent migrations:** check current schema state before applying changes so re-running is always safe (`CREATE TABLE IF NOT EXISTS`, conditional schema checks).
+- **Idempotent deploys:** check whether the desired version is already running before deploying. If a deploy crashed mid-rollout, re-running should detect partial state and converge to the target.
+- **Initialization guards:** any state-establishing operation should refuse re-execution rather than corrupt state if called twice (initializer flags, version checks, atomic swaps).
+- **Convergent startup:** scan for existing processes/state, clean stale artifacts, adopt live resources — converging to the correct state regardless of what the previous run left behind.
+
+Language-specific applications (database migrations, contract initializer pattern, deploy scripts) live in [docs/applications/](../applications/).
 
 ## The Test
 
@@ -27,3 +29,7 @@ If any answer is "it depends on what state was left behind," the operation needs
 - Extends [fix root causes](./fix-root-causes.md) by preventing a class of root causes (partial completion) at design time
 - Complements [fix root causes](./fix-root-causes.md) by making state self-correcting rather than requiring debugging
 - Distinct from [encode lessons in structure](./encode-lessons-in-structure.md) (which is about how to encode rules, not operation design)
+
+## Citations
+
+Fielding, *Architectural Styles and the Design of Network-based Software Architectures* (UC Irvine PhD dissertation, 2000) — idempotency as a REST architectural constraint. Gray & Reuter, *Transaction Processing: Concepts and Techniques* (Morgan Kaufmann, 1992) — recovery semantics. Kleppmann, *Designing Data-Intensive Applications* (O'Reilly, 2017) — idempotency in distributed systems and exactly-once delivery.
