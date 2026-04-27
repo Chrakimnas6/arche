@@ -6,6 +6,8 @@ When facing a novel interaction or architectural decision with no established pr
 
 For decisions where the right answer isn't obvious, build 2-3 competing prototypes or sketches. Compare them side-by-side. Only then commit.
 
+**Design It Twice** (Ousterhout, "A Philosophy of Software Design"): your first idea is unlikely to be the best. For interface design specifically, explore radically different interfaces -- not variations on one theme. Contrast by depth (leverage at the interface), locality (where change concentrates), and seam placement. See [module-depth](./module-depth.md) for vocabulary.
+
 ## When It Applies
 
 - Novel interactions (no prior art in the codebase)

@@ -52,7 +52,7 @@ Resolve ambiguity before exploring the codebase:
 - Are there constraints (dependencies, platform requirements, existing patterns to preserve)?
 - What does "done" look like?
 
-Frame questions with concrete options. If the request is already clear, confirm scope boundaries briefly and move on.
+Frame questions with concrete options, and state the stakes — what breaks or degrades if we pick wrong. If the request is already clear, confirm scope boundaries briefly and move on.
 
 ## Step 3 — Explore Context with Subagents
 
@@ -127,6 +127,8 @@ Don't bolt changes onto existing designs — redesign holistically.
 ### Alternatives Check
 
 For architectural decisions, briefly sketch 2-3 approaches in the overview's Constraints section. State which was chosen and why. This prevents premature commitment and documents the design space explored.
+
+**Coverage vs kind:** Alternatives usually differ in kind (fundamentally different architectures), not coverage (more vs less of the same thing). Compare on tradeoffs — performance, complexity, flexibility — not on a single completeness axis. Don't force-rank qualitatively different approaches with numerical scores; explain the tradeoff that matters for this specific decision.
 
 ### Verification Strategy
 

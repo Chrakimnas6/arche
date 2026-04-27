@@ -11,6 +11,7 @@
 
 ## Architecture
 
+- [Module Depth](./module-depth.md) — prefer deep modules: small interfaces hiding large implementations
 - [Boundary Discipline](./boundary-discipline.md) — validate at system boundaries, trust internal code
 - [Make Operations Idempotent](./make-operations-idempotent.md) — operations converge to correct state regardless of reruns
 - [Migrate Callers Then Delete Legacy APIs](./migrate-callers-then-delete-legacy-apis.md) — migrate and remove in the same wave
