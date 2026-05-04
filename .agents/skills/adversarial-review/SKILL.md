@@ -109,3 +109,10 @@ and why. Reviewers are adversarial by design; not every finding warrants action.
 false positives, overreach, and findings that mistake style for substance.
 
 Append the Lead Judgment section to the verdict (see `references/verdict-format.md`).
+
+End with ONE canonical recommendation line: `Recommendation: <action> because <one-line reason
+citing the most critical accepted finding>`. The reason must name a specific finding or
+compare against alternatives — generic reasons ("because the review found issues") do not
+qualify. If the verdict is PASS, the line should name the strongest finding that was still
+accepted as no-action (e.g., `Recommendation: Ship as-is because the strongest finding is a
+theoretical race that requires conditions we can't trigger in production`).

@@ -21,6 +21,9 @@ For each finding:
 
 ## Lead Judgment
 <for each finding: accept or reject with a one-line rationale>
+
+## Recommendation
+Recommendation: <action> because <one-line reason citing the most critical accepted finding>
 ```
 
 ## Verdict Logic
