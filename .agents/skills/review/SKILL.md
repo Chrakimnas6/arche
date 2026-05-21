@@ -30,7 +30,7 @@ Use the detected branch wherever instructions say `<base>`.
 
 1. Run `git branch --show-current` to get the current branch.
 2. If on the base branch, output: **"Nothing to review -- you're on the base branch or have no changes against it."** and stop.
-3. Run `git fetch origin <base> --quiet && git diff origin/<base> --stat` to check if there's a diff. If no diff, output the same message and stop.
+3. Run `git fetch origin <base> --quiet && DIFF_BASE=$(git merge-base origin/<base> HEAD) && git diff "$DIFF_BASE" --stat` to check if there's a diff. If no diff, output the same message and stop.
 
 ---
 
@@ -42,7 +42,7 @@ Before reviewing code quality, check: **did they build what was requested -- not
    Read commit messages (`git log origin/<base>..HEAD --oneline`).
    **If no PR exists:** rely on commit messages for stated intent -- this is common since /review runs before creating a PR.
 2. Identify the **stated intent** -- what was this branch supposed to accomplish?
-3. Run `git diff origin/<base>...HEAD --stat` and compare the files changed against the stated intent.
+3. Run `DIFF_BASE=$(git merge-base origin/<base> HEAD) && git diff "$DIFF_BASE" --stat` and compare the files changed against the stated intent.
 4. Evaluate with skepticism:
 
    **SCOPE CREEP detection:**
@@ -97,7 +97,14 @@ Fetch the latest base branch to avoid false positives from stale local state:
 git fetch origin <base> --quiet
 ```
 
-Run `git diff origin/<base>` to get the full diff. This includes both committed and uncommitted changes against the latest base branch.
+Compute the merge base, then diff the working tree against that point:
+
+```bash
+DIFF_BASE=$(git merge-base origin/<base> HEAD)
+git diff "$DIFF_BASE"
+```
+
+This includes both committed and uncommitted changes while excluding commits that landed on the base branch after this branch was created.
 
 ---
 
@@ -149,7 +156,7 @@ Examples:
 
 After the two-pass review, re-examine the diff through domain-specific lenses based on what the diff touches. Only apply lenses that match — skip the rest.
 
-**Detect signals** from the diff (`git diff origin/<base> --stat` and file content):
+**Detect signals** from the diff (`DIFF_BASE=$(git merge-base origin/<base> HEAD) && git diff "$DIFF_BASE" --stat` and file content):
 
 | Signal | Lens |
 |--------|------|
