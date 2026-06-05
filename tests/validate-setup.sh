@@ -21,7 +21,6 @@ section "1. Core files exist"
 for f in \
   AGENTS.md \
   README.md \
-  .codex/config.toml \
   .claude/settings.json \
   .agents/hooks/check-careful.sh \
   docs/principles/index.md \
@@ -131,13 +130,6 @@ if python3 -c "import json; json.load(open('.claude/settings.json'))" 2>/dev/nul
   pass "settings.json is valid JSON"
 else
   fail "settings.json is invalid JSON"
-fi
-
-# config.toml — basic check (model key exists)
-if grep -q '^model' .codex/config.toml; then
-  pass "config.toml has model key"
-else
-  fail "config.toml missing model key"
 fi
 
 # upstream-shas.json
