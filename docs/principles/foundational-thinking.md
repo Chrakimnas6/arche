@@ -46,4 +46,4 @@ See also [redesign-from-first-principles](./redesign-from-first-principles.md). 
 
 ## Citations
 
-Brooks, *The Mythical Man-Month* (1975) — "Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I won't usually need your flowcharts; they'll be obvious." Hickey, "The Value of Values" (JaxConf, 2012) — values over places. Hunt & Thomas, *The Pragmatic Programmer* (1999) — "Don't outrun your headlights" + tracer bullets / scaffolding.
+Brooks, *The Mythical Man-Month* (1975) — "Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I won't usually need your flowcharts; they'll be obvious." Hickey, "The Value of Values" (JaxConf, 2012) — values over places. Hunt & Thomas, *The Pragmatic Programmer* (1999) — tracer bullets / scaffolding. Hunt & Thomas, *The Pragmatic Programmer* (20th Anniversary Edition, 2019) — Topic 27, "Don't outrun your headlights."

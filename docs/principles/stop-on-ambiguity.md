@@ -34,4 +34,4 @@ See also [exhaust-the-design-space](./exhaust-the-design-space.md), [fix-root-ca
 
 ## Citations
 
-Toyota Production System: andon cord — "stop the line on any defect." See Liker, *The Toyota Way* (McGraw-Hill, 2004), and Imai, *Kaizen: The Key to Japan's Competitive Success* (McGraw-Hill, 1986) — the discipline of stopping when something is unclear. Hunt & Thomas, *The Pragmatic Programmer* (1999) — "Don't outrun your headlights"; if you're not sure, slow down and ask.
+Toyota Production System: andon cord — "stop the line on any defect." See Liker, *The Toyota Way* (McGraw-Hill, 2004), and Imai, *Kaizen: The Key to Japan's Competitive Success* (McGraw-Hill, 1986) — the discipline of stopping when something is unclear. Hunt & Thomas, *The Pragmatic Programmer* (20th Anniversary Edition, 2019) — Topic 27, "Don't outrun your headlights"; if you're not sure, slow down and ask.
