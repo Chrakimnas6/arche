@@ -22,6 +22,7 @@
 - [Prove It Works](./prove-it-works.md) — verify the real thing directly, not proxies or self-reports
 - [Fix Root Causes](./fix-root-causes.md) — never paper over symptoms, trace to root cause
 - [Stop on Ambiguity](./stop-on-ambiguity.md) — when high-stakes ambiguity surfaces, name it and ask before proceeding
+- [Surgical Changes](./surgical-changes.md) — when editing, every changed line should trace to the request; clean up only your own orphans
 
 ## Meta
 

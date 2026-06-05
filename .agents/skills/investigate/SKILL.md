@@ -163,6 +163,7 @@ You MUST complete each phase before proceeding to the next.
    - ONE change at a time
    - No "while I'm here" improvements
    - No bundled refactoring
+   - See `docs/principles/surgical-changes.md` — every changed line should trace to the fix
 
 3. **Verify Fix**
    - Test passes now?

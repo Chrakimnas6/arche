@@ -36,7 +36,7 @@ Use the detected branch wherever instructions say `<base>`.
 
 ## Step 2: Scope Drift Detection
 
-Before reviewing code quality, check: **did they build what was requested -- nothing more, nothing less?**
+Before reviewing code quality, check: **did they build what was requested -- nothing more, nothing less?** This step enforces `docs/principles/surgical-changes.md` at PR level.
 
 1. Read PR description (`gh pr view --json body --jq .body 2>/dev/null || true`).
    Read commit messages (`git log origin/<base>..HEAD --oneline`).
