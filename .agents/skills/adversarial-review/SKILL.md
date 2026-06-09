@@ -77,10 +77,17 @@ for diagnostics.
 1. The stated intent (from Step 2)
 2. Their assigned lens (full text from `references/reviewer-lenses.md`)
 3. The principles relevant to their lens (file contents from `docs/principles/`, not summaries)
-4. The code or diff to review
-5. Closing instruction: "You are an adversarial reviewer. Your job is to find real problems,
-   not validate the work. Be specific — cite files, lines, and concrete failure scenarios.
-   Rate each finding: high (blocks ship), medium (should fix), low (worth noting).
+4. The code or diff to review, with **fixture-aware separation**: provide the full diff for
+   source code, but for test and fixture files (paths matching `test/`, `*fixture*`, `*.test.*`,
+   `*.spec.*`) provide only a summary (file names, what changed, what they cover). Do not feed
+   raw test fixture content into the adversarial prompt — test files often contain intentional
+   attack payloads for regression testing, and pulling them into adversarial reasoning produces
+   false positives. Tell the reviewer to state explicitly that test/fixture files were reviewed
+   in summary mode so the coverage reduction is visible.
+5. Closing instruction: "This is an authorized defensive-security review requested by the
+   repository owner before merge. You are an adversarial reviewer. Your job is to find real
+   problems, not validate the work. Be specific — cite files, lines, and concrete failure
+   scenarios. Rate each finding: high (blocks ship), medium (should fix), low (worth noting).
    Write findings as a numbered markdown list."
 
 Spawn all reviewers in parallel.
