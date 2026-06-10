@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Validates the vibe-coding-setup template is consistent and complete.
+# Validates the Arché setup is consistent and complete.
 # Run from the repo root: bash tests/validate-setup.sh
 
 set -euo pipefail
@@ -22,7 +22,6 @@ for f in \
   AGENTS.md \
   README.md \
   .claude/settings.json \
-  .agents/hooks/check-careful.sh \
   docs/principles/index.md \
   global/CLAUDE.md \
   .github/workflows/ci.yml \
@@ -34,7 +33,7 @@ done
 section "2. Skills structure"
 # ---------------------------------------------------------------------------
 
-EXPECTED_SKILLS="adversarial-review careful grill-me investigate plan reflect review tdd"
+EXPECTED_SKILLS="adversarial-review grill-me investigate plan reflect review tdd"
 
 for skill in $EXPECTED_SKILLS; do
   skill_file=".agents/skills/$skill/SKILL.md"
@@ -85,11 +84,10 @@ check_symlink() {
 }
 
 check_symlink ".claude/CLAUDE.md" "../AGENTS.md"
-check_symlink ".claude/hooks" "../.agents/hooks"
 check_symlink ".claude/skills" "../.agents/skills"
 
 # Verify symlink targets actually resolve
-for link in .claude/CLAUDE.md .claude/hooks .claude/skills; do
+for link in .claude/CLAUDE.md .claude/skills; do
   [ -e "$link" ] && pass "$link resolves" || fail "$link is a broken symlink"
 done
 
@@ -140,17 +138,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-section "6. Hook executable"
-# ---------------------------------------------------------------------------
-
-if [ -x ".agents/hooks/check-careful.sh" ]; then
-  pass "check-careful.sh is executable"
-else
-  fail "check-careful.sh is not executable"
-fi
-
-# ---------------------------------------------------------------------------
-section "7. No stale references"
+section "6. No stale references"
 # ---------------------------------------------------------------------------
 
 # No remaining references to reviewer-prompt.md
@@ -169,7 +157,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-section "8. README consistency"
+section "7. README consistency"
 # ---------------------------------------------------------------------------
 
 # All skills in the skills table
@@ -181,25 +169,29 @@ for skill in $EXPECTED_SKILLS; do
   fi
 done
 
-# Plugin reference
+# Plugin reference (recommended plugin, not a monitored upstream)
 if grep -q "codex-plugin-cc" README.md; then
   pass "README references codex plugin"
 else
   fail "README missing codex plugin reference"
 fi
 
-# Upstream sources include codex-plugin-cc
-if grep -q "openai/codex-plugin-cc" README.md; then
-  pass "README lists codex-plugin-cc as upstream"
-else
-  fail "README missing codex-plugin-cc in upstream sources"
-fi
+# Upstream sources in the README must match the tracked repos in upstream-shas.json
+shas_repos=$(python3 -c "import json; print('\n'.join(json.load(open('.github/upstream-shas.json')).keys()))")
+upstream_ok=true
+for repo in $shas_repos; do
+  if ! grep -q "$repo" README.md; then
+    fail "README upstream sources missing tracked repo: $repo"
+    upstream_ok=false
+  fi
+done
+[ "$upstream_ok" = true ] && pass "README upstream sources cover all tracked repos"
 
 # ---------------------------------------------------------------------------
-section "9. Principles"
+section "8. Principles"
 # ---------------------------------------------------------------------------
 
-EXPECTED_PRINCIPLES="foundational-thinking redesign-from-first-principles subtract-before-you-add experience-first exhaust-the-design-space module-depth boundary-discipline make-operations-idempotent serialize-shared-state-mutations threat-modeling observability prove-it-works fix-root-causes stop-on-ambiguity encode-lessons-in-structure"
+EXPECTED_PRINCIPLES="foundational-thinking redesign-from-first-principles subtract-before-you-add experience-first exhaust-the-design-space module-depth boundary-discipline make-operations-idempotent serialize-shared-state-mutations threat-modeling observability prove-it-works fix-root-causes stop-on-ambiguity surgical-changes encode-lessons-in-structure"
 
 for p in $EXPECTED_PRINCIPLES; do
   f="docs/principles/$p.md"
@@ -216,7 +208,7 @@ for p in $EXPECTED_PRINCIPLES; do
 done
 
 # ---------------------------------------------------------------------------
-section "10. Adversarial-review skill content"
+section "9. Adversarial-review skill content"
 # ---------------------------------------------------------------------------
 
 skill=".agents/skills/adversarial-review/SKILL.md"

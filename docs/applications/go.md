@@ -17,11 +17,7 @@ How the principles in `docs/principles/` materialize in Go codebases. Read this 
 
 ### Code organization
 
-- **Parse functions:** pure `([]byte) => (State, error)` transforms. No framework dependencies.
-- **Computation:** pure `(Input) => Output` transforms. No side effects.
-- **Orchestration:** thin wiring that calls pure functions and handles I/O.
-
-Business logic lives in pure functions with no framework dependencies (`(Input) => (Output, error)`). The shell — CLI routing, HTTP handlers, event dispatching — is thin and mechanical.
+The functional core / imperative shell split in Go: parse and computation are pure `func(In) (Out, error)` with no framework imports; orchestration is thin wiring that calls them and performs the I/O. Keep `net/http`, DB handles, and `context.Context` plumbing in the shell so the core stays unit-testable without spinning up the framework.
 
 ## Serialize Shared State Mutations
 
@@ -32,9 +28,9 @@ Business logic lives in pure functions with no framework dependencies (`(Input) 
 
 ## Make Operations Idempotent
 
-- **Idempotent migrations:** `CREATE TABLE IF NOT EXISTS`, conditional schema checks before applying changes.
-- **Idempotent deploys:** check whether the desired version is already running before deploying. If a deploy crashed mid-rollout, re-running should detect partial state and converge.
-- **Convergent startup:** scan for existing processes/state, clean stale artifacts, adopt live resources — converging to the correct state regardless of what the previous run left behind.
+- **Single-execution init:** wrap one-time setup in `sync.Once` so repeated or concurrent calls run it exactly once.
+- **Idempotent migrations:** use a versioned migration tool (golang-migrate, goose) rather than ad-hoc DDL, so re-running a partially-applied set converges instead of erroring.
+- **Convergent startup:** on boot, reconcile desired vs. actual — check for an existing PID/lock file, adopt a still-running child, clean a stale socket — so a crashed-and-restarted process lands in the right state regardless of what the previous run left behind.
 
 ## Module Depth
 

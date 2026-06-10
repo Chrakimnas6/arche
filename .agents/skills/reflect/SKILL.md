@@ -41,7 +41,7 @@ For each learning, determine where it belongs. Prefer structural enforcement ove
 ### Routing priority (highest to lowest):
 
 **1. Structural enforcement** — Can this be a lint rule, script, hook, or automated check?
-- Example: "Agent keeps running `rm -rf` on test fixtures" → add pattern to `check-careful.sh`
+- Example: "Agent keeps editing generated files by hand" → add a CI check that fails when generated output drifts from its source
 - Example: "Tests must pass before committing" → add a pre-commit hook
 - If yes, propose the structural change. This is the highest-value outcome.
 

@@ -208,7 +208,7 @@ Evaluate every codepath changed in the diff and identify test gaps. Gaps become 
 
 ### Detect test framework
 
-1. Read CLAUDE.md -- look for a `## Testing` section with test command and framework name.
+1. Read AGENTS.md -- look for a `## Commands` section with test command and framework name.
 2. If not found, auto-detect:
    ```bash
    [ -f Gemfile ] && echo "RUNTIME:ruby"
@@ -255,7 +255,7 @@ GAPS: 2 paths need tests
 ### Generate tests for gaps (Fix-First)
 
 If test framework is detected and gaps were identified:
-- **AUTO-FIX:** Simple unit tests for pure functions, edge cases of existing tested functions. Generate, run, commit as `test: coverage for {feature}`.
+- **AUTO-FIX:** Simple unit tests for pure functions, edge cases of existing tested functions. Generate and run them, then leave the new tests unstaged for the user to commit (this skill never commits — see Important Rules).
 - **ASK:** E2E tests, tests requiring new infrastructure, tests for ambiguous behavior. Include in the Fix-First batch question.
 
 If no test framework detected: include gaps as INFORMATIONAL findings only, no generation.
@@ -342,7 +342,7 @@ Where `critical_count` and `informational_count` are the **remaining** findings 
 
 ## Step 7: Adversarial Review Nudge
 
-After the review is complete, always suggest running `/adversarial-review` regardless of diff size. LOC is not a proxy for risk — a 5-line auth change can be critical.
+After the review is complete, suggest running `/adversarial-review` when the diff is large (200+ lines) or touches high-stakes code — auth, money movement, smart contracts, or other security boundaries. LOC is not the only risk signal: a 5-line auth change can warrant it, so judge by blast radius, not line count alone.
 
 ```
 💡 Consider running /adversarial-review for cross-model analysis of this diff.
