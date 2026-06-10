@@ -40,7 +40,7 @@ Tell the user this task doesn't need a plan and suggest implementing directly wi
 
 Read `docs/principles/index.md`. Follow every link and read each linked principle file. These principles govern all plan decisions — cite them by name in the plan overview and phase files.
 
-**Do NOT skip this. Do NOT use memorized principle content — always read fresh.** The self-check in Step 5b will verify citations exist.
+**Do NOT skip this. Do NOT use memorized principle content — always read fresh.** The self-check in Step 4b will verify citations exist.
 
 If `docs/principles/index.md` does not exist, note the absence and proceed without principle citations. Do not create the file.
 

@@ -39,4 +39,4 @@ See also [foundational-thinking](./foundational-thinking.md), [threat-modeling](
 
 ## Citations
 
-Postel's Law (RFC 793, 1981) — "be conservative in what you do, be liberal in what you accept from others." Hunt & Thomas, *The Pragmatic Programmer* (1999) — design by contract, assertive programming. Eric Evans, *Domain-Driven Design* (2003) — bounded contexts and anti-corruption layers at integration boundaries.
+Meyer, *Object-Oriented Software Construction* (1988/1997) — Design by Contract: preconditions checked at the boundary, internals trust the contract. Hunt & Thomas, *The Pragmatic Programmer* (1999) — assertive programming and contracts. Eric Evans, *Domain-Driven Design* (2003) — bounded contexts and anti-corruption layers at integration boundaries.

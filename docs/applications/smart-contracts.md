@@ -16,9 +16,7 @@ You cannot patch a deployed contract the way you patch a service. If a new requi
 
 Subtraction is even more valuable for contracts: every line of deployed code is attack surface. Remove unused functions, dead modifiers, and speculative extension points before shipping. Gas cost is proportional to complexity; less code means cheaper execution.
 
-## Outcome-Oriented Execution
-
-When migrating from v1 to v2 of a contract, design the v2 end state cleanly rather than contorting v1 to stay backward-compatible during the transition. Use migration scripts that converge on the target state and verify invariants at the end.
+When migrating v1 → v2, converge directly on the target state — design v2 cleanly and use migration scripts that verify invariants at the end, rather than contorting v1 to stay backward-compatible through the transition.
 
 ## Boundary Discipline
 

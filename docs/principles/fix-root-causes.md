@@ -18,9 +18,11 @@ Symptom fixes accumulate: each workaround makes the system harder to reason abou
 
 Code doesn't change between runs. State does. When "fails after restart," suspect stale persistent state first -- config files, caches, lock files, serialized state. If clearing a state file restores behavior, prioritize state validation as the fix.
 
-## Own Every File You Touch
+## Own the Cause, Wherever It Lives
 
-Never label an issue "pre-existing" to justify skipping it. If you touch a file, you own its quality. Fix lint errors, style violations, and bugs in the file regardless of who introduced them. The distinction between "my changes" and "existing code" doesn't exist -- all codebase issues are shared ownership.
+Follow the bug to its root even when the root is "pre-existing" or sits in code you didn't write. Don't stop at the nearest symptom because the real cause lives in another file, an older commit, or someone else's module — the causal chain is yours to chase to bedrock.
+
+This governs *depth*, not *breadth*. Owning the cause means tracing the bug you were asked to fix all the way down; it does not mean adopting every unrelated lint error or smell in a file you happened to open. For issues that are not on the causal path, follow [surgical-changes](./surgical-changes.md): surface them, don't bundle the fix.
 
 ## Relationship to Other Principles
 
