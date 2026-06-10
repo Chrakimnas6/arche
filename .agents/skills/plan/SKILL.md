@@ -38,7 +38,7 @@ Tell the user this task doesn't need a plan and suggest implementing directly wi
 
 ## Step 1 — Load Principles
 
-Read `docs/principles/index.md`. Follow every link and read each linked principle file. These principles govern all plan decisions — cite them by name in the plan overview and phase files.
+Read `docs/principles/index.md`. Read the **Always read** baseline in full, then read in full each principle whose **Apply when** clause matches this task — the index's routing matrix covers common task shapes. Read the whole corpus only when genuinely unsure which apply. These principles govern all plan decisions — cite the ones you read by name in the plan overview and phase files.
 
 **Do NOT skip this. Do NOT use memorized principle content — always read fresh.** The self-check in Step 4b will verify citations exist.
 
