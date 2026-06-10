@@ -13,6 +13,8 @@ Adding to a complex system compounds complexity. Removing first reduces the surf
 - **Design for observed usage, not speculative edge cases.** If the real workflow is single-process or low-concurrency, prefer simpler designs that fit that reality. Add edge-case machinery only after usage data says it's needed.
 - **When a reference has no novel content, delete it** rather than leaving a stub.
 
+**Corollary — borrow a maintainer's fatigue.** Writing code is cheap for an agent, which makes over-engineering easy. Counter it continuously, not just when sequencing: prefer deletion when asked to improve, make the smallest change that solves the problem, and when a task wants a new signal threaded through types, schemas, or pipelines, stop and look for a more direct path. If a human would find the result exhausting to maintain, it's a bad solution.
+
 ## Migrate Callers, Then Delete Legacy APIs
 
 When a new API is the right design, migrate callers and remove the old API in the *same* refactor wave instead of preserving compatibility layers.

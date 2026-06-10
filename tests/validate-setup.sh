@@ -191,7 +191,7 @@ done
 section "8. Principles"
 # ---------------------------------------------------------------------------
 
-EXPECTED_PRINCIPLES="foundational-thinking redesign-from-first-principles subtract-before-you-add experience-first exhaust-the-design-space module-depth boundary-discipline make-operations-idempotent serialize-shared-state-mutations threat-modeling observability prove-it-works fix-root-causes stop-on-ambiguity surgical-changes encode-lessons-in-structure"
+EXPECTED_PRINCIPLES="foundational-thinking redesign-from-first-principles subtract-before-you-add experience-first exhaust-the-design-space module-depth boundary-discipline make-operations-idempotent serialize-shared-state-mutations threat-modeling observability prove-it-works fix-root-causes stop-on-ambiguity surgical-changes build-the-lever guard-the-context-window never-block-on-the-human encode-lessons-in-structure"
 
 for p in $EXPECTED_PRINCIPLES; do
   f="docs/principles/$p.md"
@@ -205,6 +205,19 @@ for p in $EXPECTED_PRINCIPLES; do
   else
     fail "index.md missing reference to $p"
   fi
+done
+
+# Reverse check: every principle file on disk must be registered in EXPECTED_PRINCIPLES.
+# Without this, a new principle file passes CI silently (the forward check only
+# verifies names already on the list) — the drift that produced the stale
+# "15 principles" README. See docs/principles/encode-lessons-in-structure.md.
+for f in docs/principles/*.md; do
+  name=$(basename "$f" .md)
+  [ "$name" = "index" ] && continue
+  case " $EXPECTED_PRINCIPLES " in
+    *" $name "*) pass "$name is registered in EXPECTED_PRINCIPLES" ;;
+    *) fail "$name exists on disk but is NOT in EXPECTED_PRINCIPLES (tests/validate-setup.sh)" ;;
+  esac
 done
 
 # ---------------------------------------------------------------------------

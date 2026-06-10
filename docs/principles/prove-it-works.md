@@ -29,6 +29,9 @@ After completing any task, ask: **"How do I prove this actually works?"**
 - If you can run it, run it
 - Prefer automated verification over manual inspection
 
+### Sweeps and migrations: verify per unit, not per batch
+In a run of similar edits, verify each change before starting the next -- known-good state, one change, run the check, proceed. Never batch the edits and verify once at the end: a break caught at the unit that caused it is cheap to localize; a break caught after the batch is buried under everything built on top of it.
+
 ### Delegation: trust artifacts, not self-reports
 
 When verifying delegated work, inspect the actual output artifact (`git diff --stat`, file contents, runtime behavior) -- never the delegate's summary of what they claim to have done. Agents report what they intended, not always what happened. Scope violations and silent failures are invisible in self-reports but obvious in artifacts.

@@ -41,7 +41,7 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 │   ├── upstream-shas.json    # Last-seen SHAs for monitored upstream repos
 │   └── workflows/ci.yml      # validate-setup + shellcheck + markdown-links
 ├── docs/
-│   ├── principles/           # 16 engineering principles
+│   ├── principles/           # Engineering principles
 │   ├── applications/         # Language overlays (Go, smart contracts)
 │   ├── plans/                # Implementation plans (skill output)
 │   └── design/               # Design documents
@@ -73,11 +73,12 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 
 ## Principles
 
-16 engineering principles in `docs/principles/`, covering:
+Engineering principles in `docs/principles/`, grouped as:
 
 - **Core**: foundational thinking, redesign from first principles, subtract before you add, experience first, exhaust the design space
 - **Architecture**: module depth, boundary discipline, idempotent operations, serialize shared state, threat modeling, observability
-- **Verification**: prove it works, fix root causes, stop on ambiguity, surgical changes
+- **Verification**: prove it works, fix root causes, stop on ambiguity, surgical changes, build the lever
+- **Delegation**: guard the context window, never block on the human
 - **Meta**: encode lessons in structure
 
 Language-specific applications (Go, smart contracts) live in `docs/applications/`, kept separate so the principles stay paradigm-agnostic.
@@ -103,7 +104,7 @@ This gives you `/codex:review`, `/codex:adversarial-review`, and `/codex:rescue`
 
 A weekly Claude Code scheduled agent monitors upstream repos for changes in the paths we care about. When relevant updates are found, it reads the actual source files, implements adaptations directly, and opens or updates a rolling adoption PR. Managed via `/schedule` in Claude Code. Full routine prompt lives at [`.github/upstream-monitor.md`](./.github/upstream-monitor.md).
 
-Upstream sources: [poteto/noodle](https://github.com/poteto/noodle), [garrytan/gstack](https://github.com/garrytan/gstack), [mattpocock/skills](https://github.com/mattpocock/skills), [obra/superpowers](https://github.com/obra/superpowers).
+Upstream sources: [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack) (pstack — poteto's successor to noodle), [garrytan/gstack](https://github.com/garrytan/gstack), [mattpocock/skills](https://github.com/mattpocock/skills), [obra/superpowers](https://github.com/obra/superpowers).
 
 ## Customization
 

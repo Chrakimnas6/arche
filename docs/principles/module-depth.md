@@ -24,6 +24,8 @@ Use these terms consistently when discussing architecture. Don't substitute "com
 
 **Depth is a property of the interface, not the implementation.** A deep module can be internally composed of small, swappable parts -- they just aren't part of the interface. Internal seams (private, used by tests) are fine; exposing them through the module's interface is not.
 
+**Reader load has two axes: layers-to-trace and state-to-hold.** When judging whether code is hard to follow, count the abstraction layers a reader must cross to answer a question, and the mutable state they must hold in their head while crossing them -- not the number of files. Collapse wrappers with a single caller; shrink the scope of mutable state. (Internal structure spread across files is fine when the interface stays small -- that's depth working.)
+
 ## Deepening Safely
 
 When merging shallow modules into a deeper one, classify dependencies to determine the testing strategy:

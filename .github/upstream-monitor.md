@@ -18,7 +18,7 @@ Query each watched path, take the most recent commit across them, and call that 
 - **Different:** the repo has candidate changes; proceed to Step 3.
 
 Watched paths per repo (resolve to the repo's actual paths when you inspect it):
-- poteto/noodle: principles docs, plan + adversarial-review skills
+- cursor/plugins: `pstack/skills`, `pstack/agents` — poteto's successor to noodle; only the pstack/ subdir of this monorepo is watched (query with `?path=pstack/skills` etc.)
 - garrytan/gstack: review + investigate skills, plan patterns, hooks
 - mattpocock/skills: tdd + grill-me skills
 - obra/superpowers: debugging + tdd skills, anti-rationalization tables
@@ -39,12 +39,13 @@ For each HIGH/MEDIUM change, decide whether to adopt it as **skill content** (a 
 
 **Default to skill content.** Principles are load-bearing — once added they're cited by multiple skills and shape architectural decisions across the project. They are hard to retract without churning every skill that references them. The bar for promotion is high.
 
-A new principle qualifies for `docs/principles/` ONLY if ALL FIVE of these are true:
-1. **Multiple authoritative citations** (≥2 industry-standard sources — Ousterhout, Brooks, Fowler, Hunt/Thomas, Feathers, Liskov, Hickey, Pike, etc.). One upstream repo's blog post does not count.
+A new principle qualifies for `docs/principles/` ONLY if ALL FOUR of these are true:
+1. **Authoritative backing.** Backed by ≥2 industry-standard sources (Ousterhout, Brooks, Fowler, Hunt/Thomas, Feathers, Liskov, Hickey, Pike, well-cited books like APOSD or *Working Effectively with Legacy Code*) — OR, for agent-era *operating* principles, broad practitioner consensus: frontier-lab guidance, widely-cited talks/posts, and multiple independent implementations (e.g. pstack) together count. A single upstream repo's blog post does not.
 2. **Paradigm-agnostic.** Works equally in Go, smart contracts, OOP, FP, distributed systems. If it only makes sense in one paradigm, it's not a principle — it's a pattern.
 3. **Actionable, not aphoristic.** Has concrete "do X / don't do Y" guidance and at least one heuristic readers can apply, not just an inspirational slogan.
 4. **No substantial overlap** with an existing principle in `docs/principles/index.md`. If it overlaps, either skip it or update the existing principle with the new framing.
-5. **Broadly accepted in the software engineering community.** Multiple credible practitioners or books refer to the underlying idea — even if not by this exact phrase, and not necessarily in a single canonical book. A well-cited book (APOSD, Pragmatic Programmer, *Working Effectively with Legacy Code*) is strong evidence; multiple corroborating sources (papers, talks, RFCs, recent industry-standard texts) also count.
+
+*Why criterion 1 has the consensus branch:* the original ≥2-books bar was calibrated for timeless software-design principles and structurally excluded the agent-operating category (context management, delegation discipline), which is now load-bearing for this setup. The branch relaxes the *form* of evidence, not the bar itself — multiple independent credible sources are still required.
 
 If any criterion fails, the upstream pattern should be adopted as **skill content** — not a principle. Cite this decision in the PR body so the human reviewer can sanity-check.
 

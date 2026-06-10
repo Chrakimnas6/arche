@@ -37,6 +37,7 @@ Applies to commits too -- sequence for maximum option value:
 - Infra/setup before features, tests before fixes
 - Keep commits small and single-purpose
 - Prefer commits that are easy to review, revert, and cherry-pick independently
+- **Order the stack so the sequence proves itself to a reviewer**: the failing test lands before the fix (red, then green), the subtraction before the reshape, the baseline capture before the treatment. Each commit stands alone and the sequence reads as an argument.
 
 Subtraction ([subtract-before-you-add](./subtract-before-you-add.md)) comes before scaffolding -- remove dead weight first, then lay foundations.
 
