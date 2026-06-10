@@ -207,6 +207,19 @@ for p in $EXPECTED_PRINCIPLES; do
   fi
 done
 
+# Reverse check: every principle file on disk must be registered in EXPECTED_PRINCIPLES.
+# Without this, a new principle file passes CI silently (the forward check only
+# verifies names already on the list) — the drift that produced the stale
+# "15 principles" README. See docs/principles/encode-lessons-in-structure.md.
+for f in docs/principles/*.md; do
+  name=$(basename "$f" .md)
+  [ "$name" = "index" ] && continue
+  case " $EXPECTED_PRINCIPLES " in
+    *" $name "*) pass "$name is registered in EXPECTED_PRINCIPLES" ;;
+    *) fail "$name exists on disk but is NOT in EXPECTED_PRINCIPLES (tests/validate-setup.sh)" ;;
+  esac
+done
+
 # ---------------------------------------------------------------------------
 section "9. Adversarial-review skill content"
 # ---------------------------------------------------------------------------

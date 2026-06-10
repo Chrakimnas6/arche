@@ -41,7 +41,7 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 │   ├── upstream-shas.json    # Last-seen SHAs for monitored upstream repos
 │   └── workflows/ci.yml      # validate-setup + shellcheck + markdown-links
 ├── docs/
-│   ├── principles/           # 16 engineering principles
+│   ├── principles/           # Engineering principles
 │   ├── applications/         # Language overlays (Go, smart contracts)
 │   ├── plans/                # Implementation plans (skill output)
 │   └── design/               # Design documents
@@ -73,7 +73,7 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 
 ## Principles
 
-16 engineering principles in `docs/principles/`, covering:
+Engineering principles in `docs/principles/`, grouped as:
 
 - **Core**: foundational thinking, redesign from first principles, subtract before you add, experience first, exhaust the design space
 - **Architecture**: module depth, boundary discipline, idempotent operations, serialize shared state, threat modeling, observability
