@@ -191,7 +191,7 @@ done
 section "8. Principles"
 # ---------------------------------------------------------------------------
 
-EXPECTED_PRINCIPLES="foundational-thinking redesign-from-first-principles subtract-before-you-add experience-first exhaust-the-design-space module-depth boundary-discipline make-operations-idempotent serialize-shared-state-mutations threat-modeling observability prove-it-works fix-root-causes stop-on-ambiguity surgical-changes encode-lessons-in-structure"
+EXPECTED_PRINCIPLES="foundational-thinking redesign-from-first-principles subtract-before-you-add experience-first exhaust-the-design-space module-depth boundary-discipline make-operations-idempotent serialize-shared-state-mutations threat-modeling observability prove-it-works fix-root-causes stop-on-ambiguity surgical-changes build-the-lever guard-the-context-window never-block-on-the-human encode-lessons-in-structure"
 
 for p in $EXPECTED_PRINCIPLES; do
   f="docs/principles/$p.md"

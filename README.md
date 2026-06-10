@@ -77,7 +77,8 @@ Engineering principles in `docs/principles/`, grouped as:
 
 - **Core**: foundational thinking, redesign from first principles, subtract before you add, experience first, exhaust the design space
 - **Architecture**: module depth, boundary discipline, idempotent operations, serialize shared state, threat modeling, observability
-- **Verification**: prove it works, fix root causes, stop on ambiguity, surgical changes
+- **Verification**: prove it works, fix root causes, stop on ambiguity, surgical changes, build the lever
+- **Delegation**: guard the context window, never block on the human
 - **Meta**: encode lessons in structure
 
 Language-specific applications (Go, smart contracts) live in `docs/applications/`, kept separate so the principles stay paradigm-agnostic.
