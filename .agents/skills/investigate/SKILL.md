@@ -86,6 +86,7 @@ You MUST complete each phase before proceeding to the next.
    - Search git log and any prior investigation notes for bugs in the same files
    - Recurring bugs in the same area are an architectural smell, not just bad luck
    - If prior investigations exist on these files, note the pattern — the root cause may be structural
+   - If the codebase records prior architectural or scope decisions (e.g. in `docs/plans/` overviews or design docs), treat them as settled with their stated rationale. Don't silently re-litigate a settled call mid-fix; if your root-cause analysis implies reversing one, say so explicitly and surface it as a decision for the user rather than quietly changing direction
 
 6. **Trace Data Flow**
 
@@ -205,7 +206,7 @@ You MUST complete each phase before proceeding to the next.
 
 ## Circles Detection
 
-If you notice you're going in circles — repeating the same diagnostic, re-reading the same file, or trying variants of a failed fix — STOP and reassess. You are likely missing context or fighting the wrong abstraction. Step back and:
+If you notice you're going in circles — repeating the same diagnostic, re-reading the same file, or trying variants of a failed fix — STOP and reassess. You are likely missing context or fighting the wrong abstraction. (This is thrashing on a *defect*, not a measurement plateau in an optimization loop — the latter calls for a pivot, not a stop; see the `hillclimb` skill.) Step back and:
 - Re-read the error from scratch with fresh eyes
 - Question whether you're investigating the right layer
 - Consider whether the architecture itself is the problem (see Phase 4, step 5)
