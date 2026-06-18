@@ -31,7 +31,10 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 │       ├── review/           # Pre-landing PR review
 │       ├── adversarial-review/ # Cross-model adversarial review
 │       ├── investigate/      # Root cause debugging
-│       └── reflect/          # Post-task learning capture
+│       ├── hillclimb/        # Keep-or-revert metric optimization
+│       ├── reflect/          # Post-task learning capture
+│       ├── handoff/          # Session handoff doc (for a fresh agent)
+│       └── teach/            # Multi-session guided learning workspace
 ├── .claude/
 │   ├── CLAUDE.md             # -> ../AGENTS.md (symlink)
 │   ├── skills                # -> ../.agents/skills (symlink)
@@ -71,6 +74,8 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 | **investigate** | "debug this", "why is this broken" | 4-phase root cause debugging (no fixes without root cause) |
 | **hillclimb** | "optimize this metric", "hillclimb the latency" | Keep-or-revert optimization loop toward a target metric |
 | **reflect** | "reflect", "what did we learn" | Captures session learnings back into AGENTS.md, skills, and docs |
+| **handoff** | `/handoff` (manual only) | Compacts the session into a handoff doc (OS temp dir) for a fresh agent to continue |
+| **teach** | `/teach` (manual only) | Multi-session guided learning — turns a dir into a teaching workspace (mission, curated resources, HTML lessons) |
 
 ## Principles
 
