@@ -58,6 +58,8 @@ RIGHT (vertical):
 
 ### 1. Planning
 
+**Align with existing domain language.** Use the project's domain glossary and naming conventions so test names and interface vocabulary match the project's language; respect any design docs or ADRs (e.g. in `docs/design/`) governing the area you're touching. Consistent terms across tests and code make tests read as specifications.
+
 Before writing any code:
 
 - [ ] Confirm with user what interface changes are needed

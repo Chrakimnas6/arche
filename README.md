@@ -69,6 +69,7 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 | **review** | "review this PR", "check my diff" | Two-pass code review with scope drift detection |
 | **adversarial-review** | "adversarial review" | Deep multi-lens review via Codex (Architect/Skeptic/Minimalist lenses) |
 | **investigate** | "debug this", "why is this broken" | 4-phase root cause debugging (no fixes without root cause) |
+| **hillclimb** | "optimize this metric", "hillclimb the latency" | Keep-or-revert optimization loop toward a target metric |
 | **reflect** | "reflect", "what did we learn" | Captures session learnings back into AGENTS.md, skills, and docs |
 
 ## Principles
