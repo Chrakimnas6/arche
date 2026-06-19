@@ -1,9 +1,6 @@
 ---
 name: review
-description: |
-  Pre-landing PR review. Analyzes diff against base branch for structural issues,
-  scope drift, test coverage gaps, and code quality. Use when asked to "review this PR",
-  "code review", "check my diff", or before merging code.
+description: Pre-landing PR review against the base branch — catches scope drift, structural bugs, and test-coverage gaps that tests miss. Use before merging, or when asked to review a PR or diff.
 ---
 
 # Pre-Landing PR Review
@@ -124,9 +121,7 @@ Apply the review against the diff in two passes:
 1. **Conditional Side Effects** -- state mutations buried inside complex conditions, side effects in getters, mutation in filter/map callbacks.
 2. **Magic Numbers & String Coupling** -- hardcoded values that should be constants, string matching on values that could change.
 3. **Dead Code & Consistency** -- unreachable branches, inconsistent patterns across similar code.
-4. **Test Gaps** -- new code paths without tests (subsumes into the coverage analysis in Step 5).
-5. **Performance** -- N+1 queries, unbounded loops, missing pagination, large payloads.
-6. **AI Code Quality (advisory)** -- patterns common in AI-generated code: empty catch blocks that swallow errors, over-abstracted wrappers around single-use logic, defensive validation for impossible internal states, copy-paste patterns that should be a shared function.
+4. **AI Code Quality (advisory)** -- patterns common in AI-generated code: empty catch blocks that swallow errors, over-abstracted wrappers around single-use logic, defensive validation for impossible internal states, copy-paste patterns that should be a shared function.
 
 **Search-before-recommending:** When recommending a fix, verify it's current best practice for the framework version in use. Check if a built-in solution exists before recommending a workaround.
 
@@ -165,38 +160,7 @@ After the two-pass review, re-examine the diff through domain-specific lenses ba
 | API routes, handlers, request/response contracts | **API Contract** |
 | DB queries, loops over collections, data fetching | **Performance** |
 
-### Security Lens
-
-When the diff touches auth/permissions/access control code:
-- Input validation at trust boundaries — are all external inputs validated before use?
-- Auth/authz bypass — can the new code path be reached without proper authentication?
-- Injection vectors beyond SQL — command injection, path traversal, SSRF
-- Cryptographic misuse — hardcoded secrets, weak algorithms, improper key management
-- Attack surface expansion — does this change expose new endpoints or capabilities?
-
-### Data Safety Lens
-
-When the diff touches migrations or schema:
-- Reversibility — can this migration be rolled back without data loss?
-- Data loss risk — dropping columns, narrowing types, adding NOT NULL without defaults
-- Lock duration — will ALTER TABLE lock production tables for an unacceptable duration?
-- Migration ordering — does this migration depend on another that may not have run?
-
-### API Contract Lens
-
-When the diff touches API routes or contracts:
-- Breaking changes — removed fields, type changes, new required parameters
-- Versioning consistency — does this follow the project's API versioning strategy?
-- Error response standardization — do new error cases follow existing patterns?
-- Backward compatibility — will existing clients break?
-
-### Performance Lens
-
-When the diff touches queries or data-fetching code:
-- N+1 queries — loops that issue a query per iteration
-- Missing indexes — new queries on columns without indexes
-- Algorithmic complexity — O(n²) patterns, unbounded iterations
-- Large payloads — endpoints returning unbounded result sets without pagination
+When a signal matches, apply that lens's checklist from [references/specialist-lenses.md](references/specialist-lenses.md) — only the lenses whose signal is present; skip the rest.
 
 Specialist lens findings follow the same confidence calibration and finding format as Step 4. They flow into Step 6 (Fix-First) alongside the two-pass findings.
 
