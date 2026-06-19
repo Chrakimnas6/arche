@@ -34,7 +34,9 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 │       ├── hillclimb/        # Keep-or-revert metric optimization
 │       ├── reflect/          # Post-task learning capture
 │       ├── handoff/          # Session handoff doc (for a fresh agent)
-│       └── teach/            # Multi-session guided learning workspace
+│       ├── teach/            # Multi-session guided learning workspace
+│       ├── resolving-merge-conflicts/ # Resolve merge/rebase conflicts
+│       └── writing-great-skills/ # Rubric for authoring & auditing skills
 ├── .claude/
 │   ├── CLAUDE.md             # -> ../AGENTS.md (symlink)
 │   ├── skills                # -> ../.agents/skills (symlink)
@@ -76,6 +78,8 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 | **reflect** | "reflect", "what did we learn" | Captures session learnings back into AGENTS.md, skills, and docs |
 | **handoff** | `/handoff` (manual only) | Compacts the session into a handoff doc (OS temp dir) for a fresh agent to continue |
 | **teach** | `/teach` (manual only) | Multi-session guided learning — turns a dir into a teaching workspace (mission, curated resources, HTML lessons) |
+| **resolving-merge-conflicts** | "resolve merge conflict", mid-merge/rebase | Resolves an in-progress conflict by recovering each side's intent, then runs the project's checks |
+| **writing-great-skills** | `/writing-great-skills` (manual only) | Rubric for writing & auditing skills — invocation, info hierarchy, leading words, failure modes |
 
 ## Principles
 
