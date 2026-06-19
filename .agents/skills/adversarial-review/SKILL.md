@@ -1,11 +1,9 @@
 ---
 name: adversarial-review
 description: >-
-  Deep multi-lens adversarial code review. Spawns multiple Codex reviewers with distinct
-  critical lenses (Architect, Skeptic, Minimalist) grounded in project principles. Produces
-  a synthesized verdict with lead judgment. For quick single-lens adversarial reviews, use
-  /codex:adversarial-review from the codex plugin instead. Use this skill for large changes
-  (200+ lines), high-stakes code like smart contracts, or when you want multi-perspective analysis.
+  Deep multi-lens adversarial code review — multiple Codex reviewers with distinct critical
+  lenses, synthesized into one verdict. Use for large changes (200+ lines), high-stakes code
+  like smart contracts, or when you want multi-perspective analysis.
 ---
 
 # Adversarial Review

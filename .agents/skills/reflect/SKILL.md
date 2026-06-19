@@ -3,20 +3,14 @@ name: reflect
 description: >-
   Post-task learning capture. Reviews the conversation for mistakes, corrections,
   and discoveries, then proposes updates to AGENTS.md, skills, principles, or docs.
-  Use after completing significant work, when wrapping up a session, after mistakes
-  or corrections, or when the user says "reflect", "what did we learn", or "remember this".
+  Use after completing significant work, when wrapping up a session, after a mistake
+  or correction, when you notice recurring friction, or when the user says "reflect",
+  "what did we learn", or "remember this".
 ---
 
 # Reflect
 
 Capture learnings from the current session and route them to the right place in the project. **Do NOT make changes without user approval** — present proposals and let the user decide.
-
-## When to Use
-
-- After completing a significant feature or bug fix
-- After a session where mistakes were made and corrected
-- When the user says "reflect", "what did we learn?", or "remember this"
-- When you notice recurring friction that could be eliminated
 
 ## Step 1 — Scan the Conversation
 
