@@ -105,11 +105,7 @@ Run tests one-by-one using bisection to find the first polluter.
 
 **Fix:** Made TempDir a method that panics if accessed before setup
 
-**Also added defense-in-depth:**
-- Layer 1: Project.Create() validates directory
-- Layer 2: WorkspaceManager validates not empty
-- Layer 3: GO_ENV guard refuses git init outside tmpdir
-- Layer 4: Stack trace logging before git init
+**Also added defense-in-depth** at every layer — see [defense-in-depth.md](defense-in-depth.md) for the full four-layer validation pattern.
 
 ## Key Principle
 

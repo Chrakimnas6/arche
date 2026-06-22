@@ -1,10 +1,8 @@
 ---
 name: plan
 description: >-
-  Systematic planning for features and projects. Gathers context, explores codebase,
-  writes phased implementation plans to docs/plans/. Two modes: greenfield (from requirements)
-  and feature (incremental changes). Does NOT implement. Use when asked to "plan this",
-  "break this down", "design this", or starting a new feature.
+  Plan features and projects — phased implementation plans written to docs/plans/, never
+  code. Use when asked to plan or break down a feature, or when starting a new project.
 ---
 
 # Plan
