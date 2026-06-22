@@ -326,6 +326,18 @@ Before producing the final review output:
 
 **Rationalization prevention:** "This looks fine" is not a finding. Either cite evidence it IS fine, or flag it as unverified.
 
+**Evidence ladder for safety-critical claims.** Citing a line is not the top of the ladder. For each claim the change's safety actually depends on, push it as far down this ladder as is cheap, and state where it stopped:
+
+1. *Asserted* -- "it's safe because I say so." Worthless on its own.
+2. *Cited* -- a real `file:line`, or the dependency's own source, that shows it.
+3. *Traced* -- you walked the failure case step by step and it cannot reach.
+4. *Executed* -- a script or test that calls the real code and fails loud if you're wrong.
+5. *Reproduced* -- observed in the running system.
+
+A safety claim you cannot get to step 4 cheaply, label **unproven** -- do not round a level-2 cite up to "verified." Step 4 is usually one small script that exercises the exact code path in question.
+
+**Concentrate the proof.** A change that looks risky is usually safe because of a single fact ("this only drops already-dead entries"). Find that one fact and prove *it*, rather than writing a long list of maybes -- if it holds, most of the scary cases fall at once.
+
 ---
 
 ## Step 6e: PR Quality Score
