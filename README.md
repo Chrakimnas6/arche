@@ -27,8 +27,9 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 │   └── skills/               # AI agent skills
 │       ├── grill-me/         # Relentless design questioning
 │       ├── plan/             # Systematic implementation planning
+│       ├── execute-plan/     # Phase-by-phase plan execution
 │       ├── tdd/              # Test-driven development
-│       ├── review/           # Pre-landing PR review
+│       ├── pre-landing-review/ # Pre-landing PR review
 │       ├── adversarial-review/ # Cross-model adversarial review
 │       ├── investigate/      # Root cause debugging
 │       ├── hillclimb/        # Keep-or-revert metric optimization
@@ -70,16 +71,30 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 |-------|---------|-------------|
 | **grill-me** | "grill me", "stress-test this plan" | Interviews you relentlessly about every design decision |
 | **plan** | "plan this", "break this down" | Creates phased implementation plans in `docs/plans/` |
+| **execute-plan** | "implement the plan", "execute the plan" | Implements a plan phase by phase; each phase's verification gates the next |
 | **tdd** | "use TDD", "red-green-refactor" | Enforces test-driven development with iron law discipline |
-| **review** | "review this PR", "check my diff" | Two-pass code review with scope drift detection |
+| **pre-landing-review** | "review my changes", "check my diff" | Two-pass code review with scope drift detection |
 | **adversarial-review** | "adversarial review" | Deep multi-lens review via Codex (Architect/Skeptic/Minimalist lenses) |
 | **investigate** | "debug this", "why is this broken" | 4-phase root cause debugging (no fixes without root cause) |
 | **hillclimb** | "optimize this metric", "hillclimb the latency" | Keep-or-revert optimization loop toward a target metric |
 | **reflect** | "reflect", "what did we learn" | Captures session learnings back into AGENTS.md, skills, and docs |
-| **handoff** | `/handoff` (manual only) | Compacts the session into a handoff doc (OS temp dir) for a fresh agent to continue |
+| **handoff** | `/handoff` (manual only) | Pause/pickup notes at `.handoff/<branch>.md` (git-ignored) so a fresh session resumes without being told a path |
 | **teach** | `/teach` (manual only) | Multi-session guided learning — turns a dir into a teaching workspace (mission, curated resources, HTML lessons) |
 | **resolving-merge-conflicts** | "resolve merge conflict", mid-merge/rebase | Resolves an in-progress conflict by recovering each side's intent, then runs the project's checks |
 | **writing-great-skills** | `/writing-great-skills` (manual only) | Rubric for writing & auditing skills — invocation, info hierarchy, leading words, failure modes |
+
+## Workflow
+
+For non-trivial work the skills chain into a pipeline, each stage handing the next a durable artifact so the chain survives session boundaries:
+
+1. `grill-me` — stress-test the requirement → decision record in `docs/design/`
+2. `plan` — decision record + codebase exploration → phased plan in `docs/plans/<name>/`
+3. `adversarial-review` (plan mode) — challenge the design before any code exists
+4. `execute-plan` — implement phase by phase; each phase's verification gates the next
+5. `pre-landing-review` — add `adversarial-review` for large or high-stakes diffs
+6. `reflect` — route learnings back into the setup
+
+The chain is encoded in `AGENTS.md`, so any session can pick it up mid-stream. Stages are skipped deliberately, not by omission.
 
 ## Principles
 

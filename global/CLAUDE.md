@@ -8,7 +8,7 @@
 ## General
 
 - Actively search the web when unsure — especially for AI tooling, libraries, and best practices which update rapidly.
-- Never assume anything. Confirm with the user when requirements, scope, or approach is unclear. Present options with trade-offs.
+- Never assume direction. When requirements, scope, or approach are unclear, confirm with the user and present options with trade-offs. Once direction is set, don't ask permission for reversible execution steps — proceed and present results (see the `never-block-on-the-human` principle).
 
 ## Engineering Principles
 

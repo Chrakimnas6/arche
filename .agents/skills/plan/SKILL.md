@@ -46,6 +46,8 @@ If `docs/principles/index.md` does not exist, note the absence and proceed witho
 
 ## Step 2 — Define Scope and Constraints
 
+If a grill-me decision record exists for this work (`docs/design/<topic>-decisions.md`), or the user points to one, read it first: its resolved decisions are settled scope — don't re-ask them. Carry its deferred questions into the list below.
+
 Resolve ambiguity before exploring the codebase:
 
 - What is in scope vs explicitly out of scope?
@@ -108,14 +110,18 @@ Each phase file must include:
 
 **Keep plans high-level.** Describe *what* and *why*, not *how* at the code level. A phase should read like a brief to a senior engineer: goals, boundaries, key types, and verification — not code snippets or pseudocode.
 
-Order phases so that infrastructure and shared types come first, features after. Each phase should be independently shippable.
+Order phases so that infrastructure and shared types come first, features after.
 
 ### Phase Sizing
 
-- **1 function/type + tests** per phase, or **1 bug fix** — not "one file" or "one component" (too variable)
-- **Max 2-3 files touched** per phase when possible
-- **Prefer 8-10 small phases** over 3-4 large ones — small phases keep future options open
-- If a phase lists >5 test cases or >3 functions, split it
+A phase is the smallest **independently shippable, independently verifiable** increment: implement it, run its verification, and the codebase is coherent even if the next phase never runs. Size by that test, not by counting — file and function counts are smells, not rules (a mechanical 6-file rename can be one phase; a 2-file concurrency change may deserve three).
+
+Apply the test in both directions:
+
+- **Split** when a phase bundles work that could ship and be verified separately — a Goal that needs "and" between unrelated outcomes is the tell.
+- **Merge** when a phase can't be verified without the next one, or when splitting separates logic from the types and tests that only make sense beside it.
+
+Smaller phases keep future options open, but cohesion wins: one phase holding one coherent idea beats fragments that only make sense together.
 
 ### Redesign Check
 
@@ -154,7 +160,7 @@ After writing all plan files, verify these three constraints before proceeding. 
 
 **Principles cited (if applicable):** If `docs/principles/index.md` exists, the overview must reference at least 2 principles by name. If not, re-read the principles and add the most relevant ones to the overview's design decisions.
 
-**Phase sizing:** Review each phase. If any phase touches >3 files or lists >5 test cases, split it into smaller phases. Count the files listed under "Changes" — if the list exceeds 3, the phase is too big.
+**Phase sizing:** For each phase, check two things: (a) its Verification section can pass without changes from any later phase, and (b) its Goal states a single outcome. A phase failing (a) merges into the phase it depends on; a phase failing (b) splits.
 
 **No code in phases:** Phase files must not contain code blocks. Name types and functions but do not define them. A phase should read like a brief to a senior engineer, not a diff or implementation spec. If you find code blocks, replace them with prose describing the intended shape.
 

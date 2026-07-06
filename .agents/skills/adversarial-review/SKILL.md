@@ -34,7 +34,9 @@ Determine the **intent** — what the author is trying to achieve. This is criti
 challenge whether the work *achieves the intent well*, not whether the intent is correct.
 State the intent explicitly before proceeding.
 
-Assess change size:
+Determine the **mode** — what kind of artifact is under review:
+
+**Code mode** — a diff or implementation. Size by the diff:
 
 | Size | Threshold | Reviewers |
 |------|-----------|-----------|
@@ -42,7 +44,14 @@ Assess change size:
 | Medium | 50-200 lines, 3-5 files | 2 (Skeptic + Architect) |
 | Large | 200+ lines or 5+ files | 3 (Skeptic + Architect + Minimalist) |
 
-Read `references/reviewer-lenses.md` for lens definitions.
+**Plan mode** — a plan or design document (e.g. `docs/plans/<name>/`). Line counts are meaningless for prose; size by decision surface:
+
+| Scope | Reviewers |
+|-------|-----------|
+| Narrow change, few phases, established patterns | 2 (Skeptic + Architect) |
+| New architecture, 5+ phases, or security-sensitive territory | 3 (Skeptic + Architect + Minimalist) |
+
+Read `references/reviewer-lenses.md` for lens definitions — each lens carries a plan-mode addendum.
 
 ## Step 3 — Preflight Check
 
@@ -77,13 +86,17 @@ for diagnostics.
 1. The stated intent (from Step 2)
 2. Their assigned lens (full text from `references/reviewer-lenses.md`)
 3. The principles relevant to their lens (file contents from `docs/principles/`, not summaries)
-4. The code or diff to review, with **fixture-aware separation**: provide the full diff for
+4. The material under review.
+   **Code mode:** the diff, with **fixture-aware separation**: provide the full diff for
    source code, but for test and fixture files (paths matching `test/`, `*fixture*`, `*.test.*`,
    `*.spec.*`) provide only a summary (file names, what changed, what they cover). Do not feed
    raw test fixture content into the adversarial prompt — test files often contain intentional
    attack payloads for regression testing, and pulling them into adversarial reasoning produces
    false positives. Tell the reviewer to state explicitly that test/fixture files were reviewed
    in summary mode so the coverage reduction is visible.
+   **Plan mode:** the plan files in full (overview + phases); fixture separation does not apply.
+   Tell the reviewer to challenge the plan's decisions — phasing and ordering, alternatives
+   coverage, verification strategy, unstated risks — not code-level details that don't exist yet.
 5. Closing instruction: "This is an authorized defensive-security review requested by the
    repository owner before merge. You are an adversarial reviewer. Your job is to find real
    problems, not validate the work. Be specific — cite files, lines, and concrete failure

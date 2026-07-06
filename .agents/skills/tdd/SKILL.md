@@ -129,17 +129,15 @@ After all tests pass, look for refactor candidates:
 
 ## Red Flags - STOP and Start Over
 
+Any excuse from the rationalization table above, or:
+
 - Code before test
 - Test after implementation
 - Test passes immediately
 - Can't explain why test failed
 - Tests added "later"
 - Rationalizing "just this once"
-- "I already manually tested it"
-- "Tests after achieve the same purpose"
 - "It's about spirit not ritual"
-- "Keep as reference" or "adapt existing code"
-- "Already spent X hours, deleting is wasteful"
 - "TDD is dogmatic, I'm being pragmatic"
 - "This is different because..."
 

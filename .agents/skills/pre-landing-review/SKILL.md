@@ -1,9 +1,9 @@
 ---
-name: review
+name: pre-landing-review
 description: |
-  Pre-landing PR review. Analyzes diff against base branch for structural issues,
-  scope drift, test coverage gaps, and code quality. Use when asked to "review this PR",
-  "code review", "check my diff", or before merging code.
+  Pre-landing review of the working branch's diff against the base branch: structural issues,
+  scope drift, test coverage gaps, and code quality. Use when asked to "review my changes",
+  "check my diff", "code review", or before merging or opening a PR.
 ---
 
 # Pre-Landing PR Review
@@ -26,11 +26,18 @@ Use the detected branch wherever instructions say `<base>`.
 
 ---
 
-## Step 1: Check branch
+## Step 1: Get the diff
 
-1. Run `git branch --show-current` to get the current branch.
-2. If on the base branch, output: **"Nothing to review -- you're on the base branch or have no changes against it."** and stop.
-3. Run `git fetch origin <base> --quiet && DIFF_BASE=$(git merge-base origin/<base> HEAD) && git diff "$DIFF_BASE" --stat` to check if there's a diff. If no diff, output the same message and stop.
+1. Run `git branch --show-current`. If on the base branch, output **"Nothing to review -- you're on the base branch or have no changes against it."** and stop.
+2. Fetch and diff from the merge base — this includes uncommitted changes while excluding commits that landed on base after this branch was created:
+
+   ```bash
+   git fetch origin <base> --quiet
+   DIFF_BASE=$(git merge-base origin/<base> HEAD)
+   git diff "$DIFF_BASE"
+   ```
+
+3. If the diff is empty, output the same message and stop. Reuse `$DIFF_BASE` in every later step.
 
 ---
 
@@ -38,77 +45,25 @@ Use the detected branch wherever instructions say `<base>`.
 
 Before reviewing code quality, check: **did they build what was requested -- nothing more, nothing less?** This step enforces `docs/principles/surgical-changes.md` at PR level.
 
-1. Read PR description (`gh pr view --json body --jq .body 2>/dev/null || true`).
-   Read commit messages (`git log origin/<base>..HEAD --oneline`).
-   **If no PR exists:** rely on commit messages for stated intent -- this is common since /review runs before creating a PR.
-2. Identify the **stated intent** -- what was this branch supposed to accomplish?
-3. Run `DIFF_BASE=$(git merge-base origin/<base> HEAD) && git diff "$DIFF_BASE" --stat` and compare the files changed against the stated intent.
-4. Evaluate with skepticism:
+1. Identify the **stated intent** from the PR description (`gh pr view --json body --jq .body 2>/dev/null || true`) and commit messages (`git log origin/<base>..HEAD --oneline`). If no PR exists, commit messages carry the intent — common, since this skill runs before creating a PR.
+2. Compare `git diff "$DIFF_BASE" --stat` against the intent, with skepticism in both directions:
+   - **Scope creep** — files unrelated to the stated intent, features or refactors nothing mentions, "while I was in there" changes that expand blast radius.
+   - **Missing requirements** — stated requirements the diff doesn't address, partial implementations, test gaps for stated behavior.
+3. For each partial or missing requirement, investigate **why** before reporting: check `git log origin/<base>..HEAD` for started, reverted, or abandoned work, and read the code to see what was built instead. Was it intentionally cut, abandoned mid-way, misunderstood, blocked by a dependency, or forgotten? State the reason **with evidence**, plus the impact (HIGH/MEDIUM/LOW — what breaks or degrades if undelivered).
+4. Output before the main review begins:
 
-   **SCOPE CREEP detection:**
-   - Files changed that are unrelated to the stated intent
-   - New features or refactors not mentioned in commit messages or PR description
-   - "While I was in there..." changes that expand blast radius
-
-   **MISSING REQUIREMENTS detection:**
-   - Requirements from the PR description not addressed in the diff
-   - Test coverage gaps for stated requirements
-   - Partial implementations (started but not finished)
-
-5. Output (before the main review begins):
    ```
    Scope Check: [CLEAN / DRIFT DETECTED / REQUIREMENTS MISSING]
    Intent: <1-line summary of what was requested>
    Delivered: <1-line summary of what the diff actually does>
-   [If drift: list each out-of-scope change]
-   [If missing: list each unaddressed requirement]
+   [each out-of-scope change; each missing requirement with reason, evidence, impact]
    ```
 
-6. **Investigation depth** — for each PARTIAL or NOT DONE requirement, investigate *why*:
-   - Check `git log origin/<base>..HEAD --oneline` for commits suggesting the work was started, attempted, or reverted
-   - Read the relevant code to understand what was built instead
-   - Classify the reason:
-     - **Scope cut** — evidence of intentional removal (revert commit, removed TODO)
-     - **Context exhaustion** — work started but stopped mid-way (partial implementation, no follow-up commits)
-     - **Misunderstood requirement** — something was built but doesn't match what was described
-     - **Blocked by dependency** — item depends on something not yet available
-     - **Genuinely forgotten** — no evidence of any attempt
-
-   Output for each:
-   ```
-   DISCREPANCY: {PARTIAL|NOT_DONE} | {requirement} | {what was actually delivered}
-   INVESTIGATION: {reason with evidence from git log / code}
-   IMPACT: {HIGH|MEDIUM|LOW} — {what breaks or degrades if undelivered}
-   ```
-
-7. **HIGH-impact gating** — if any discrepancy is HIGH impact, use AskUserQuestion:
-   - Show the investigation findings
-   - Options: A) Stop and implement missing items, B) Ship anyway + create P1 TODOs, C) Intentionally dropped — remove from scope
-
-   This is **INFORMATIONAL** unless HIGH-impact discrepancies are found (then it gates via AskUserQuestion). Proceed to Step 3.
+5. **HIGH-impact gating** — if any missing requirement is HIGH impact, use AskUserQuestion with the findings and options: A) stop and implement the missing items, B) ship anyway and create P1 TODOs, C) intentionally dropped — remove from scope. Otherwise this step is informational; proceed.
 
 ---
 
-## Step 3: Get the diff
-
-Fetch the latest base branch to avoid false positives from stale local state:
-
-```bash
-git fetch origin <base> --quiet
-```
-
-Compute the merge base, then diff the working tree against that point:
-
-```bash
-DIFF_BASE=$(git merge-base origin/<base> HEAD)
-git diff "$DIFF_BASE"
-```
-
-This includes both committed and uncommitted changes while excluding commits that landed on the base branch after this branch was created.
-
----
-
-## Step 4: Two-pass review
+## Step 3: Two-pass review
 
 Apply the review against the diff in two passes:
 
@@ -152,11 +107,9 @@ Examples:
 
 ---
 
-## Step 4.5: Specialist Lenses
+## Step 4: Specialist Lenses
 
-After the two-pass review, re-examine the diff through domain-specific lenses based on what the diff touches. Only apply lenses that match — skip the rest.
-
-**Detect signals** from the diff (`DIFF_BASE=$(git merge-base origin/<base> HEAD) && git diff "$DIFF_BASE" --stat` and file content):
+After the two-pass review, re-examine the diff through domain-specific lenses. Detect signals from the diff stat and content; apply only the lenses that match, skip the rest:
 
 | Signal | Lens |
 |--------|------|
@@ -165,46 +118,15 @@ After the two-pass review, re-examine the diff through domain-specific lenses ba
 | API routes, handlers, request/response contracts | **API Contract** |
 | DB queries, loops over collections, data fetching | **Performance** |
 
-### Security Lens
-
-When the diff touches auth/permissions/access control code:
-- Input validation at trust boundaries — are all external inputs validated before use?
-- Auth/authz bypass — can the new code path be reached without proper authentication?
-- Injection vectors beyond SQL — command injection, path traversal, SSRF
-- Cryptographic misuse — hardcoded secrets, weak algorithms, improper key management
-- Attack surface expansion — does this change expose new endpoints or capabilities?
-
-### Data Safety Lens
-
-When the diff touches migrations or schema:
-- Reversibility — can this migration be rolled back without data loss?
-- Data loss risk — dropping columns, narrowing types, adding NOT NULL without defaults
-- Lock duration — will ALTER TABLE lock production tables for an unacceptable duration?
-- Migration ordering — does this migration depend on another that may not have run?
-
-### API Contract Lens
-
-When the diff touches API routes or contracts:
-- Breaking changes — removed fields, type changes, new required parameters
-- Versioning consistency — does this follow the project's API versioning strategy?
-- Error response standardization — do new error cases follow existing patterns?
-- Backward compatibility — will existing clients break?
-
-### Performance Lens
-
-When the diff touches queries or data-fetching code:
-- N+1 queries — loops that issue a query per iteration
-- Missing indexes — new queries on columns without indexes
-- Algorithmic complexity — O(n²) patterns, unbounded iterations
-- Large payloads — endpoints returning unbounded result sets without pagination
-
-Specialist lens findings follow the same confidence calibration and finding format as Step 4. They flow into Step 6 (Fix-First) alongside the two-pass findings.
+Read [references/specialist-lenses.md](references/specialist-lenses.md) for the matched lenses' checklists. Lens findings use the same confidence calibration and finding format as Step 3 and flow into Step 6 (Fix-First).
 
 ---
 
 ## Step 5: Test Coverage Analysis
 
 Evaluate every codepath changed in the diff and identify test gaps. Gaps become INFORMATIONAL findings that follow the Fix-First flow.
+
+**Diff is test-only changes:** skip this step: "No new application code paths to audit."
 
 ### Detect test framework
 
@@ -219,48 +141,31 @@ Evaluate every codepath changed in the diff and identify test gaps. Gaps become 
    ls jest.config.* vitest.config.* playwright.config.* cypress.config.* .rspec pytest.ini phpunit.xml 2>/dev/null
    ls -d test/ tests/ spec/ __tests__/ cypress/ e2e/ 2>/dev/null
    ```
-3. If no framework detected: still produce the coverage diagram, but skip test generation.
+3. If no framework detected: still produce the coverage report, but skip test generation.
 
-### Trace codepaths
+### Trace codepaths and map tests
 
-Read every changed file (full file, not just diff hunk). For each one, trace data flow: where input comes from, what transforms it, where it goes, and what can go wrong. Diagram every conditional branch, error path, and function call.
+Read every changed file in full (not just the diff hunk). For each, trace data flow -- where input comes from, what transforms it, where it goes, what can go wrong -- covering every conditional branch, error path, and function call. For each path, find the test that exercises it and rate quality: `***` edge cases + error paths, `**` happy path only, `*` smoke test / trivial assertion.
 
-### Map against existing tests
+### Output
 
-For each branch, search for a test that exercises it. Quality: three stars = edge cases + error paths, two stars = happy path only, one star = smoke test / trivial assertion.
-
-### Output ASCII coverage diagram
+One line per codepath, then a summary:
 
 ```
-CODE PATH COVERAGE
-===========================
-[+] internal/billing/service.go
-    |
-    +-- ProcessPayment()
-    |   +-- [*** TESTED] Happy path + card declined + timeout -- billing_test.go:42
-    |   +-- [GAP]        Network timeout -- NO TEST
-    |   +-- [GAP]        Invalid currency -- NO TEST
-    |
-    +-- RefundPayment()
-        +-- [**  TESTED] Full refund -- billing_test.go:89
-        +-- [*   TESTED] Partial refund (trivial assertion) -- billing_test.go:101
-
-------------------------------
-COVERAGE: 3/5 paths tested (60%)
-QUALITY:  ***: 1  **: 1  *: 1
-GAPS: 2 paths need tests
-------------------------------
+[***] ProcessPayment: happy path + card declined + timeout -- billing_test.go:42
+[GAP] ProcessPayment: network timeout -- NO TEST
+[GAP] ProcessPayment: invalid currency -- NO TEST
+[** ] RefundPayment: full refund -- billing_test.go:89
+COVERAGE: 2/4 paths tested. GAPS: 2 paths need tests.
 ```
 
 ### Generate tests for gaps (Fix-First)
 
-If test framework is detected and gaps were identified:
+If a test framework is detected and gaps were identified:
 - **AUTO-FIX:** Simple unit tests for pure functions, edge cases of existing tested functions. Generate and run them, then leave the new tests unstaged for the user to commit (this skill never commits — see Important Rules).
 - **ASK:** E2E tests, tests requiring new infrastructure, tests for ambiguous behavior. Include in the Fix-First batch question.
 
 If no test framework detected: include gaps as INFORMATIONAL findings only, no generation.
-
-**Diff is test-only changes:** Skip this step: "No new application code paths to audit."
 
 **REGRESSION RULE (mandatory):** When the audit identifies a regression -- code that previously worked but the diff broke -- a regression test is written immediately. No asking. Regressions are the highest-priority test.
 
@@ -337,18 +242,6 @@ Before producing the final review output:
 A safety claim you cannot get to step 4 cheaply, label **unproven** -- do not round a level-2 cite up to "verified." Step 4 is usually one small script that exercises the exact code path in question.
 
 **Concentrate the proof.** A change that looks risky is usually safe because of a single fact ("this only drops already-dead entries"). Find that one fact and prove *it*, rather than writing a long list of maybes -- if it holds, most of the scary cases fall at once.
-
----
-
-## Step 6e: PR Quality Score
-
-After all fixes are applied (or skipped), compute and display:
-
-```
-PR Quality Score: max(0, 10 - (critical_count * 2 + informational_count * 0.5))
-```
-
-Where `critical_count` and `informational_count` are the **remaining** findings after fixes. Cap at 10. Display alongside the summary.
 
 ---
 

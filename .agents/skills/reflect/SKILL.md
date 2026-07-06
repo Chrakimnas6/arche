@@ -52,7 +52,7 @@ For each learning, determine where it belongs. Prefer structural enforcement ove
 
 **3. Skill updates** — If a skill's methodology was inadequate, propose an improvement.
 - Example: "Plan skill created phases that were too large for this codebase" → adjust phase sizing guidance
-- Example: "Review skill missed a common pattern in Go error handling" → add to checklist
+- Example: "pre-landing-review skill missed a common pattern in Go error handling" → add to checklist
 - Note: use `skill-creator` for significant skill redesigns. Small additions can be edited directly.
 
 **4. Principles** — If a principle needs project-specific elaboration or a new principle emerged.

@@ -18,3 +18,7 @@ If a question can be answered by exploring the codebase, explore the codebase in
 **Stress-test with concrete scenarios.** When relationships or boundaries are discussed, invent specific scenarios that probe edge cases and force the user to be precise. Don't accept hand-waving — make them commit to how it works in the hard cases.
 
 **Cross-reference with code.** When the user states how something works, check whether the code agrees. If you find a contradiction, surface it: "Your code does X, but you just said Y — which is right?"
+
+## Closing
+
+When every branch is resolved, write the decision record to `docs/design/<topic>-decisions.md`: each decision with its one-line why, plus any questions deliberately deferred. This is the artifact the `plan` skill consumes — without it, the interview's conclusions die with the session.

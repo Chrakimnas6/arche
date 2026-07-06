@@ -21,7 +21,7 @@ Watched paths per repo (resolve to the repo's actual paths when you inspect it):
 - cursor/plugins: `pstack/skills`, `pstack/agents` — poteto's successor to noodle; only the pstack/ subdir of this monorepo is watched (query with `?path=pstack/skills` etc.)
 - garrytan/gstack: review + investigate skills, plan patterns, hooks
 - mattpocock/skills: tdd + grill-me skills
-- obra/superpowers: debugging + tdd skills, anti-rationalization tables
+- obra/superpowers: `skills/test-driven-development`, `skills/systematic-debugging` — pinned paths; the anti-rationalization tables live inside these two skills. Other `skills/*` dirs (e.g. `using-superpowers`) are NOT watched (query with `?path=skills/test-driven-development` etc.)
 
 **Step 3 — Analyze by reading actual source files**
 For each repo with candidate changes, clone it (`git clone --depth=50`; deepen if the stored SHA isn't in range) and READ THE ACTUAL CHANGED FILES in the watched paths in full — not just diffs. Cross-reference against our corresponding files in `.agents/skills/` and `docs/principles/`. Determine what's genuinely useful to adopt vs what's repo-specific infrastructure we should skip.
@@ -54,6 +54,8 @@ When the upstream principle file contains language-specific examples (Go, Solidi
 **Step 4 — Adaptation work (only if HIGH or MEDIUM changes found)**
 
 Do the adaptation **before** any bookkeeping (Step 5). If every change was LOW, skip straight to Step 5.
+
+**Adoption includes subtraction.** When adopting into an existing skill or principle, apply `docs/principles/subtract-before-you-add.md`: check whether the new content makes existing content in that file redundant — an older phrasing of the same idea, a weaker version of the new rule — and remove it in the same commit. A monitor that only ever adds is how skills sediment. Note removals in the PR body alongside additions.
 
 Check for an existing open rolling-adoption PR:
 ```
