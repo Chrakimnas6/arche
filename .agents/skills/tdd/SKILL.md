@@ -63,14 +63,15 @@ RIGHT (vertical):
 Before writing any code:
 
 - [ ] Confirm with user what interface changes are needed
+- [ ] Agree the **seams** — the public boundaries tests will attach to — before writing any test
 - [ ] Confirm with user which behaviors to test (prioritize)
 - [ ] List the behaviors to test (not implementation steps)
 - [ ] Design interfaces for testability
 - [ ] Get user approval on the plan
 
-Ask: "What should the public interface look like? Which behaviors are most important to test?"
+Ask: "What should the public interface look like? Which seams should we test, and which behaviors matter most?"
 
-**You can't test everything.** Confirm with the user exactly which behaviors matter most. Focus testing effort on critical paths and complex logic, not every possible edge case.
+A **seam** is the public boundary you observe behavior at without reaching inside. Tests live at seams, never against internals. **You can't test everything** — agreeing the seams up front is how testing effort lands on critical paths and complex logic instead of every edge case. No test is written at a seam the user hasn't confirmed.
 
 ### 2. Tracer Bullet
 
