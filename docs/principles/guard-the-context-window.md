@@ -13,7 +13,7 @@ Context overflow degrades reasoning quality, forces lossy compression, and can h
 - **Isolate large payloads.** Route verbose command output, long documents, screenshots, and broad exploration to subagents. The main context receives conclusions and summaries, not raw data.
 - **Don't read what you won't use.** Read selectively based on relevance — this principles index's selective-read protocol is one application.
 - **Keep hot content inline.** Templates and references used on every invocation belong in the skill file itself; separate files cost a read each time. Cold reference material belongs in separate files for the opposite reason.
-- **Size phases and cap scope.** Limit files per phase and account for mechanism costs (tool schemas, transcripts) when planning long work.
+- **Size phases and cap scope.** Limit files per phase and account for mechanism costs (tool schemas, transcripts) when planning long work. Before a wide delegate fan-out, pilot one slice to gauge what a delegate consumes and what its return adds to the main thread — then size the full run.
 - **Summarize at boundaries.** When work crosses a session or compaction boundary, write the state down *outside* the context (a file), not just in it.
 
 ## Relationship to Other Principles
