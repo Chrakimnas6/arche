@@ -195,6 +195,7 @@ If there are ASK items remaining, present them in one batch:
 
 - List each item with a number, severity label, problem, and recommended fix
 - **State the stakes:** For each item, say what breaks or degrades if left unfixed — the user needs this to prioritize
+- **Pattern check:** if a finding class repeats across the diff, add one batch item proposing its mechanization — lint rule, CI check, or hook — as a follow-up change outside this diff (tests are already generated in Step 5; see `docs/principles/encode-lessons-in-structure.md`)
 - For each item, provide options: A) Fix as recommended, B) Skip
 - Include an overall RECOMMENDATION
 
