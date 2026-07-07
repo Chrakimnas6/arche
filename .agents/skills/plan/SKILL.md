@@ -46,12 +46,12 @@ If `docs/principles/index.md` does not exist, note the absence and proceed witho
 
 ## Step 2 — Define Scope and Constraints
 
-If a grill-me decision record exists for this work (`docs/design/<topic>-decisions.md`), or the user points to one, read it first: its resolved decisions are settled scope — don't re-ask them. Carry its deferred questions into the list below.
+If a grill-me decision record exists for this work (`docs/design/<topic>-decisions.md`), or the user points to one, read it first: its resolved decisions are settled scope — don't re-ask them. Carry its deferred questions into the list below — except questions the record marks as prototype-resolved: don't re-ask those; instead plan an early throwaway-spike phase that builds the 2-3 sketches and gates dependent phases on the user's pick (the plan describes the spike; execute-plan builds it — the no-implement gate holds).
 
 Resolve ambiguity before exploring the codebase:
 
 - What is in scope vs explicitly out of scope?
-- Are there constraints (dependencies, platform requirements, existing patterns to preserve)?
+- Are there constraints (dependencies, platform requirements, existing patterns to preserve, a reference implementation to follow)?
 - What does "done" look like?
 
 Frame questions with concrete options, and state the stakes — what breaks or degrades if we pick wrong. If the request is already clear, confirm scope boundaries briefly and move on.
@@ -93,8 +93,9 @@ Non-phase files (like `testing.md`) are fine alongside phases.
 Must include:
 - **Mode** — greenfield or feature
 - **Context** — what problem this solves and why
+- **Key decisions** — the decisions this plan introduces that a reviewer is most likely to contest (data models, interfaces, user-visible behavior): the chosen approach, the alternatives considered, and why — see the alternatives check below. Decisions already settled in a grill-me decision record are cited, not re-opened.
 - **Scope** — what's included, what's explicitly excluded
-- **Constraints** — technical, platform, dependency, or pattern constraints. Include the alternatives check here (see below).
+- **Constraints** — technical, platform, dependency, or pattern constraints
 - **Principles** — which project principles apply and how they shaped decisions (if `docs/principles/index.md` exists)
 - **Phases** — ordered list with links to phase files
 - **Verification** — project-level verification commands (e.g. `go test ./...`, `go vet ./...`)
@@ -132,7 +133,7 @@ Don't bolt changes onto existing designs — redesign holistically.
 
 ### Alternatives Check
 
-For architectural decisions, briefly sketch 2-3 approaches in the overview's Constraints section. State which was chosen and why. This prevents premature commitment and documents the design space explored.
+For architectural decisions, briefly sketch 2-3 approaches in the overview's Key decisions section. State which was chosen and why. This prevents premature commitment and documents the design space explored.
 
 **Coverage vs kind:** Alternatives usually differ in kind (fundamentally different architectures), not coverage (more vs less of the same thing). Compare on tradeoffs — performance, complexity, flexibility — not on a single completeness axis. Don't force-rank qualitatively different approaches with numerical scores; explain the tradeoff that matters for this specific decision.
 
@@ -140,29 +141,23 @@ For architectural decisions, briefly sketch 2-3 approaches in the overview's Con
 
 Every phase **must** have a verification section with both:
 
-**Static:**
-- Type checking passes
-- Linting passes
-- Code follows project conventions
-- Tests written and passing
+**Static:** the project's static commands, named — the overview's project-level commands plus any phase-specific ones (e.g. `go vet ./...`, `npx tsc --noEmit`).
 
-**Runtime:**
-- What to test manually (launch the app, exercise the feature path)
-- What automated tests to write (unit, integration, e2e)
-- Edge cases to cover
-- For UI: visual verification via screenshot
+**Runtime:** runnable checks whose exit code or observable output decides pass/fail (e.g. `go test ./internal/foo/...` covering the tests this phase writes). A genuinely manual check (a UI flow, a screenshot) must state its concrete observable pass condition — "dashboard renders three panels with non-zero counts", not "visual verification".
 
 "It compiles" is not verification. Every phase must describe how to **prove** the change works.
 
 ## Step 4b — Self-Check
 
-After writing all plan files, verify these three constraints before proceeding. Fix any violations before moving on.
+After writing all plan files, verify these four constraints before proceeding. Fix any violations before moving on.
 
 **Principles cited (if applicable):** If `docs/principles/index.md` exists, the overview must reference at least 2 principles by name. If not, re-read the principles and add the most relevant ones to the overview's design decisions.
 
 **Phase sizing:** For each phase, check two things: (a) its Verification section can pass without changes from any later phase, and (b) its Goal states a single outcome. A phase failing (a) merges into the phase it depends on; a phase failing (b) splits.
 
-**No code in phases:** Phase files must not contain code blocks. Name types and functions but do not define them. A phase should read like a brief to a senior engineer, not a diff or implementation spec. If you find code blocks, replace them with prose describing the intended shape.
+**No code in phases:** Phase files must not contain code blocks. Name types and functions but do not define them. A phase should read like a brief to a senior engineer, not a diff or implementation spec. If you find code blocks, replace them with prose describing the intended shape. Verification commands are not code — naming the runnable check is required, not a violation.
+
+**Deterministic verification:** Every phase's Verification section contains at least one runnable command whose output decides pass/fail, and every manual check states its observable pass condition. A section made only of categories ("test manually", "cover edge cases") is a violation — rewrite it as commands and conditions.
 
 ## Step 5 — Present and Stop
 
