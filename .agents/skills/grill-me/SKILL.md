@@ -21,7 +21,7 @@ If a question can be answered by exploring the codebase, explore the codebase in
 
 **Stress-test with concrete scenarios.** When relationships or boundaries are discussed, invent specific scenarios that probe edge cases and force the user to be precise. Don't accept hand-waving — make them commit to how it works in the hard cases.
 
-**Prototypes, not pressure, for know-it-when-I-see-it questions.** When the honest answer is a preference the user can only judge by seeing concrete options (UX, API feel, output shape), don't force a verbal commitment — defer it, recording in the decision record that it resolves via 2-3 throwaway sketches (`docs/principles/experience-first.md`, `docs/principles/exhaust-the-design-space.md`).
+**Prototypes, not pressure, for know-it-when-I-see-it questions.** When the honest answer is a preference the user can only judge by seeing concrete options (UX, API feel, output shape), don't force a verbal commitment — defer it, marking it *prototype-resolved* in the decision record: it resolves via 2-3 throwaway sketches (`docs/principles/experience-first.md`, `docs/principles/exhaust-the-design-space.md`).
 
 **Cross-reference with code.** When the user states how something works, check whether the code agrees. If you find a contradiction, surface it: "Your code does X, but you just said Y — which is right?"
 

@@ -151,7 +151,7 @@ Every phase **must** have a verification section with both:
 
 After writing all plan files, verify these four constraints before proceeding. Fix any violations before moving on.
 
-**Principles cited (if applicable):** If `docs/principles/index.md` exists, the overview must reference at least 2 principles by name. If not, re-read the principles and add the most relevant ones to the overview's design decisions.
+**Principles cited (if applicable):** If `docs/principles/index.md` exists, the overview must reference at least 2 principles by name. If not, re-read the principles and add the most relevant ones to the overview's Principles section.
 
 **Phase sizing:** For each phase, check two things: (a) its Verification section can pass without changes from any later phase, and (b) its Goal states a single outcome. A phase failing (a) merges into the phase it depends on; a phase failing (b) splits.
 

@@ -31,7 +31,7 @@ Use when the goal is a number moving toward a target over many iterations:
 
 Before any attempt, build the harness that produces the metric — a script, benchmark, or test you can rerun identically. This is your **immutable ruler**: if the ruler changes mid-run, no measurement is comparable. The harness is the artifact a reviewer reruns to replay your run. See `docs/principles/build-the-lever.md`.
 
-Record the **baseline** measurement before changing anything. Fix an **attempt budget** for the run at the same time — use the one the user gave, or declare one in the decision log and proceed (adjustable on async review).
+Record the **baseline** measurement before changing anything. Fix an **attempt budget** for the run at the same time — use the one the user gave, or declare one at the top of the decision log and proceed (adjustable on async review).
 
 ### 2. One hypothesis, grounded in the system
 
