@@ -30,6 +30,7 @@ Stages are skipped deliberately, not by omission — a trivial fix can go straig
 <!-- - **Build:** `go build ./...` -->
 <!-- - **Test:** `go test ./...` -->
 <!-- - **Lint:** `golangci-lint run` -->
+<!-- Beyond commands: encode how to launch, drive, and observe the running app as a project verify skill (.agents/skills/verify/), so agents can prove changes work end-to-end, not just that tests pass. -->
 
 ## Conventions
 
