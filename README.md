@@ -18,12 +18,16 @@ rsync -a AGENTS.md .agents .claude docs /path/to/your/project/
 
 Then fill in the project-specific sections in `AGENTS.md` (build/test commands, conventions).
 
+Alternatively, make everything available in *every* project on your machine instead of copying per project: `bash scripts/sync-global.sh` compares `~/.claude/` against this repo, symlinks any skill or agent the global config is missing, prunes links left dangling by renamed or removed skills, and reports global-only entries (personal skills with no arche counterpart — candidates to adopt) plus any `CLAUDE.md` drift. Re-run it after adding a skill or agent; it's idempotent and never touches entries that don't point into this repo. `--check` runs the same comparison without changing anything and exits non-zero when out of sync.
+
 ## Structure
 
 ```
 .
 ├── AGENTS.md                 # Project instructions (single source of truth)
 ├── .agents/
+│   ├── agents/               # Subagent definitions
+│   │   └── implementer.md    # Implementation worker (plan big, execute small)
 │   └── skills/               # AI agent skills
 │       ├── grill-me/         # Relentless design questioning
 │       ├── plan/             # Systematic implementation planning
@@ -51,6 +55,8 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 │   ├── applications/         # Language overlays (Go, smart contracts)
 │   ├── plans/                # Implementation plans (skill output)
 │   └── design/               # Design documents
+├── scripts/
+│   └── sync-global.sh        # Compare ~/.claude with this repo; link what's missing
 ├── tests/
 │   ├── validate-setup.sh     # Structural invariants (runs in CI)
 │   └── test-adversarial-review.sh # Manual smoke test (requires codex CLI)
@@ -82,6 +88,12 @@ Then fill in the project-specific sections in `AGENTS.md` (build/test commands, 
 | **teach** | `/teach` (manual only) | Multi-session guided learning — turns a dir into a teaching workspace (mission, curated resources, HTML lessons) |
 | **resolving-merge-conflicts** | "resolve merge conflict", mid-merge/rebase | Resolves an in-progress conflict by recovering each side's intent, then runs the project's checks |
 | **writing-great-skills** | `/writing-great-skills` (manual only) | Rubric for writing & auditing skills — invocation, info hierarchy, leading words, failure modes |
+
+## Agents
+
+| Agent | Used by | What It Does |
+|-------|---------|-------------|
+| **implementer** | `execute-plan` | Cheap-model implementation worker (defaults to Sonnet): takes one phase brief, implements and verifies it, reports back with artifacts. The orchestrating session re-runs verification and gates the next phase — design judgment stays in the main loop. |
 
 ## Workflow
 

@@ -24,6 +24,7 @@ for f in \
   .claude/settings.json \
   docs/principles/index.md \
   global/CLAUDE.md \
+  scripts/sync-global.sh \
   .github/workflows/ci.yml \
   .github/upstream-shas.json; do
   [ -f "$f" ] && pass "$f" || fail "$f missing"
@@ -284,6 +285,46 @@ if ! grep -q "reviewer-prompt" "$skill"; then
   pass "No reference to removed reviewer-prompt.md"
 else
   fail "Still references reviewer-prompt.md"
+fi
+
+# ---------------------------------------------------------------------------
+section "10. Agents"
+# ---------------------------------------------------------------------------
+
+EXPECTED_AGENTS="implementer"
+
+for agent in $EXPECTED_AGENTS; do
+  agent_file=".agents/agents/$agent.md"
+  if [ ! -f "$agent_file" ]; then
+    fail "$agent_file missing"
+    continue
+  fi
+  pass "$agent_file"
+  for field in name description model; do
+    if grep -q "^$field:" "$agent_file"; then
+      pass "$agent: has $field field"
+    else
+      fail "$agent: missing $field field in frontmatter"
+    fi
+  done
+done
+
+# Reverse check: every agent file on disk must be registered in EXPECTED_AGENTS
+# (same drift guard as the principles reverse check above).
+for f in .agents/agents/*.md; do
+  [ -e "$f" ] || continue
+  name=$(basename "$f" .md)
+  case " $EXPECTED_AGENTS " in
+    *" $name "*) pass "$name is registered in EXPECTED_AGENTS" ;;
+    *) fail "$name exists on disk but is NOT in EXPECTED_AGENTS (tests/validate-setup.sh)" ;;
+  esac
+done
+
+# README mentions the agent
+if grep -q "implementer" README.md; then
+  pass "README mentions implementer agent"
+else
+  fail "README missing implementer agent"
 fi
 
 # ---------------------------------------------------------------------------

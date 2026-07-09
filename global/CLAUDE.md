@@ -12,7 +12,7 @@
 
 ## Engineering Principles
 
-Before acting on design or implementation tasks, read the principles index at `/Users/hao.chen/src/github.com/chrakimnas6/arche/docs/principles/index.md`. Read its **Always read** baseline, then each principle whose **Apply when** clause matches the task (the index's routing matrix covers common shapes) — not the whole corpus. These govern all decisions — unless the current project has its own `docs/principles/`, in which case use those instead.
+Before acting on design or implementation tasks, read the principles index at `~/src/github.com/Chrakimnas6/arche/docs/principles/index.md`. Read its **Always read** baseline, then each principle whose **Apply when** clause matches the task (the index's routing matrix covers common shapes) — not the whole corpus. These govern all decisions — unless the current project has its own `docs/principles/`, in which case use those instead.
 
 ## GitHub Repo Fetching
 When needing to read/explore a GitHub repo, first check if it's already cloned locally:
