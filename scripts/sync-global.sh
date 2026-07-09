@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
-# Compares the user-level Claude Code config (~/.claude) against this repo and
-# keeps them in sync:
-#   - every skill in .agents/skills/ and agent in .agents/agents/ gets a
-#     symlink in ~/.claude/skills/ and ~/.claude/agents/ (created if missing)
+# Compares the user-level agent configs (~/.claude for Claude Code, ~/.codex
+# for Codex, ~/.agents for the tool-agnostic Agent Skills convention) against
+# this repo and keeps them in sync:
+#   - every skill in .agents/skills/ gets a symlink in ~/.claude/skills/,
+#     ~/.agents/skills/, and ~/.codex/skills/ (all read the same SKILL.md
+#     format); every agent in .agents/agents/ gets one in ~/.claude/agents/
+#     (subagent definitions are Claude Code-specific, so they sync nowhere else)
 #   - symlinks that point into this repo but no longer resolve are pruned
 #     (renamed or removed skills)
-#   - entries in ~/.claude that don't come from this repo are reported as
-#     global-only (candidates to adopt into arche) but never touched
-#   - global/CLAUDE.md (the committed copy) is diffed against ~/.claude/CLAUDE.md
+#   - entries in the global dirs that don't come from this repo are reported
+#     as global-only (candidates to adopt into arche) but never touched
+#   - global/CLAUDE.md (the committed copy) is diffed against
+#     ~/.claude/CLAUDE.md and ~/.codex/AGENTS.md
 #
 # Idempotent — run it any time, e.g. after adding a skill or agent:
 #   bash scripts/sync-global.sh          # sync + report
@@ -18,6 +22,8 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CLAUDE_DIR="${CLAUDE_DIR:-$HOME/.claude}"
+CODEX_DIR="${CODEX_DIR:-$HOME/.codex}"
+AGENTS_DIR="${AGENTS_DIR:-$HOME/.agents}"
 
 CHECK=0
 [ "${1:-}" = "--check" ] && CHECK=1
@@ -94,40 +100,64 @@ report_global_only() {
   fi
 }
 
-# Skills: one symlink per skill directory
-[ "$CHECK" = 1 ] || mkdir -p "$CLAUDE_DIR/skills"
+# The committed global/CLAUDE.md is the source of truth for both tools'
+# user-level instruction files — diff, don't overwrite
+diff_global_copy() {
+  local live="$1"
+  [ -f "$live" ] || return 0
+  if diff -q "$REPO_ROOT/global/CLAUDE.md" "$live" >/dev/null 2>&1; then
+    printf '%s: in sync with global/CLAUDE.md\n' "$live"
+  else
+    printf 'warn: global/CLAUDE.md and %s differ — reconcile manually:\n' "$live"
+    diff -u "$REPO_ROOT/global/CLAUDE.md" "$live" || true
+    WARNED=$((WARNED + 1))
+  fi
+}
+
+# One symlink per skill directory into the given target
+sync_skills_into() {
+  local dest="$1" skill_dir
+  [ "$CHECK" = 1 ] || mkdir -p "$dest"
+  for skill_dir in "$REPO_ROOT"/.agents/skills/*/; do
+    [ -f "$skill_dir/SKILL.md" ] || continue
+    ensure_link "${skill_dir%/}" "$dest/$(basename "$skill_dir")"
+  done
+  prune_dangling "$dest"
+}
+
 for skill_dir in "$REPO_ROOT"/.agents/skills/*/; do
   [ -f "$skill_dir/SKILL.md" ] || continue
   SKILLS=$((SKILLS + 1))
-  ensure_link "${skill_dir%/}" "$CLAUDE_DIR/skills/$(basename "$skill_dir")"
 done
 
-# Agents: one symlink per agent definition file
+# Claude Code
+sync_skills_into "$CLAUDE_DIR/skills"
 [ "$CHECK" = 1 ] || mkdir -p "$CLAUDE_DIR/agents"
 for agent_file in "$REPO_ROOT"/.agents/agents/*.md; do
   [ -e "$agent_file" ] || continue
   AGENTS=$((AGENTS + 1))
   ensure_link "$agent_file" "$CLAUDE_DIR/agents/$(basename "$agent_file")"
 done
-
-prune_dangling "$CLAUDE_DIR/skills"
 prune_dangling "$CLAUDE_DIR/agents"
+report_global_only "$CLAUDE_DIR/skills" "claude skills"
+report_global_only "$CLAUDE_DIR/agents" "claude agents"
+diff_global_copy "$CLAUDE_DIR/CLAUDE.md"
 
-report_global_only "$CLAUDE_DIR/skills" "skills"
-report_global_only "$CLAUDE_DIR/agents" "agents"
+# Tool-agnostic standard location (Gemini CLI and other convention-following tools)
+sync_skills_into "$AGENTS_DIR/skills"
+report_global_only "$AGENTS_DIR/skills" "standard-location skills"
 
-# global/CLAUDE.md is the committed copy of ~/.claude/CLAUDE.md — diff, don't overwrite
-if [ -f "$CLAUDE_DIR/CLAUDE.md" ]; then
-  if diff -q "$REPO_ROOT/global/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md" >/dev/null 2>&1; then
-    printf 'CLAUDE.md: in sync with global/CLAUDE.md\n'
-  else
-    printf 'warn: global/CLAUDE.md and %s/CLAUDE.md differ — reconcile manually:\n' "$CLAUDE_DIR"
-    diff -u "$REPO_ROOT/global/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md" || true
-    WARNED=$((WARNED + 1))
-  fi
+# Codex (its bundled skills live in skills/.system/, which the dot-excluding
+# glob leaves alone)
+if [ -d "$CODEX_DIR" ]; then
+  sync_skills_into "$CODEX_DIR/skills"
+  report_global_only "$CODEX_DIR/skills" "codex skills"
+  diff_global_copy "$CODEX_DIR/AGENTS.md"
+else
+  printf 'codex: %s not found — skipping codex sync\n' "$CODEX_DIR"
 fi
 
-printf 'coverage: %d skills + %d agents in repo, targeting %s\n' "$SKILLS" "$AGENTS" "$CLAUDE_DIR"
+printf 'coverage: %d skills + %d agents in repo, targeting %s, %s, and %s\n' "$SKILLS" "$AGENTS" "$CLAUDE_DIR" "$AGENTS_DIR" "$CODEX_DIR"
 
 if [ "$CHECK" = 1 ]; then
   printf 'sync-global --check: %d missing, %d stale, %d warnings\n' "$LINKED" "$PRUNED" "$WARNED"

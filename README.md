@@ -18,7 +18,7 @@ rsync -a AGENTS.md .agents .claude docs /path/to/your/project/
 
 Then fill in the project-specific sections in `AGENTS.md` (build/test commands, conventions).
 
-Alternatively, make everything available in *every* project on your machine instead of copying per project: `bash scripts/sync-global.sh` compares `~/.claude/` against this repo, symlinks any skill or agent the global config is missing, prunes links left dangling by renamed or removed skills, and reports global-only entries (personal skills with no arche counterpart — candidates to adopt) plus any `CLAUDE.md` drift. Re-run it after adding a skill or agent; it's idempotent and never touches entries that don't point into this repo. `--check` runs the same comparison without changing anything and exits non-zero when out of sync.
+Alternatively, make everything available in *every* project on your machine instead of copying per project: `bash scripts/sync-global.sh` compares `~/.claude/`, `~/.agents/` (the tool-agnostic [Agent Skills](https://agentskills.io) location), and `~/.codex/` against this repo and symlinks any skill the global configs are missing — all three read the same SKILL.md format, so one skill source serves every tool (subagent definitions are Claude Code-specific and sync only to `~/.claude/agents/`). It also prunes links left dangling by renamed or removed skills, reports global-only entries (personal skills with no arche counterpart — candidates to adopt), and diffs `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` against the committed `global/CLAUDE.md`. Re-run it after adding a skill or agent; it's idempotent and never touches entries that don't point into this repo. `--check` runs the same comparison without changing anything and exits non-zero when out of sync.
 
 ## Structure
 
@@ -56,7 +56,7 @@ Alternatively, make everything available in *every* project on your machine inst
 │   ├── plans/                # Implementation plans (skill output)
 │   └── design/               # Design documents
 ├── scripts/
-│   └── sync-global.sh        # Compare ~/.claude with this repo; link what's missing
+│   └── sync-global.sh        # Compare ~/.claude, ~/.agents & ~/.codex with this repo; link what's missing
 ├── tests/
 │   ├── validate-setup.sh     # Structural invariants (runs in CI)
 │   └── test-adversarial-review.sh # Manual smoke test (requires codex CLI)
