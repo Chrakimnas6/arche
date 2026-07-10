@@ -81,11 +81,17 @@ Run each reviewer with `run_in_background: true`. Name output files after the le
 `skeptic.md`, `architect.md`, `minimalist.md`. Redirect stderr to per-lens `.err` files
 for diagnostics.
 
-**Prompt construction** — each reviewer gets:
+**Prompt construction** — reviewers read files themselves; pass paths, not contents.
+Codex runs with filesystem read access and has this skill's files and the principles on
+disk (globally via `~/.codex/skills/`, or in-repo). Pasting file contents into the prompt
+only bloats it and drifts from source. Each reviewer gets:
 
 1. The stated intent (from Step 2)
-2. Their assigned lens (full text from `references/reviewer-lenses.md`)
-3. The principles relevant to their lens (file contents from `docs/principles/`, not summaries)
+2. Their assigned lens: the absolute path to this skill's `references/reviewer-lenses.md`
+   and which lens to apply — instruct the reviewer to read it first
+3. The principles governing their lens: the absolute path to `docs/principles/index.md`
+   plus the specific principle files identified in Step 1 — again paths, with an
+   instruction to read them before reviewing
 4. The material under review.
    **Code mode:** the diff, with **fixture-aware separation**: provide the full diff for
    source code, but for test and fixture files (paths matching `test/`, `*fixture*`, `*.test.*`,

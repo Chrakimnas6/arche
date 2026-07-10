@@ -3,6 +3,7 @@ name: implementer
 description: Implementation worker (defaults to Sonnet; override per invocation for design-heavy phases) for the plan-big-execute-small flow. Delegate ONE plan phase (or one self-contained coding brief) per invocation; it implements the brief, runs that phase's verification, and reports back. Use proactively when executing docs/plans/ phases.
 tools: Read, Edit, Write, Bash, Glob, Grep, Skill
 model: sonnet
+effort: max
 permissionMode: acceptEdits
 ---
 
