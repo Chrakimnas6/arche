@@ -14,7 +14,7 @@ Context overflow degrades reasoning quality, forces lossy compression, and can h
 - **Don't read what you won't use.** Read selectively based on relevance — this principles index's selective-read protocol is one application.
 - **Keep hot content inline.** Templates and references used on every invocation belong in the skill file itself; separate files cost a read each time. Cold reference material belongs in separate files for the opposite reason.
 - **Size phases and cap scope.** Limit files per phase and account for mechanism costs (tool schemas, transcripts) when planning long work. Before a wide delegate fan-out, pilot one slice to gauge what a delegate consumes and what its return adds to the main thread — then size the full run.
-- **Summarize at boundaries.** When work crosses a session or compaction boundary, write the state down *outside* the context (a file), not just in it. That written state is your recovery map: a ledger that names what's done and the commits (or artifacts) proving it survives a compaction the conversation doesn't. After the boundary, trust the ledger and the durable record over recollection — the expensive failure is redoing completed work because memory of it was lost.
+- **Summarize at boundaries.** When work crosses a session or compaction boundary, write the state down *outside* the context (a file), not just in it. That written state is your recovery map: a ledger of what's done and the commits (or artifacts) proving it. The ledger survives a compaction the conversation doesn't; after the boundary, trust it and the durable record over recollection — the expensive failure is redoing completed work because memory of it was lost.
 
 ## Relationship to Other Principles
 
