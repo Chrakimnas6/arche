@@ -146,6 +146,30 @@ Whether a line still bears on what the skill does — the lens for what to keep.
 
 _Avoid_: load-bearing, staleness, freshness
 
+### Baseline Failure
+
+What the agent does wrong *without* the skill — the behaviour gap the skill exists to close, and the first thing to diagnose, because its type picks the form the guidance must take (the form-matching table in [`SKILL.md`](SKILL.md) pairs each type with the form that binds and the form that backfires). Distinct from the failure modes below, which afflict the skill itself: a baseline failure is why a skill exists; a failure mode is how one decays. If a **no-guidance control** doesn't exhibit the failure, there is no baseline failure — and nothing to fix.
+
+_Avoid_: problem, gap, misbehaviour
+
+### Discipline Failure
+
+A **baseline failure** where the agent knows the rule and drops it under a competing incentive — finishing faster, pleasing the user, dodging a hard step. The rule loses a negotiation at the moment of action, so the form that binds is a prohibition naming the rule at the moment of temptation, backed by a rationalization table (the excuses, pre-refuted) and red-flag phrases the agent can catch itself saying. Soft guidance (*prefer…*, *consider…*) just re-loses the negotiation.
+
+_Avoid_: non-compliance, willpower failure
+
+### Shaping Failure
+
+A **baseline failure** where the agent complies but the output has the wrong shape — bloated, verdict buried, structure wrong. The inverse of a **discipline failure** in what binds: a prohibition backfires here, because "don't include X" hands the agent something to negotiate with and yields *more* X than silence, where a positive recipe — what the output *is*, its parts in order — leaves nothing to negotiate. The output matches the stated shape or it doesn't.
+
+_Avoid_: style problem, quality gap
+
+### No-Guidance Control
+
+The baseline arm of a wording micro-test: the same tempting task run with the candidate guidance absent, several fresh samples per arm, every sample read by hand. It answers what the guidance arm alone cannot: whether the **baseline failure** actually occurs (a control that doesn't exhibit it means there is nothing to fix — the candidate line is a **No-Op**), and whether the wording binds (bound samples converge on one shape; five different readings across five samples means it isn't binding yet).
+
+_Avoid_: control group, baseline run, A/B test
+
 ## Failure Modes
 
 ### Premature Completion

@@ -10,11 +10,11 @@ Context overflow degrades reasoning quality, forces lossy compression, and can h
 
 ## The Pattern
 
-- **Isolate large payloads.** Route verbose command output, long documents, screenshots, and broad exploration to subagents. The main context receives conclusions and summaries, not raw data.
+- **Isolate large payloads.** Route verbose command output, long documents, screenshots, and broad exploration to subagents. The main context receives conclusions and summaries, not raw data. This includes the delegation itself: everything you paste into a dispatch prompt, and everything a subagent prints back, stays resident and is re-read on every later turn. Hand large artifacts over as files (a brief, a report path), not inlined text, and cap what a subagent returns inline — a dispatch prompt describes one task, not the session's accumulated history.
 - **Don't read what you won't use.** Read selectively based on relevance — this principles index's selective-read protocol is one application.
 - **Keep hot content inline.** Templates and references used on every invocation belong in the skill file itself; separate files cost a read each time. Cold reference material belongs in separate files for the opposite reason.
 - **Size phases and cap scope.** Limit files per phase and account for mechanism costs (tool schemas, transcripts) when planning long work. Before a wide delegate fan-out, pilot one slice to gauge what a delegate consumes and what its return adds to the main thread — then size the full run.
-- **Summarize at boundaries.** When work crosses a session or compaction boundary, write the state down *outside* the context (a file), not just in it.
+- **Summarize at boundaries.** When work crosses a session or compaction boundary, write the state down *outside* the context (a file), not just in it. That written state is your recovery map: a ledger of what's done and the commits (or artifacts) proving it. The ledger survives a compaction the conversation doesn't; after the boundary, trust it and the durable record over recollection — the expensive failure is redoing completed work because memory of it was lost.
 
 ## Relationship to Other Principles
 
@@ -24,4 +24,4 @@ Context overflow degrades reasoning quality, forces lossy compression, and can h
 
 ## Citations
 
-Agent-era operating principle (consensus-backed, per the promotion bar's authoritative-backing branch): Anthropic, "Effective context engineering for AI agents" (engineering blog, 2025) — context as a finite resource; curation over accumulation. The context-engineering practitioner literature, 2025–2026 (the term's broad adoption across frontier-lab guidance and tooling docs). pstack, `principle-guard-the-context-window` (cursor/plugins) — an independent implementation of the same rule.
+Agent-era operating principle (consensus-backed, per the promotion bar's authoritative-backing branch): Anthropic, "Effective context engineering for AI agents" (engineering blog, 2025) — context as a finite resource; curation over accumulation. The context-engineering practitioner literature, 2025–2026 (the term's broad adoption across frontier-lab guidance and tooling docs). pstack, `principle-guard-the-context-window` (cursor/plugins) — an independent implementation of the same rule. obra/superpowers, `subagent-driven-development` — a second independent implementation: file handoffs over pasted context, and a durable progress ledger trusted over recollection after compaction.
