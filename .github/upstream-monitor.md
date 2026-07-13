@@ -21,7 +21,7 @@ Watched paths per repo (resolve to the repo's actual paths when you inspect it):
 - cursor/plugins: `pstack/skills`, `pstack/agents` — poteto's successor to noodle; only the pstack/ subdir of this monorepo is watched (query with `?path=pstack/skills` etc.)
 - garrytan/gstack: review + investigate skills, plan patterns, hooks
 - mattpocock/skills: tdd + grill-me skills
-- obra/superpowers: `skills/test-driven-development`, `skills/systematic-debugging` — pinned paths; the anti-rationalization tables live inside these two skills. Other `skills/*` dirs (e.g. `using-superpowers`) are NOT watched (query with `?path=skills/test-driven-development` etc.)
+- obra/superpowers: `skills/test-driven-development`, `skills/systematic-debugging`, `skills/writing-skills`, `skills/subagent-driven-development` — pinned paths; the anti-rationalization tables live inside the first two, skill-authoring and delegation-discipline patterns in the latter two. Other `skills/*` dirs (e.g. `using-superpowers`) are NOT watched (query with `?path=skills/test-driven-development` etc.)
 
 **Step 3 — Analyze by reading actual source files**
 For each repo with candidate changes, clone it (`git clone --depth=50`; deepen if the stored SHA isn't in range) and READ THE ACTUAL CHANGED FILES in the watched paths in full — not just diffs. Cross-reference against our corresponding files in `.agents/skills/` and `docs/principles/`. Determine what's genuinely useful to adopt vs what's repo-specific infrastructure we should skip.
