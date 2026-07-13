@@ -71,6 +71,26 @@ Hunt for opportunities to refactor skills to use leading words. A triad spelled 
 
 You win twice over: fewer tokens, _and_ a sharper hook for the agent to hang its thinking on. Assume every skill is carrying restatements that leading words retire — go find them.
 
+## Match the form to the failure
+
+A skill fixes a **baseline failure** — what the agent does wrong without guidance. The _form_ the guidance takes has to match the failure, or it backfires. Diagnose the failure first, then pick the form:
+
+| Baseline failure | Right form | Wrong form |
+|---|---|---|
+| Skips or violates a rule under pressure (knows better) | Prohibition + rationalization table + red flags | Soft guidance (_prefer…_, _consider…_) |
+| Complies, but the output has the wrong shape (bloated, verdict buried) | Positive recipe: state what the output **is** and its parts in order | Prohibition list (_don't restate_, _never narrate_) |
+| Omits a required element from something it already produces | Structural: a REQUIRED field or slot in the template | Prose reminders near the template |
+| Behaviour should depend on a condition | Conditional keyed to an observable predicate | Unconditional rule + exemption clauses |
+
+The split that matters is **discipline** failures versus **shaping** failures. A prohibition works on discipline — the agent knows the rule and drops it under a competing incentive — because it names the rule at the moment of temptation. It backfires on shaping: told to _make the prompt self-contained_, an agent reads "don't include X" as a thing to negotiate, and produces **more** of X than no guidance at all. A recipe leaves nothing to negotiate — the output matches the stated shape or it doesn't.
+
+Two corollaries, both about not reopening the negotiation:
+
+- **No nuance clauses.** _Don't X unless it matters_ turns a binding recipe back into a judgment call. If a case is genuinely exempt, restructure so the rule can't reach it rather than appending an exception.
+- **Exemption clauses don't scope.** _This limit doesn't apply to code blocks_ still suppresses code blocks. Move the exempt part out from under the rule; don't carve it out in prose.
+
+When you can't tell which form will bind, micro-test the wording: run the guidance against a **no-guidance control** on a task that tempts the failure, several fresh samples each, and read every flagged match by hand. If the control doesn't exhibit the failure, there's nothing to fix. When guidance binds, the samples converge on one shape; five different readings across five samples means the wording isn't binding yet.
+
 ## Failure modes
 
 Use these to diagnose issues the user may be having with the skill.
