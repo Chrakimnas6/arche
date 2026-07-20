@@ -16,6 +16,8 @@ Get the data structures right before writing logic. The right structure makes do
 - Choose structures that match the dominant access pattern
 - A data structure change late in the project is a rewrite; early is a one-line diff
 
+**Name the organizing structure the code is missing.** "Get the data structure right" is not just picking a container — it is choosing the model that makes illegal states unrepresentable: a state machine over scattered booleans, a table or registry over spread-out branching, a typed model over repeated shape assumptions. The test is whether the structure *deletes* branches and invalid states rather than adding indirection. Boring, explicit code stays when the shape is already clear and local; reach for a model only when it removes possibilities, not when it merely relocates them.
+
 At the code level, simplicity preserves options:
 
 - **DRY at the structural level** (types, data models) -- but three similar lines of code is better than a premature abstraction
