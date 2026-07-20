@@ -7,7 +7,7 @@ Interview me relentlessly about every aspect of this plan until we reach a share
 
 Ask the questions one at a time.
 
-If a question can be answered by exploring the codebase, explore the codebase instead.
+Split **facts** from **decisions**. If a *fact* can be found by exploring the environment — the codebase, the filesystem, tools, docs — look it up rather than asking me; finding facts is your job, never mine. The *decisions* are mine: put each one to me and wait for my answer. Don't answer a decision autonomously because you could infer it from the code — inference is not consent.
 
 ## Opening
 

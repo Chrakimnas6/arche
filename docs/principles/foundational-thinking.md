@@ -16,6 +16,8 @@ Get the data structures right before writing logic. The right structure makes do
 - Choose structures that match the dominant access pattern
 - A data structure change late in the project is a rewrite; early is a one-line diff
 
+**Name the organizing structure the code is missing.** "Get the data structure right" is not just picking a container — it is choosing the model that makes illegal states unrepresentable: a state machine over scattered booleans, a table or registry over spread-out branching, a typed model over repeated shape assumptions. The test is whether the structure *deletes* branches and invalid states rather than adding indirection. Boring, explicit code stays when the shape is already clear and local; reach for a model only when it removes possibilities, not when it merely relocates them.
+
 At the code level, simplicity preserves options:
 
 - **DRY at the structural level** (types, data models) -- but three similar lines of code is better than a premature abstraction
@@ -47,4 +49,4 @@ See also [redesign-from-first-principles](./redesign-from-first-principles.md). 
 
 ## Citations
 
-Brooks, *The Mythical Man-Month* (1975) — "Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I won't usually need your flowcharts; they'll be obvious." Hickey, "The Value of Values" (JaxConf, 2012) — values over places. Hunt & Thomas, *The Pragmatic Programmer* (1999) — tracer bullets / scaffolding. Hunt & Thomas, *The Pragmatic Programmer* (20th Anniversary Edition, 2019) — Topic 27, "Don't outrun your headlights."
+Brooks, *The Mythical Man-Month* (1975) — "Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I won't usually need your flowcharts; they'll be obvious." Hickey, "The Value of Values" (JaxConf, 2012) — values over places. Hunt & Thomas, *The Pragmatic Programmer* (1999) — tracer bullets / scaffolding. Hunt & Thomas, *The Pragmatic Programmer* (20th Anniversary Edition, 2019) — Topic 27, "Don't outrun your headlights." Minsky, "Effective ML" (2011) — make illegal states unrepresentable. Evans, *Domain-Driven Design* (2003) — the domain model as the organizing structure.
