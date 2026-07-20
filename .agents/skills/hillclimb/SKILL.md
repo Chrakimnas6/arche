@@ -39,13 +39,13 @@ Build the harness that produces the metric — a script, benchmark, or test you 
 
 Once proven, the harness is your **immutable ruler**: if it changes mid-run, no measurement is comparable. It is the artifact a reviewer reruns to replay your run. See `docs/principles/build-the-lever.md`.
 
-Record the **baseline** measurement before changing anything. Fix an **attempt budget** for the run at the same time — use the one the user gave, or declare one at the top of the decision log and proceed (adjustable on async review).
+Record the **baseline** measurement before changing anything — sampled to clear the noise (median of N runs, never a single number) — plus a green run of the regression tests that must stay green, so a later failure is attributable. Fix an **attempt budget** for the run at the same time — use the one the user gave, or declare one at the top of the decision log and proceed (adjustable on async review). Give the stop predicate a **floor on attempts** as well as a target, so a lucky early win can't end the run.
 
 ### 3. One hypothesis, grounded in the system
 
 Each attempt states a hypothesis: "Changing X should move the metric because Y," naming a specific mechanism in the architecture you read in step 1 ("defer X off the boot path because it blocks first paint"), not "try memoizing something."
 
-Most performance wins come from a small set of **strategy families**. Use them to generate hypotheses, not as a checklist — a family earns an attempt only when the measurement shows the signal it names, and a focused fix for the dominant cost beats spreading effort across all of them.
+Most performance wins come from a small set of **strategy families**. Use them to generate hypotheses, not as a checklist — a family earns an attempt only when the measurement shows the signal it names (Elimination, whose signal no profile shows, is the exception), and a focused fix for the dominant cost beats spreading effort across all of them.
 
 - **Elimination.** The cheapest work is work that never runs. Before optimizing a hot path, ask whether it needs to exist: a result nobody consumes, a gate always off for this case, a redundant sync. Deleting the work beats every other family when it applies — and the measurement shows what's slow, never that it's deletable, so this one needs reading the code, not just the profile.
 - **Divide and conquer.** Cost scales with input size. Split so each piece touches less (chunk, shard, prune the search space) or so independent pieces run in parallel.
@@ -75,7 +75,7 @@ id | hypothesis | change | before | after | delta | tests | verdict (kept/revert
 
 ### 6. Stop semantics
 
-Stop **only** when: the predicate is met (metric hits target), remaining ideas lack meaningful cost-benefit, or the attempt budget is exhausted — then keep the best accepted state and present the decision log. A budget stop is a defined outcome, not a failure. The budget bounds the whole run, pivots included; it never licenses quitting at the first plateau.
+Stop **only** when: the predicate is met (metric hits target and the attempt floor is spent), remaining ideas lack meaningful cost-benefit, or the attempt budget is exhausted — then keep the best accepted state and present the decision log. A budget stop is a defined outcome, not a failure. The budget bounds the whole run, pivots included; it never licenses quitting at the first plateau.
 
 **A plateau is not a stop.** Two flat iterations mean *pivot the approach*, not *quit*: pivot category, combine near-misses, re-read the source, or try something more radical. Surface a genuine dead end honestly rather than spinning on variants of a failed attempt.
 
