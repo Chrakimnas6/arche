@@ -20,4 +20,6 @@ When needing to read/explore a GitHub repo, first check if it's already cloned l
 - If not found, clone using `ghq get https://github.com/owner/repo` — repos are stored under `~/src/github.com/`
 
 ## Fetching X/Twitter Content
-WebFetch fails on `x.com` / `twitter.com`. Use the `claude-in-chrome` MCP tools instead — the Chrome session is authenticated.
+WebFetch fails on `x.com` / `twitter.com` directly.
+- **Single tweet:** swap host to `api.fxtwitter.com` (keep the path) and fetch — free JSON, no auth.
+- **Timelines/search/login-gated:** use `claude-in-chrome` MCP (authenticated Chrome session).
