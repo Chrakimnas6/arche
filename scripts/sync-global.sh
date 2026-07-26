@@ -10,8 +10,10 @@
 #     (renamed or removed skills)
 #   - entries in the global dirs that don't come from this repo are reported
 #     as global-only (candidates to adopt into arche) but never touched
-#   - global/CLAUDE.md (the committed copy) is diffed against
-#     ~/.claude/CLAUDE.md and ~/.codex/AGENTS.md
+#   - global/CLAUDE.md (the committed copy) gets a symlink at
+#     ~/.claude/CLAUDE.md — single source of truth, hot-edits land in the
+#     repo working tree; ~/.codex/AGENTS.md (codex needs its own filename,
+#     kept as a copy) is diffed against it
 #
 # Idempotent — run it any time, e.g. after adding a skill or agent:
 #   bash scripts/sync-global.sh          # sync + report
@@ -141,7 +143,7 @@ done
 prune_dangling "$CLAUDE_DIR/agents"
 report_global_only "$CLAUDE_DIR/skills" "claude skills"
 report_global_only "$CLAUDE_DIR/agents" "claude agents"
-diff_global_copy "$CLAUDE_DIR/CLAUDE.md"
+ensure_link "$REPO_ROOT/global/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
 
 # Tool-agnostic standard location (Gemini CLI and other convention-following tools)
 sync_skills_into "$AGENTS_DIR/skills"

@@ -8,6 +8,8 @@ For decisions where the right answer isn't obvious, build 2-3 competing prototyp
 
 **Design It Twice** (Ousterhout, "A Philosophy of Software Design"): your first idea is unlikely to be the best. For interface design specifically, explore radically different interfaces -- not variations on one theme. Contrast by depth (leverage at the interface), locality (where change concentrates), and seam placement. See [module-depth](./module-depth.md) for vocabulary.
 
+**Coverage vs kind:** Alternatives usually differ in kind (fundamentally different architectures), not coverage (more vs less of the same thing). Compare on tradeoffs — performance, complexity, flexibility — not on a single completeness axis. Don't force-rank qualitatively different approaches with numerical scores; explain the tradeoff that matters for this specific decision.
+
 ## When It Applies
 
 - Novel interactions (no prior art in the codebase)

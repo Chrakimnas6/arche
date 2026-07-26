@@ -27,7 +27,6 @@
 ## Verification
 
 - [Fix Root Causes](./fix-root-causes.md) — never paper over symptoms, trace to root cause. **Apply when** debugging any failure, before proposing a fix.
-- [Stop on Ambiguity](./stop-on-ambiguity.md) — when high-stakes ambiguity surfaces, name it and ask before proceeding. **Apply when** an irreversible fork or high-stakes ambiguity surfaces mid-task.
 - [Build the Lever](./build-the-lever.md) — build the tool that does or proves the work; the tool is the artifact a reviewer reruns. **Apply when** work is non-trivial and a script, codemod, or generator would make it checkable or materially safer than hand edits.
 
 (Prove It Works and Surgical Changes also belong here — they live in the Always-read baseline above.)
@@ -35,7 +34,7 @@
 ## Delegation
 
 - [Guard the Context Window](./guard-the-context-window.md) — context is finite and non-renewable; route bulk to subagents, keep summaries in the main thread. **Apply when** context is filling up: large outputs, long files, repeated reads, fan-out planning.
-- [Never Block on the Human](./never-block-on-the-human.md) — proceed on reversible execution, present results for async review; block on direction and irreversibility. **Apply when** tempted to ask "should I do X?" about reversible execution mid-task.
+- [Never Block on the Human](./never-block-on-the-human.md) — proceed on reversible execution, present results for async review; block on direction, irreversibility, and high-stakes ambiguity, naming the fork and offering 2-3 options. **Apply when** tempted to ask "should I do X?" about reversible execution mid-task, or when a high-stakes fork surfaces and you must decide whether to stop.
 
 ## Meta
 
@@ -50,7 +49,7 @@ Beyond the baseline, common task shapes route to:
 | New feature / component | foundational-thinking, module-depth, experience-first |
 | Refactor / cleanup | subtract-before-you-add, redesign-from-first-principles, module-depth |
 | Bug fix / debugging | fix-root-causes |
-| Security-sensitive: auth, trust boundaries, smart contracts | threat-modeling, boundary-discipline, stop-on-ambiguity |
+| Security-sensitive: auth, trust boundaries, smart contracts | threat-modeling, boundary-discipline, never-block-on-the-human |
 | Concurrency / shared state | serialize-shared-state-mutations, make-operations-idempotent |
 | Interface / API design | module-depth, exhaust-the-design-space, boundary-discipline |
 | Production service / job / deploy change | observability, make-operations-idempotent |
@@ -59,3 +58,5 @@ Beyond the baseline, common task shapes route to:
 | Long, autonomous, or multi-session run | guard-the-context-window, never-block-on-the-human |
 
 A task matching multiple rows reads the union. High-stakes rows (security, concurrency) are non-optional when their shape matches — skipping governance there is the failure mode this matrix exists to prevent.
+
+**Refactor / cleanup row:** dead-code removal *planned as part of* the refactor is subtract-before-you-add's domain; *opportunistic* removal while editing is what surgical-changes prohibits.

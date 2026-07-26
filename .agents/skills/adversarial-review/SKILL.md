@@ -18,13 +18,10 @@ changes.
 [codex plugin](https://github.com/openai/codex-plugin-cc) is recommended but not required —
 this skill uses `codex exec` directly.
 
-> **Quick alternative:** For a single adversarial review without multi-lens orchestration,
-> use `/codex:adversarial-review` directly (requires the codex plugin).
+## Step 1 — Collect Principle Paths
 
-## Step 1 — Load Principles
-
-Read `docs/principles/index.md` and follow links to relevant principle files. These govern
-reviewer judgments.
+From `docs/principles/index.md`, collect the paths of the principle files governing this
+review. They are fed to the Codex prompts in Step 4 — the reviewers read them themselves.
 
 ## Step 2 — Determine Scope and Intent
 
@@ -55,13 +52,8 @@ Read `references/reviewer-lenses.md` for lens definitions — each lens carries 
 
 ## Step 3 — Preflight Check
 
-Before spawning reviewers, verify Codex is available:
-
-```sh
-command -v codex >/dev/null 2>&1 || { echo "ERROR: codex CLI not found. Install with: npm install -g @openai/codex"; exit 1; }
-```
-
-If Codex is not installed or not authenticated, stop and tell the user what to run.
+Before spawning, check `command -v codex` and that it is authenticated; if not, stop and tell
+the user to run `npm install -g @openai/codex` or `codex login`.
 
 ## Step 4 — Spawn Reviewers via Codex
 
@@ -113,14 +105,9 @@ Spawn all reviewers in parallel.
 
 ## Step 5 — Wait for All Reviewers
 
-**Do NOT proceed until every reviewer has finished.** Poll each background task until
-completion. For each reviewer, confirm:
-
-1. The background task exited (check via the task management mechanism you used to launch it)
-2. The output file exists and is non-empty
-
-If a reviewer fails, read its `.err` file for diagnostics and report the specific error
-(auth expired, binary missing, timeout, etc.) — do not silently skip it.
+**Do NOT proceed until every reviewer has finished** — each background task exited and its
+output file is non-empty. If a reviewer fails, read its `.err` file and report the specific
+error (auth expired, binary missing, timeout).
 
 ## Step 6 — Synthesize Verdict
 

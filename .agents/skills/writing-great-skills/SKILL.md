@@ -86,10 +86,12 @@ The split that matters is **discipline** failures versus **shaping** failures. A
 
 Two corollaries, both about not reopening the negotiation:
 
-- **No nuance clauses.** _Don't X unless it matters_ turns a binding recipe back into a judgment call. If a case is genuinely exempt, restructure so the rule can't reach it rather than appending an exception.
-- **Exemption clauses don't scope.** _This limit doesn't apply to code blocks_ still suppresses code blocks. Move the exempt part out from under the rule; don't carve it out in prose.
+- **No nuance clauses.** _Don't X unless it matters_ reopens the judgment call — restructure so the rule can't reach the exempt case.
+- **Exemption clauses don't scope.** _This limit doesn't apply to code blocks_ still suppresses code blocks — move the exempt part out from under the rule.
 
 When you can't tell which form will bind, micro-test the wording: run the guidance against a **no-guidance control** on a task that tempts the failure, several fresh samples each, and read every sample by hand. If the control doesn't exhibit the failure, there's nothing to fix. When guidance binds, the samples converge on one shape; five different readings across five samples means the wording isn't binding yet.
+
+Re-run the control **per model generation**: a fence validated against an older model is unvalidated for the current one — its baseline failure may no longer exist, leaving the fence as pure load.
 
 ## Failure modes
 

@@ -38,7 +38,7 @@ When an `implementer` agent is available, delegate step 2 to it instead of imple
 
 ## Divergence Rule
 
-When reality contradicts the plan — an approach doesn't work, a file the plan assumed doesn't exist, a materially better design surfaces mid-phase — STOP. Do not silently improvise. Update the plan files to match the new understanding and tell the user what changed and why; if the divergence forks the design, ask before proceeding (`docs/principles/stop-on-ambiguity.md`). The plan must stay truthful: a completed plan that doesn't describe what was built is worse than no plan.
+When reality contradicts the plan — an approach doesn't work, a file the plan assumed doesn't exist, a materially better design surfaces mid-phase — STOP. Do not silently improvise. Update the plan files to match the new understanding and tell the user what changed and why; if the divergence forks the design, ask before proceeding (`docs/principles/never-block-on-the-human.md`). The plan must stay truthful: a completed plan that doesn't describe what was built is worse than no plan.
 
 Below that bar — a reversible call the plan is simply silent on (edge-case behavior, the shape of an internal helper) — don't stop: decide in line with the plan's intent and keep going (`docs/principles/never-block-on-the-human.md`). If the why wouldn't be evident from the diff, add a one-line entry under a `## Decisions` heading in the current phase file; diff-visible choices like naming need no entry.
 

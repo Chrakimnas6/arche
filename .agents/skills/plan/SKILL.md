@@ -28,7 +28,7 @@ State the mode in the plan overview.
 Before running the full planning workflow, assess whether this task actually needs a plan:
 
 **Trivially small (1-2 files, obvious approach):**
-Tell the user this task doesn't need a plan and suggest implementing directly without the plan skill. **Stop here — do not implement.**
+Tell the user this task doesn't need a plan and suggest implementing directly without the plan skill.
 
 **Needs planning (proceed to Step 1):**
 - The change spans 3+ files or introduces new architecture
@@ -40,25 +40,21 @@ Tell the user this task doesn't need a plan and suggest implementing directly wi
 
 Read `docs/principles/index.md`. Read the **Always read** baseline in full, then read in full each principle whose **Apply when** clause matches this task — the index's routing matrix covers common task shapes. Read the whole corpus only when genuinely unsure which apply. These principles govern all plan decisions — cite the ones you read by name in the plan overview and phase files.
 
-**Do NOT skip this. Do NOT use memorized principle content — always read fresh.** The self-check in Step 4b will verify citations exist.
+Always read the principle files fresh; never work from memorized principle content. The self-check in Step 4b will verify citations exist.
 
 If `docs/principles/index.md` does not exist, note the absence and proceed without principle citations. Do not create the file.
 
 ## Step 2 — Define Scope and Constraints
 
-If a grill-me decision record exists for this work (`docs/design/<topic>-decisions.md`), or the user points to one, read it first: its resolved decisions are settled scope — don't re-ask them. Carry its deferred questions into the list below — except questions the record marks as prototype-resolved: don't re-ask those; instead plan an early throwaway-spike phase that builds the 2-3 sketches and gates dependent phases on the user's pick (the plan describes the spike; execute-plan builds it — the no-implement gate holds).
+If a grill-me decision record exists for this work (`docs/design/<topic>-decisions.md`), or the user points to one, read it first: its resolved decisions are settled scope — don't re-ask them. Carry its deferred questions into the list below — except questions the record marks as prototype-resolved: don't re-ask those; instead plan an early throwaway-spike phase that builds the 2-3 sketches and gates dependent phases on the user's pick (the plan describes the spike; execute-plan builds it).
 
-Resolve ambiguity before exploring the codebase:
-
-- What is in scope vs explicitly out of scope?
-- Are there constraints (dependencies, platform requirements, existing patterns to preserve, a reference implementation to follow)?
-- What does "done" look like?
+Resolve ambiguity before exploring the codebase: scope boundaries, constraints (dependencies, platform, existing patterns to preserve, a reference implementation to follow), and the definition of done.
 
 Frame questions with concrete options, and state the stakes — what breaks or degrades if we pick wrong. If the request is already clear, confirm scope boundaries briefly and move on.
 
 ## Step 3 — Explore Context with Subagents
 
-**Always** delegate exploration to subagents. Never do large-scale codebase exploration in the main context.
+Delegate exploration to subagents (`docs/principles/guard-the-context-window.md`).
 
 Spawn exploration subagents to:
 - Read existing code in affected areas
@@ -126,16 +122,11 @@ Smaller phases keep future options open, but cohesion wins: one phase holding on
 
 ### Redesign Check
 
-For changes touching existing code, apply redesign-from-first-principles:
-> "If we were building this from scratch with this requirement, what would we build?"
-
-Don't bolt changes onto existing designs — redesign holistically.
+For changes touching existing code, apply `docs/principles/redesign-from-first-principles.md`.
 
 ### Alternatives Check
 
-For architectural decisions, briefly sketch 2-3 approaches in the overview's Key decisions section. State which was chosen and why. This prevents premature commitment and documents the design space explored.
-
-**Coverage vs kind:** Alternatives usually differ in kind (fundamentally different architectures), not coverage (more vs less of the same thing). Compare on tradeoffs — performance, complexity, flexibility — not on a single completeness axis. Don't force-rank qualitatively different approaches with numerical scores; explain the tradeoff that matters for this specific decision.
+For architectural decisions, sketch 2-3 approaches in the overview's Key decisions section and state which was chosen and why (`docs/principles/exhaust-the-design-space.md`).
 
 ### Verification Strategy
 
@@ -163,4 +154,4 @@ After writing all plan files, verify these four constraints before proceeding. F
 
 Summarize the plan: list the phases, scope boundaries, and verification approach. Point the user to the plan files in `docs/plans/<plan-name>/`.
 
-**Stop here. Do NOT begin implementation.** The plan is the deliverable. The user decides when and how to execute the plan.
+The user decides when and how to execute the plan.

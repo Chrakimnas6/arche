@@ -69,19 +69,11 @@ Apply the review against the diff in two passes:
 
 ### Pass 1 (CRITICAL)
 
-1. **SQL & Data Safety** -- injection, mass assignment, unvalidated input in queries, missing transactions around multi-step writes.
-2. **Race Conditions & Concurrency** -- TOCTOU, shared mutable state without locks, non-atomic read-modify-write, missing optimistic locking.
-3. **Trust Boundary Violations** -- LLM output used without validation, user input trusted without sanitization, external API responses used without type checking.
-4. **Enum & Value Completeness** -- when the diff introduces a new enum value, status, tier, or type constant, use Grep to find ALL files that reference sibling values, then Read those files to check if the new value is handled. This is the one category where within-diff review is insufficient.
+**Enum & Value Completeness** -- when the diff introduces a new enum value, status, tier, or type constant, use Grep to find ALL files that reference sibling values, then Read those files to check if the new value is handled. This is the one category where within-diff review is insufficient.
 
 ### Pass 2 (INFORMATIONAL)
 
-1. **Conditional Side Effects** -- state mutations buried inside complex conditions, side effects in getters, mutation in filter/map callbacks.
-2. **Magic Numbers & String Coupling** -- hardcoded values that should be constants, string matching on values that could change.
-3. **Dead Code & Consistency** -- unreachable branches, inconsistent patterns across similar code.
-4. **Test Gaps** -- new code paths without tests (subsumes into the coverage analysis in Step 5).
-5. **Performance** -- N+1 queries, unbounded loops, missing pagination, large payloads.
-6. **AI Code Quality (advisory)** -- patterns common in AI-generated code: empty catch blocks that swallow errors, over-abstracted wrappers around single-use logic, defensive validation for impossible internal states, copy-paste patterns that should be a shared function.
+**AI Code Quality (advisory)** -- patterns common in AI-generated code: empty catch blocks that swallow errors, over-abstracted wrappers around single-use logic, defensive validation for impossible internal states, copy-paste patterns that should be a shared function.
 
 **Search-before-recommending:** When recommending a fix, verify it's current best practice for the framework version in use. Check if a built-in solution exists before recommending a workaround.
 
@@ -130,22 +122,11 @@ Evaluate every codepath changed in the diff and identify test gaps. Gaps become 
 
 ### Detect test framework
 
-1. Read AGENTS.md -- look for a `## Commands` section with test command and framework name.
-2. If not found, auto-detect:
-   ```bash
-   [ -f Gemfile ] && echo "RUNTIME:ruby"
-   [ -f package.json ] && echo "RUNTIME:node"
-   [ -f requirements.txt ] || [ -f pyproject.toml ] && echo "RUNTIME:python"
-   [ -f go.mod ] && echo "RUNTIME:go"
-   [ -f Cargo.toml ] && echo "RUNTIME:rust"
-   ls jest.config.* vitest.config.* playwright.config.* cypress.config.* .rspec pytest.ini phpunit.xml 2>/dev/null
-   ls -d test/ tests/ spec/ __tests__/ cypress/ e2e/ 2>/dev/null
-   ```
-3. If no framework detected: still produce the coverage report, but skip test generation.
+Read AGENTS.md -- look for a `## Commands` section with test command and framework name; otherwise detect it from the project layout. If no framework is detected, still produce the coverage report, but skip test generation.
 
 ### Trace codepaths and map tests
 
-Read every changed file in full (not just the diff hunk). For each, trace data flow -- where input comes from, what transforms it, where it goes, what can go wrong -- covering every conditional branch, error path, and function call. For each path, find the test that exercises it and rate quality: `***` edge cases + error paths, `**` happy path only, `*` smoke test / trivial assertion.
+Read every changed file in full (not just the diff hunk). For each codepath, find the test that exercises it and rate quality: `***` edge cases + error paths, `**` happy path only, `*` smoke test / trivial assertion.
 
 ### Output
 
@@ -228,9 +209,6 @@ Before producing the final review output:
 - If you claim "this pattern is safe" -> cite the specific line proving safety
 - If you claim "this is handled elsewhere" -> read and cite the handling code
 - If you claim "tests cover this" -> name the test file and method
-- Never say "likely handled" or "probably tested" -- verify or flag as unknown
-
-**Rationalization prevention:** "This looks fine" is not a finding. Either cite evidence it IS fine, or flag it as unverified.
 
 **Evidence ladder for safety-critical claims.** Citing a line is not the top of the ladder. For each claim the change's safety actually depends on, push it as far down this ladder as is cheap, and state where it stopped:
 
@@ -258,7 +236,6 @@ After the review is complete, suggest running `/adversarial-review` when the dif
 
 ## Important Rules
 
-- **Read the FULL diff before commenting.** Do not flag issues already addressed in the diff.
 - **Fix-first, not read-only.** AUTO-FIX items are applied directly. ASK items are only applied after user approval. Never commit, push, or create PRs.
 - **Be terse.** One line problem, one line fix. No preamble.
 - **Only flag real problems.** Skip anything that's fine.

@@ -38,7 +38,7 @@
 
 [Boundary discipline](./boundary-discipline.md) governs *where* validation happens; this governs *what* validation is for and *whom* it defends against. Without a threat model, boundary validation is shape-checking, not security.
 
-[Stop on ambiguity](./stop-on-ambiguity.md) requires escalation on security-sensitive changes. This principle defines when "security-sensitive" applies: any change that affects an enumerated threat or trust boundary.
+[Never block on the human](./never-block-on-the-human.md) requires escalation on security-sensitive changes. This principle defines when "security-sensitive" applies: any change that affects an enumerated threat or trust boundary.
 
 Language-specific applications live in [docs/applications/](../applications/).
 

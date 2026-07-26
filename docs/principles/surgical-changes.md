@@ -4,9 +4,7 @@ When editing existing code, touch only what the task requires. Every changed lin
 
 ## The Pattern
 
-- **Confine the edit to the asked scope.** Don't "improve" adjacent code, comments, or formatting along the way.
-- **Match existing style** even if you'd write it differently in a greenfield project. Style consistency is more valuable inside a working codebase than personal preference.
-- **Don't refactor what isn't broken.** If you'd structure something differently but it isn't related to the task, leave it.
+- **Confine each edit to the asked scope and match existing style** — don't refactor adjacent code just because you'd write it differently.
 - **Surface unrelated issues, don't fix them.** If you spot dead code, a bug, or a smell while making your change, mention it — but don't bundle the fix in.
 
 ## Clean Up Your Own Mess, Not Others'
@@ -38,7 +36,7 @@ For every changed line, ask: *"Does this trace directly to what was asked?"* If 
 
 [Subtract before you add](./subtract-before-you-add.md) governs *what to build* — delete obsolete paths before constructing new ones, as a deliberate design move. This governs *how to edit* — when making a change, don't let scope creep in. One is planned simplification at design time; the other is restraint during routine implementation.
 
-[Stop on ambiguity](./stop-on-ambiguity.md) tells you to pause when scope or approach is unclear. This tells you what to do when the scope *is* clear: stay inside it.
+[Never block on the human](./never-block-on-the-human.md) tells you to pause when scope or approach is unclear. This tells you what to do when the scope *is* clear: stay inside it.
 
 ## Citations
 

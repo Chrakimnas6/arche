@@ -11,32 +11,15 @@ description: >-
 
 Capture learnings from the current session and route them to the right place in the project. **Do NOT make changes without user approval** — present proposals and let the user decide.
 
-## When to Use
-
-- After completing a significant feature or bug fix
-- After a session where mistakes were made and corrected
-- When the user says "reflect", "what did we learn?", or "remember this"
-- When you notice recurring friction that could be eliminated
-
 ## Step 1 — Scan the Conversation
 
-Review the current conversation for:
+Review the conversation for corrections, mistakes and their root causes, undocumented project conventions, tool/library quirks, workflow friction, and decisions worth their rationale.
 
-1. **Corrections the user made** — "no, don't do it that way", "that's wrong", "use X instead"
-2. **Mistakes and their root causes** — what went wrong and why
-3. **Project conventions discovered** — patterns, naming, architecture decisions that aren't documented
-4. **Tool/library quirks** — unexpected behavior, workarounds, version-specific gotchas
-5. **Workflow friction** — steps that were slow, confusing, or repeated unnecessarily
-6. **Decisions and rationale** — why a particular approach was chosen over alternatives
-
-**Skip:**
-- Trivial one-off issues unlikely to recur
-- Things already documented in AGENTS.md, skills, or docs/
-- Task-specific details with no broader applicability
+Skip anything one-off, already documented, or with no applicability beyond this task.
 
 ## Step 2 — Categorize and Route
 
-For each learning, determine where it belongs. Prefer structural enforcement over documentation — making something impossible beats documenting that it shouldn't happen.
+For each learning, determine where it belongs. Route by `docs/principles/encode-lessons-in-structure.md`.
 
 ### Routing priority (highest to lowest):
 
@@ -65,28 +48,7 @@ For each learning, determine where it belongs. Prefer structural enforcement ove
 
 ## Step 3 — Present Proposals
 
-Present each proposed change to the user in a clear format:
-
-```
-## Proposed Changes
-
-### 1. [AGENTS.md] Add go generate command
-**What:** Add `go generate ./...` to the Commands section
-**Why:** Agent forgot to run it twice this session, causing test failures
-**Priority:** HIGH — affects every test run
-
-### 2. [Skill: plan] Reduce max phase size for Go projects
-**What:** Add note that Go projects with small packages should use 1-2 files per phase, not 2-3
-**Why:** Three phases were too large and had to be split mid-implementation
-**Priority:** MEDIUM — improves planning accuracy
-
-### 3. [docs/design/] Document event sourcing architecture
-**What:** Create docs/design/event-sourcing.md with the architecture decided today
-**Why:** Complex decision with trade-offs that will be needed for future features
-**Priority:** LOW — useful context but not blocking
-```
-
-Ask the user which changes to apply.
+Present each proposal with its target, what changes, why, and a priority. Ask the user which to apply.
 
 ## Step 4 — Apply Approved Changes
 
@@ -99,22 +61,4 @@ For each approved change:
 
 ## Step 5 — Summary
 
-After applying changes, output a brief summary:
-
-```
-## Reflection Complete
-
-- AGENTS.md: added go generate command
-- docs/design/event-sourcing.md: created
-- 1 proposal skipped (user declined)
-```
-
-## Anti-Patterns
-
-| Bad | Good |
-|-----|------|
-| Capturing every minor detail | Focus on recurring patterns and significant decisions |
-| Adding to AGENTS.md what the code already shows | Only document what the agent can't infer |
-| Updating principles for one-off situations | Principles are general — use docs/ for specifics |
-| Making changes without asking | Always present and get approval first |
-| Reflecting after trivial tasks | Reserve for significant work or explicit request |
+After applying changes, output a brief summary: what was changed where, and how many proposals were skipped.

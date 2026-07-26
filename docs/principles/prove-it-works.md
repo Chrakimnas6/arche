@@ -15,19 +15,7 @@ After completing any task, ask: **"How do I prove this actually works?"**
 - **Read the actual value**, not a cached or derived representation.
 - **When verification fails, suspect the observation method** before suspecting the system.
 
-### Code / Features
-1. Build it (necessary but not sufficient)
-2. Run it and exercise the actual feature path
-3. Check the full chain: does data flow from input to output?
-4. For integrations (IPC, sockets, RPC), test the full communication path end-to-end
-
-### Scripts / Tools
-1. Run scripts with real inputs and verify output
-2. Test error paths: bad input, missing files, timeouts
-
-### General
-- If you can run it, run it
-- Prefer automated verification over manual inspection
+Build it, run it end-to-end against real inputs -- including error paths and integration boundaries -- and prefer automated checks over manual inspection.
 
 ### Sweeps and migrations: verify per unit, not per batch
 In a run of similar edits, verify each change before starting the next -- known-good state, one change, run the check, proceed. Never batch the edits and verify once at the end: a break caught at the unit that caused it is cheap to localize; a break caught after the batch is buried under everything built on top of it.

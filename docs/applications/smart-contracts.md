@@ -42,6 +42,6 @@ External functions are the interface; internal functions are the implementation.
 
 **Deploy to a local testnet and call the function.** Reading the ABI is not verification. For upgrades, verify storage layout compatibility by deploying both old and new contracts on a fork and asserting state-slot equivalence.
 
-## Stop on Ambiguity
+## Never Block on the Human
 
 Smart contract storage layout decisions where the wrong choice is permanent. If two layouts are plausible and the implications differ post-deployment, stop and present the options.
