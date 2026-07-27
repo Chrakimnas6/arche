@@ -101,5 +101,5 @@ After all tests pass, look for refactor candidates:
 
 ## References
 
-- See [testing-anti-patterns.md](references/testing-anti-patterns.md) for common pitfalls when adding mocks or test utilities
+- See [testing-anti-patterns.md](references/testing-anti-patterns.md) for how to write tests that catch real breaks — name the break, avoid change detectors, the mutation check — and common pitfalls when adding mocks or test utilities
 - See [mocking.md](references/mocking.md) for guidelines on when and how to mock

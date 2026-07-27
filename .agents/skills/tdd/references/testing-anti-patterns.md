@@ -18,6 +18,36 @@ Tests must verify real behavior, not mock behavior. Mocks are a means to isolate
 3. NEVER mock without understanding dependencies
 ```
 
+## Name the Break (before writing any test)
+
+A test earns its place by catching a *specific* break: a wrong branch, a missing side effect, a wrong argument, a boundary case, a broken contract. Before writing the test body, name the production change that would make this test fail — and confirm that change is a **bug**, not a **decision**. If you can't name one, the test proves nothing; redesign it around an observable behavior.
+
+**No change detectors.** A test that fails only when someone makes an *intentional* change — a constant's value, exact wording, private structure — fires on every redesign and sleeps through real bugs. Test the behavior that depends on the decision, not the decision itself:
+
+```go
+// BAD: change detector — fails on a deliberate retune, catches no bug
+if MaxRetries != 5 { t.Fatalf("got %d", MaxRetries) }
+
+// GOOD: the behavior the constant governs
+// a failing call is retried 5 times and the 6th attempt never happens
+```
+
+**Behavior, not text.** Asserting that a script, skill doc, or config *contains* an exact line proves only that the source is the source — it can't catch a behavioral break and fires on every reword. Run the artifact against controlled inputs and assert its outputs, side effects, or exit code. (`tests/validate-setup.sh` checks existence and structure, not prose; agent-facing docs are "tested" by the consuming agent's behavior; prose for humans earns no test.)
+
+**Your code, not the framework.** Test the contract *your* code makes at its boundaries — the route you register, the query you emit, the payload you produce — not the framework's documented mechanics (asserting your router invokes a handler you registered is the framework's test to write, not yours). The same line applies inside your code: constructors, getters, trivial forwarders, and constants earn a test only when they validate, normalize, default, derive, enforce, or cause a side effect; otherwise assert the first consumer-visible result that depends on them.
+
+### Gate Function
+
+```
+BEFORE writing the test body:
+  Name the production change that would make this test fail.
+
+  Cannot name one            -> redesign around an observable behavior
+  "The source text changed"  -> run the artifact, assert its effects
+  Only an intentional choice -> change detector; test the behavior
+                                that depends on the choice, not the choice
+```
+
 ## Anti-Pattern 1: Testing Mock Behavior
 
 **The violation:**
@@ -337,6 +367,22 @@ TDD cycle:
 
 **Consider:** Integration tests with real components often simpler than complex mocks
 
+## The Mutation Check
+
+Before calling a test file done, mentally mutate the production code: for each realistic mutation, at least one test should fail. If nothing fails, the behavior is unprotected — or the test is tautological.
+
+Mutations to try:
+
+- Wrong constant or argument
+- Wrong branch handler
+- Missing state change or side effect
+- Empty or default return value
+- Missing validation for zero, empty, nil, unauthorized, or malformed input
+
+## Ship Only the Tests the Behavior Needs
+
+The TDD cycle — failing test, minimal code, refactor — is what "complete" means, but "complete" is not "maximal." Trivial code and human prose earn no test; a test written only to satisfy process (or chase a coverage number) checks no break and costs maintenance forever. Ship the tests the behavior needs and only those.
+
 ## TDD Prevents These Anti-Patterns
 
 **Why TDD helps:**
@@ -351,6 +397,10 @@ TDD cycle:
 
 | Anti-Pattern | Fix |
 |--------------|-----|
+| Can't name the break it catches | Redesign around an observable behavior, or don't write it |
+| Change detector (constant/wording/structure) | Test the behavior that depends on the decision |
+| Asserts a script/doc contains a line | Run the artifact, assert outputs/side effects/exit code |
+| Tests the framework's mechanics | Test your boundary contract, not upstream mechanics |
 | Assert on mock elements | Test real component or unmock it |
 | Test-only methods in production | Move to test utilities |
 | Mock without understanding | Understand dependencies first, mock minimally |
@@ -358,9 +408,15 @@ TDD cycle:
 | Tautological assertion | Expected value from an independent source, not recomputed by the code |
 | Tests as afterthought | TDD - tests first |
 | Over-complex mocks | Consider integration tests |
+| Test written for coverage/process | Delete it — ship only tests the behavior needs |
 
 ## Red Flags
 
+- You can't name the production bug the test would catch
+- The test fails on every intentional change but never on an accidental break
+- The test greps source text, or asserts a removed symbol stays removed
+- The test would still matter if only the framework remained (no logic of yours exercised)
+- No realistic mutation of the production code makes the test fail
 - Assertions that only verify a mock struct was injected
 - Methods only called in test files
 - Mock setup is >50% of test

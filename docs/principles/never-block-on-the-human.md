@@ -16,6 +16,7 @@ The exception is the case where guessing wrong is far more expensive than pausin
 - **Prefer the experiment over the question.** If the answer is observable by running something (behavior, output, timing), run it and present the result — don't make the human decide what an experiment can settle.
 - **Reserve questions for genuine forks.** Ask only when intent cannot be inferred and the options differ in ways only the owner can weigh.
 - **Design for review-after-the-fact.** Leave a legible trail (clear diffs, commit messages, notes) so async review is cheap.
+- **Mid-run discoveries are yours.** On a long or autonomous run, the problems you stumble into — a broken skill, a flaky verifier, a related bug, a tooling failure, an orphaned follow-up, fixable drift — are yours to fix in the same loop, not to park for the human. Keep the out-of-band fix in its own commit or PR so it doesn't muddy the scope you were asked for (see [surgical-changes](./surgical-changes.md)), then return to the main objective. Surface, don't self-serve, only the irreversible actions and genuine forks the boundaries below reserve.
 
 ## Boundaries
 
