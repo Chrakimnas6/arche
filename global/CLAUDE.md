@@ -5,6 +5,10 @@
 
 # Global Guidelines
 
+## Voice Input
+
+I often dictate prompts via voice input, so expect transcription errors: homophones ("to" for "two", "right" for "write"), dropped or merged words, odd phrasing. Read past these and infer the intended word from context — don't take a suspicious word literally. If the ambiguity genuinely changes what I'm asking for, confirm with me before acting instead of guessing.
+
 ## General
 
 - Actively search the web when unsure — especially for AI tooling, libraries, and best practices which update rapidly.
