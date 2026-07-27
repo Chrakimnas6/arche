@@ -11,6 +11,7 @@ Symptom fixes accumulate: each workaround makes the system harder to reason abou
 - **Reproduce first.** If you can't reproduce it, you can't verify your fix.
 - **Ask "why" until you hit bedrock.** The test fails -> the mock is wrong -> the interface changed -> the type doesn't match the runtime shape. Fix the type, not the mock.
 - **Resist the urge to add guards.** Adding a nil check to silence a crash is a symptom fix. Why is it nil? Fix that.
+- **A workaround that needs a paragraph to justify it is the wrong fix.** If the code only makes sense with a long comment explaining why the hack is necessary, the comment is a symptom of a design fault. Fix the code so the comment isn't needed, not the other way around.
 - **Check for the pattern, not just the instance.** If one file has a bug, grep for the same pattern. Fix all instances, or make it structurally impossible.
 - **When stuck, instrument -- don't guess.** Add logging, read the actual error.
 
