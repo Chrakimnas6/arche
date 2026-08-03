@@ -10,6 +10,7 @@ Validation scattered throughout a codebase is noisy, redundant, and gives a fals
 
 - **At boundaries** (CLI args, config files, external APIs, user input, RPC calls): validate, surface errors, handle defensively.
 - **Inside the system:** typed data, error propagation as values, no re-validation. Trust the types.
+- **Across the boundary:** expose domain concepts, not the boundary's private representation. Keep general-purpose mechanism inside and special-purpose policy at the edge.
 
 ## Applications
 
@@ -17,7 +18,8 @@ Validation scattered throughout a codebase is noisy, redundant, and gives a fals
 
 - All boundary entry points return values + errors. Errors are handled at the boundary, never silently swallowed and never raised as global aborts in production paths.
 - Validate config at parse time (the config boundary), not inside business logic.
-- Store raw payloads at boundaries; parse lazily at use-site to keep the parse failure mode local.
+- Parse raw data into domain types at the boundary — don't pass raw payloads inward for internal code to interpret. Storing a raw payload and parsing lazily spreads the parse failure mode to every use-site and makes internal code distrust its inputs.
+- Do not re-export transport, storage, framework, or wire types through the public surface — that leaks the boundary's private representation into internal code (see [module-depth](./module-depth.md) red flags).
 
 ### Code organization
 
@@ -39,4 +41,4 @@ See also [foundational-thinking](./foundational-thinking.md), [threat-modeling](
 
 ## Citations
 
-Meyer, *Object-Oriented Software Construction* (1988/1997) — Design by Contract: preconditions checked at the boundary, internals trust the contract. Hunt & Thomas, *The Pragmatic Programmer* (1999) — assertive programming and contracts. Eric Evans, *Domain-Driven Design* (2003) — bounded contexts and anti-corruption layers at integration boundaries.
+Meyer, *Object-Oriented Software Construction* (1988/1997) — Design by Contract: preconditions checked at the boundary, internals trust the contract. Hunt & Thomas, *The Pragmatic Programmer* (1999) — assertive programming and contracts. Eric Evans, *Domain-Driven Design* (2003) — bounded contexts and anti-corruption layers at integration boundaries. Alexis King, "Parse, don't validate" (2019) — parsing into domain types at the boundary so internal code never re-checks.
