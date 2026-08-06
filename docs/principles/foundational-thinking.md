@@ -16,7 +16,9 @@ Get the data structures right before writing logic. The right structure makes do
 - Choose structures that match the dominant access pattern
 - A data structure change late in the project is a rewrite; early is a one-line diff
 
-**Name the organizing structure the code is missing.** "Get the data structure right" is not just picking a container — it is choosing the model that makes illegal states unrepresentable: a state machine over scattered booleans, a table or registry over spread-out branching, a typed model over repeated shape assumptions. The test is whether the structure *deletes* branches and invalid states rather than adding indirection. Boring, explicit code stays when the shape is already clear and local; reach for a model only when it removes possibilities, not when it merely relocates them.
+**Name the organizing structure the code is missing.** "Get the data structure right" is not just picking a container — it is choosing the model that makes illegal states unrepresentable: a state machine over scattered booleans, a table or registry over spread-out branching, a typed model over repeated shape assumptions. The test is whether the structure *deletes* branches and invalid states rather than adding indirection. Boring, explicit code stays when the shape is already clear and local; reach for a model only when it removes possibilities, not when it merely relocates them. Another tell the structure is wrong: modules named for execution phases (load, validate, transform, save) that repeat the same domain rules across steps — execution order is not ownership; group code by the knowledge it protects.
+
+**Types are constructions, not restrictions.** Build the type up from the values you want instead of carving them out of a looser type with runtime checks — a non-empty list is a head plus a rest, not a list with a length check; a valid time range is a start plus a duration, not two timestamps kept ordered by discipline. Strengthen a type only where partiality appears: a runtime assertion, nil check, or "should never happen" branch marks the place a type is too weak — push that check up into the type, then stop. Precision beyond what keeps operations total costs reuse and ceremony and buys no safety.
 
 At the code level, simplicity preserves options:
 
@@ -40,6 +42,7 @@ Applies to commits too -- sequence for maximum option value:
 - Keep commits small and single-purpose
 - Prefer commits that are easy to review, revert, and cherry-pick independently
 - **Order the stack so the sequence proves itself to a reviewer**: the failing test lands before the fix (red, then green), the subtraction before the reshape, the baseline capture before the treatment. Each commit stands alone and the sequence reads as an argument.
+- **Each increment lands a coherent abstraction or deepens one that exists.** Don't spread a new capability across callers as special-case coordination.
 
 Subtraction ([subtract-before-you-add](./subtract-before-you-add.md)) comes before scaffolding -- remove dead weight first, then lay foundations.
 

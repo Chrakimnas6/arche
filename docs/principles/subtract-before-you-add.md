@@ -15,6 +15,8 @@ Adding to a complex system compounds complexity. Removing first reduces the surf
 
 **Corollary — borrow a maintainer's fatigue.** Writing code is cheap for an agent, which makes over-engineering easy. Counter it continuously, not just when sequencing: prefer deletion when asked to improve, make the smallest change that solves the problem, and when a task wants a new signal threaded through types, schemas, or pipelines, stop and look for a more direct path. If a human would find the result exhausting to maintain, it's a bad solution.
 
+**Corollary — sweat the small leaks.** Within the code you are already changing, remove tiny pass-throughs, representation leaks, and duplicated decisions before they spread — small leaks compound into permanent coordination costs. Aim to leave the code you touched slightly simpler, behind the same or smaller surface, than you found it. This is continual investment inside your change's scope, not license for opportunistic cleanup of code you aren't changing — that boundary belongs to [surgical-changes](./surgical-changes.md).
+
 ## Migrate Callers, Then Delete Legacy APIs
 
 When a new API is the right design, migrate callers and remove the old API in the *same* refactor wave instead of preserving compatibility layers.

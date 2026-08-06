@@ -26,6 +26,17 @@ Use these terms consistently when discussing architecture. Don't substitute "com
 
 **Reader load has two axes: layers-to-trace and state-to-hold.** When judging whether code is hard to follow, count the abstraction layers a reader must cross to answer a question, and the mutable state they must hold in their head while crossing them -- not the number of files. Collapse wrappers with a single caller; shrink the scope of mutable state. (Internal structure spread across files is fine when the interface stays small -- that's depth working.)
 
+## Red Flags
+
+Screen every interface — proposed or existing — against these. Each is a reason to revise the shape.
+
+- **Shallow module.** The interface is nearly as complex as what it hides. Signs: callers coordinate several calls to complete one operation; public options expose internal stages or implementation choices; learning the interface doesn't spare the caller from learning the implementation.
+- **Information leakage.** One internal decision — a representation, policy, or protocol detail — appears in more than one module, so changing it requires coordinated edits. Re-exporting transport, storage, or framework types through a public surface is leakage; parse external data into domain types behind the interface (see [boundary-discipline](./boundary-discipline.md)).
+- **Temporal decomposition.** Modules organized by execution order (load, validate, transform, save) instead of the knowledge they own, repeating one representation and its invariants across several boundaries. Group code by domain knowledge and ownership; methods that run at different times can share a module when they protect the same decisions. Execution order is not ownership.
+- **Pass-through method.** Forwards the same arguments to another method with the same shape — a layer that hides nothing. Remove it or move the responsibility to the module that can complete the operation; keep a forwarding boundary only when it adds policy, adaptation, or a distinct abstraction. The deletion test above catches these.
+
+Don't confuse a deep module with a deep call chain: a chain scatters understanding across layers, a deep module concentrates capability behind one interface. A rich interface can keep call chains short.
+
 ## Deepening Safely
 
 When merging shallow modules into a deeper one, classify dependencies to determine the testing strategy:

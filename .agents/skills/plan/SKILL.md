@@ -126,7 +126,7 @@ For changes touching existing code, apply `docs/principles/redesign-from-first-p
 
 ### Alternatives Check
 
-For architectural decisions, sketch 2-3 approaches in the overview's Key decisions section and state which was chosen and why (`docs/principles/exhaust-the-design-space.md`).
+For architectural decisions, sketch 2-3 approaches in the overview's Key decisions section and state which was chosen and why (`docs/principles/exhaust-the-design-space.md`). A second flavor of the first approach does not count as an alternative. Screen each candidate against the red flags in `docs/principles/module-depth.md` (shallow module, information leakage, temporal decomposition, pass-throughs); between viable candidates, prefer the one that hides more complexity behind the smaller interface.
 
 ### Verification Strategy
 
