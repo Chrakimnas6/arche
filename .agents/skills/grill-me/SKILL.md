@@ -3,11 +3,19 @@ name: grill-me
 description: Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. Use when user wants to stress-test a plan, get grilled on their design, or mentions "grill me".
 ---
 
-Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. Enter high-leverage branches first — questions whose answers would change data models, interfaces, or the shape of the plan — and defer questions that only tune details within a settled structure; a structural answer discovered late invalidates every branch resolved on top of it (`docs/principles/foundational-thinking.md`: structural decisions optimize for option value). For each question, provide your recommended answer.
+Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Map the plan as a **design tree** — every decision branches into the decisions that hang off it — and walk each branch, respecting dependencies between decisions. Enter high-leverage branches first — questions whose answers would change data models, interfaces, or the shape of the plan — and defer questions that only tune details within a settled structure; a structural answer discovered late invalidates every branch resolved on top of it (`docs/principles/foundational-thinking.md`: structural decisions optimize for option value). For each question, provide your recommended answer.
 
-Ask the questions one at a time.
+Work the tree in **rounds**. The **frontier** is every decision whose prerequisites are already settled — the questions you can ask *now* without guessing at answers you haven't heard yet. Ask the whole frontier in one round, high-leverage questions first; a question whose answer depends on another question still open in this round belongs to a *later* round, not this one. Each answered round reshapes the tree — settled decisions push the frontier outward and unblock the questions that depended on them. Recompute the frontier and ask the next round.
 
-Split **facts** from **decisions**. If a *fact* can be found by exploring the environment — the codebase, the filesystem, tools, docs — look it up rather than asking me; finding facts is your job, never mine. The *decisions* are mine: put each one to me and wait for my answer. Don't answer a decision autonomously because you could infer it from the code — inference is not consent.
+Format each question in the round like so:
+
+```
+❓ **Q1 — <question title>**: <question body, may be multiple paragraphs, including choices>
+
+➡️ <your recommended answer>
+```
+
+Split **facts** from **decisions**. If a *fact* can be found by exploring the environment — the codebase, the filesystem, tools, docs — look it up rather than asking me; finding facts is your job, never mine. When a frontier question needs a fact, dispatch a subagent to find it and don't block the round on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait — ask the rest of the frontier now. The *decisions* are mine: put each one to me and wait for my answer. Don't answer a decision autonomously because you could infer it from the code — inference is not consent.
 
 ## Opening
 
@@ -29,4 +37,4 @@ Split **facts** from **decisions**. If a *fact* can be found by exploring the en
 
 ## Closing
 
-When every branch is resolved, write the decision record to `docs/design/<topic>-decisions.md`: each decision with its one-line why, plus any questions deliberately deferred. This is the artifact the `plan` skill consumes — without it, the interview's conclusions die with the session.
+The interview is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Then write the decision record to `docs/design/<topic>-decisions.md`: each decision with its one-line why, plus any questions deliberately deferred. This is the artifact the `plan` skill consumes — without it, the interview's conclusions die with the session.

@@ -59,7 +59,7 @@ Before writing any code:
 
 Ask: "What should the public interface look like? Which seams should we test, and which behaviors matter most?"
 
-A **seam** is the public boundary you observe behavior at without reaching inside. Tests live at seams, never against internals. **You can't test everything** — agreeing the seams up front is how testing effort lands on critical paths and complex logic instead of every edge case. No test is written at a seam the user hasn't confirmed.
+A **seam** is the public boundary you observe behavior at without reaching inside. Tests live at seams, never against internals. When the shape of the interface is itself in question — how deep the module is, where the seam belongs, what to expose — consult `docs/principles/module-depth.md` before agreeing the seams, not only when refactoring later. **You can't test everything** — agreeing the seams up front is how testing effort lands on critical paths and complex logic instead of every edge case. No test is written at a seam the user hasn't confirmed.
 
 ### 2. Tracer Bullet
 
