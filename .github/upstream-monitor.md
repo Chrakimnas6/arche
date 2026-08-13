@@ -19,6 +19,7 @@ Query each watched path, take the most recent commit across them, and call that 
 
 Watched paths per repo (resolve to the repo's actual paths when you inspect it):
 - cursor/plugins: `pstack/skills`, `pstack/agents` — poteto's successor to noodle; only the pstack/ subdir of this monorepo is watched (query with `?path=pstack/skills` etc.)
+- dietrichgebert/ponytail: `AGENTS.md` — the core lazy-senior-dev ruleset, source of subtract-before-you-add's reuse ladder; the rest of the repo is multi-host install plumbing, benchmarks, and mode hooks we don't use (query with `?path=AGENTS.md`)
 - garrytan/gstack: review + investigate skills, plan patterns, hooks
 - mattpocock/skills: tdd + grill-me skills
 - obra/superpowers: `skills/test-driven-development`, `skills/systematic-debugging`, `skills/writing-skills`, `skills/subagent-driven-development` — pinned paths; the anti-rationalization tables live inside the first two, skill-authoring and delegation-discipline patterns in the latter two. Other `skills/*` dirs (e.g. `using-superpowers`) are NOT watched (query with `?path=skills/test-driven-development` etc.)

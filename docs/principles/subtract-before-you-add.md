@@ -15,6 +15,18 @@ Adding to a complex system compounds complexity. Removing first reduces the surf
 
 **Corollary — borrow a maintainer's fatigue.** Writing code is cheap for an agent, which makes over-engineering easy. Counter it continuously, not just when sequencing: prefer deletion when asked to improve, make the smallest change that solves the problem, and when a task wants a new signal threaded through types, schemas, or pipelines, stop and look for a more direct path. If a human would find the result exhausting to maintain, it's a bad solution.
 
+**Corollary — climb the reuse ladder before writing new code.** Stop at the first rung that holds:
+
+1. Does this need to exist at all?
+2. Does the codebase already have it? Reuse the helper or pattern that's there.
+3. Does the standard library do it?
+4. Does a native platform feature cover it?
+5. Does an already-installed dependency solve it?
+6. Can it be one line?
+7. Only then: write the minimum that works.
+
+The ladder runs *after* understanding the problem, not instead of it — read the code the change touches and trace the real flow before picking a rung. It never cuts what correctness requires: trust-boundary validation, error handling that prevents data loss, security, accessibility. The result is small because it is necessary, not golfed.
+
 **Corollary — sweat the small leaks.** Within the code you are already changing, remove tiny pass-throughs, representation leaks, and duplicated decisions before they spread — small leaks compound into permanent coordination costs. Aim to leave the code you touched slightly simpler, behind the same or smaller surface, than you found it. This is continual investment inside your change's scope, not license for opportunistic cleanup of code you aren't changing — that boundary belongs to [surgical-changes](./surgical-changes.md).
 
 ## Migrate Callers, Then Delete Legacy APIs
@@ -50,4 +62,4 @@ This is not about *what* to build ([foundational-thinking](./foundational-thinki
 
 ## Citations
 
-Saint-Exupéry, *Wind, Sand and Stars* (1939) — "Perfection is finally attained not when there is no longer anything to add, but when there is no longer anything to take away." Brooks, *The Mythical Man-Month* (1975) — second-system effect; less is more. Hunt & Thomas, *The Pragmatic Programmer* (1999) — "Program Deliberately" (the antidote to programming by coincidence) and the DRY principle. Fowler, "StranglerFigApplication" (martinfowler.com bliki, 2004) — incremental replacement of legacy systems for caller migration. Fowler, *Refactoring* (2nd ed., 2018) — refactor in the direction of deletion.
+Saint-Exupéry, *Wind, Sand and Stars* (1939) — "Perfection is finally attained not when there is no longer anything to add, but when there is no longer anything to take away." Brooks, *The Mythical Man-Month* (1975) — second-system effect; less is more. Hunt & Thomas, *The Pragmatic Programmer* (1999) — "Program Deliberately" (the antidote to programming by coincidence) and the DRY principle. Fowler, "StranglerFigApplication" (martinfowler.com bliki, 2004) — incremental replacement of legacy systems for caller migration. Fowler, "Yagni" (martinfowler.com bliki, 2015) — the reuse ladder's first rung. Fowler, *Refactoring* (2nd ed., 2018) — refactor in the direction of deletion.
