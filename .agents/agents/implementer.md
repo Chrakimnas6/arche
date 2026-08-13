@@ -1,6 +1,6 @@
 ---
 name: implementer
-description: Implementation worker (defaults to Opus at medium effort; raise effort to high for phases touching concurrency, security boundaries or smart contracts, cross-cutting refactors, or when retrying a failed verification — criteria live in the execute-plan skill) for the plan-big-execute-small flow. Delegate ONE plan phase (or one self-contained coding brief) per invocation; it implements the brief, runs that phase's verification, and reports back. Use proactively when executing docs/plans/ phases.
+description: Implementation worker (defaults to Opus at medium effort; raise effort to high for phases touching concurrency or shared state, security boundaries or smart contracts, cross-cutting refactors, or when retrying a failed verification — criteria live in the execute-plan skill) for the plan-big-execute-small flow. Delegate ONE plan phase (or one self-contained coding brief) per invocation; it implements the brief, runs that phase's verification, and reports back. Use proactively when executing docs/plans/ phases.
 tools: Read, Edit, Write, Bash, Glob, Grep, Skill
 model: opus
 effort: medium
