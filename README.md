@@ -141,7 +141,7 @@ This gives you `/codex:review`, `/codex:adversarial-review`, and `/codex:rescue`
 
 A weekly Claude Code scheduled agent monitors upstream repos for changes in the paths we care about. When relevant updates are found, it reads the actual source files, implements adaptations directly, and opens or updates a rolling adoption PR. Managed via `/schedule` in Claude Code. Full routine prompt lives at [`.github/upstream-monitor.md`](./.github/upstream-monitor.md).
 
-Upstream sources: [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack) (pstack — poteto's successor to noodle), [garrytan/gstack](https://github.com/garrytan/gstack), [mattpocock/skills](https://github.com/mattpocock/skills), [obra/superpowers](https://github.com/obra/superpowers).
+Upstream sources: [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack) (pstack — poteto's successor to noodle), [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) (lazy-senior-dev reuse ladder), [garrytan/gstack](https://github.com/garrytan/gstack), [mattpocock/skills](https://github.com/mattpocock/skills), [obra/superpowers](https://github.com/obra/superpowers).
 
 ## Customization
 

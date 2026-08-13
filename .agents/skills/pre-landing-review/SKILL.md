@@ -73,7 +73,7 @@ Apply the review against the diff in two passes:
 
 ### Pass 2 (INFORMATIONAL)
 
-**AI Code Quality (advisory)** -- patterns common in AI-generated code: empty catch blocks that swallow errors, over-abstracted wrappers around single-use logic, defensive validation for impossible internal states, copy-paste patterns that should be a shared function.
+**AI Code Quality (advisory)** -- patterns common in AI-generated code: empty catch blocks that swallow errors, over-abstracted wrappers around single-use logic, defensive validation for impossible internal states, copy-paste patterns that should be a shared function, reviewer-facing comments (narrating the change, justifying a decision, replaying design discussion -- prose that belongs in the PR description, not the file), comment density far above the surrounding file's baseline.
 
 **Search-before-recommending:** When recommending a fix, verify it's current best practice for the framework version in use. Check if a built-in solution exists before recommending a workaround.
 
