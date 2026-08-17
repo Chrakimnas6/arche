@@ -146,6 +146,7 @@ Use for ANY technical issue — test failures, production bugs, unexpected behav
    - If you are uncertain about a security-sensitive change, STOP and escalate
    - If the scope of work exceeds what you can verify, STOP and escalate
    - If a fix seems to work but you cannot explain *why*, that is not a fix
+   - A claimed blocker is itself a hypothesis: before escalating "this can't be done" or "this needs X", hold the verbatim error, the documented statement, or a live probe that proves it — when a cheap probe settles the question, run it first (`docs/principles/prove-it-works.md`)
 
    See `docs/principles/never-block-on-the-human.md`.
 

@@ -109,6 +109,11 @@ Spawn all reviewers in parallel.
 output file is non-empty. If a reviewer fails, read its `.err` file and report the specific
 error (auth expired, binary missing, timeout).
 
+A failed or timed-out reviewer is **missing coverage, not a clean bill**. Do not synthesize
+as if that lens had reviewed and found nothing: the verdict must name which lens produced no
+output and state that its perspective is absent, so the reader weighs the remaining findings
+against a known coverage gap.
+
 ## Step 6 — Synthesize Verdict
 
 Read each reviewer's output file from `$REVIEW_DIR/`. Deduplicate overlapping findings.
