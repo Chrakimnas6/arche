@@ -18,7 +18,7 @@ Validation scattered throughout a codebase is noisy, redundant, and gives a fals
 
 - All boundary entry points return values + errors. Errors are handled at the boundary, never silently swallowed and never raised as global aborts in production paths.
 - Validate config at parse time (the config boundary), not inside business logic.
-- Parse raw data into domain types at the boundary — don't pass raw payloads inward for internal code to interpret. Storing a raw payload and parsing lazily spreads the parse failure mode to every use-site and makes internal code distrust its inputs.
+- Parse raw data into a **named domain type** at the boundary — don't pass raw payloads inward for internal code to interpret. The boundary's generic representation (a raw map, string-keyed dictionary, or untyped blob, whatever the language spells it as) stops at that parse: it must not appear in any internal signature. Storing a raw payload and parsing lazily spreads the parse failure mode to every use-site and makes internal code distrust its inputs.
 - Do not re-export transport, storage, framework, or wire types through the public surface — that leaks the boundary's private representation into internal code (see [module-depth](./module-depth.md) red flags).
 
 ### Code organization

@@ -17,6 +17,8 @@ Review the conversation for corrections, mistakes and their root causes, undocum
 
 Skip anything one-off, already documented, or with no applicability beyond this task.
 
+The scan always ends with an explicit outcome. If it genuinely surfaces nothing, report "No durable learnings this session" and stop — an explicit empty result, not a silently skipped step. A self-review gated on "if something noteworthy came up" reads as optional and never fires; running the scan unconditionally and stating the empty result is what keeps the step honest.
+
 ## Step 2 — Categorize and Route
 
 For each learning, determine where it belongs. Route by `docs/principles/encode-lessons-in-structure.md`.
