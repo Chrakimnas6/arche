@@ -7,10 +7,16 @@ Interview me relentlessly about every aspect of this plan until we reach a share
 
 Work the tree in **rounds**. The **frontier** is every decision whose prerequisites are already settled — the questions you can ask *now* without guessing at answers you haven't heard yet. Ask the whole frontier in one round, high-leverage questions first; a question whose answer depends on another question still open in this round belongs to a *later* round, not this one. Each answered round reshapes the tree — settled decisions push the frontier outward and unblock the questions that depended on them. Recompute the frontier and ask the next round.
 
-Format each question in the round like so:
+Format a round like so, separating questions with a horizontal rule:
 
 ```
 ❓ **Q1 — <question title>**: <question body, may be multiple paragraphs, including choices>
+
+➡️ <your recommended answer>
+
+---
+
+❓ **Q2 — <question title>**: <question body, may be multiple paragraphs, including choices>
 
 ➡️ <your recommended answer>
 ```
