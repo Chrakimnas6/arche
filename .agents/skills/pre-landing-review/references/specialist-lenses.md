@@ -38,3 +38,19 @@ When the diff touches queries or data-fetching code:
 - Missing indexes — new queries on columns without indexes
 - Algorithmic complexity — O(n²) patterns, unbounded iterations
 - Large payloads — endpoints returning unbounded result sets without pagination
+
+## Simplification Lens
+
+When the diff adds substantial new structure (roughly 100+ changed lines of application code). Hunts unrequested *structure* only — findings are INFORMATIONAL and advisory. Coverage gaps are out of scope: Step 5 owns those. Simplification and test-coverage findings are orthogonal, not contradictory — coverage pushes tests UP, simplification pushes unrequested structure DOWN; the same diff can legitimately receive both.
+
+Tag each finding with exactly one category:
+
+- `delete` — dead code, unused flexibility, speculative feature. Replacement: nothing.
+- `stdlib` — hand-rolled thing the standard library ships. Name the function.
+- `native` — dependency or code doing what the platform already does (DB constraint over app code, CSS over JS). Name the feature.
+- `speculative` — abstraction with one implementation, config nobody sets, layer with one caller.
+- `shrink` — same logic, fewer lines; only when the reduction is ≥5 lines. Show the shorter form.
+
+**Finding style: location + what to cut + what replaces it.** "This validator might be more complex than necessary" is not a finding; "`lib/email.go:12` — 27-line validator, `stdlib`: a contains-`@` check covers it; real validation is the confirmation mail" is.
+
+Never flag for deletion: tests, error paths, edge-case branches, input validation, security measures, accessibility. A single smoke test is the completeness minimum, not bloat. Skip harmless redundancy that aids readability, consistency-only changes, and anything the diff itself already addresses. These findings map to `docs/principles/subtract-before-you-add.md` — cite the reuse-ladder rung the fix lands on.
