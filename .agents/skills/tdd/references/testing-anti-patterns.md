@@ -13,9 +13,9 @@ Tests must verify real behavior, not mock behavior. Mocks are a means to isolate
 ## The Iron Laws
 
 ```
-1. NEVER test mock behavior
-2. NEVER add test-only methods to production structs
-3. NEVER mock without understanding dependencies
+1. Never test mock behavior
+2. Never add test-only methods to production structs
+3. Never mock without understanding dependencies
 ```
 
 ## Name the Break (before writing any test)
@@ -66,8 +66,6 @@ func TestRendersSidebar(t *testing.T) {
 - Test passes when mock is present, fails when it's not
 - Tells you nothing about real behavior
 
-**The user's correction:** "Are we testing the behavior of a mock?"
-
 **The fix:**
 ```go
 // GOOD: Test real component or don't mock it
@@ -81,18 +79,6 @@ func TestRendersSidebar(t *testing.T) {
 
 // OR if sidebar must be mocked for isolation:
 // Don't assert on the mock - test Page's behavior with sidebar present
-```
-
-### Gate Function
-
-```
-BEFORE asserting on any mock element:
-  Ask: "Am I testing real component behavior or just mock existence?"
-
-  IF testing mock existence:
-    STOP - Delete the assertion or use the real implementation
-
-  Test real behavior instead
 ```
 
 ## Anti-Pattern 2: Test-Only Methods in Production
@@ -148,22 +134,6 @@ func TestSomething(t *testing.T) {
 }
 ```
 
-### Gate Function
-
-```
-BEFORE adding any method to production struct:
-  Ask: "Is this only used by tests?"
-
-  IF yes:
-    STOP - Don't add it
-    Put it in test utilities instead
-
-  Ask: "Does this struct own this resource's lifecycle?"
-
-  IF no:
-    STOP - Wrong struct for this method
-```
-
 ## Anti-Pattern 3: Mocking Without Understanding
 
 **The violation:**
@@ -205,31 +175,7 @@ func TestDetectsDuplicateServer(t *testing.T) {
 }
 ```
 
-### Gate Function
-
-```
-BEFORE mocking any method:
-  STOP - Don't mock yet
-
-  1. Ask: "What side effects does the real method have?"
-  2. Ask: "Does this test depend on any of those side effects?"
-  3. Ask: "Do I fully understand what this test needs?"
-
-  IF depends on side effects:
-    Mock at lower level (the actual slow/external operation)
-    OR use test doubles that preserve necessary behavior
-    NOT the high-level method the test depends on
-
-  IF unsure what test depends on:
-    Run test with real implementation FIRST
-    Observe what actually needs to happen
-    THEN add minimal mocking at the right level
-
-  Red flags:
-    - "I'll mock this to be safe"
-    - "This might be slow, better mock it"
-    - Mocking without understanding the dependency chain
-```
+When unsure what the test depends on, run it against the real implementation first and observe what has to happen; then mock only the slow or external operation, at that level. "I'll mock this to be safe" is the red flag.
 
 ## Anti-Pattern 4: Incomplete Mocks
 
@@ -267,24 +213,6 @@ mockResponse := Response{
 }
 ```
 
-### Gate Function
-
-```
-BEFORE creating mock responses:
-  Check: "What fields does the real API response contain?"
-
-  Actions:
-    1. Examine actual API response from docs/examples
-    2. Include ALL fields system might consume downstream
-    3. Verify mock matches real response schema completely
-
-  Critical:
-    If you're creating a mock, you must understand the ENTIRE structure
-    Partial mocks fail silently when code depends on omitted fields
-
-  If uncertain: Include all documented fields
-```
-
 ## Anti-Pattern 5: Tautological Assertions
 
 **The violation:**
@@ -318,20 +246,6 @@ func TestApplyDiscount(t *testing.T) {
 }
 ```
 
-### Gate Function
-
-```
-BEFORE writing an assertion:
-  Ask: "Where does my expected value come from?"
-
-  IF it is produced the same way the code produces it
-     (same formula, a snapshot the code regenerates, a constant equal to itself):
-    STOP - the test passes by construction and can never catch a bug
-
-  Expected values must come from an independent source:
-    a known-good literal, a worked example, or the spec
-```
-
 ## Anti-Pattern 6: Integration Tests as Afterthought
 
 **The violation:**
@@ -362,8 +276,6 @@ TDD cycle:
 - Mocking everything to make test pass
 - Mocks missing methods real components have
 - Test breaks when mock changes
-
-**The user's question:** "Do we need to be using a mock here?"
 
 **Consider:** Integration tests with real components often simpler than complex mocks
 

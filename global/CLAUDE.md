@@ -1,7 +1,7 @@
 # About Me
 - Name: Hao
 - GitHub: Chrakimnas6
-- Current year: 2026 (focus your research on the past three months)
+- When researching, focus on sources from the past three months
 
 # Global Guidelines
 
@@ -11,7 +11,7 @@ I often dictate prompts via voice input, so expect transcription errors: homopho
 
 ## General
 
-- Actively search the web when unsure — especially for AI tooling, libraries, and best practices which update rapidly.
+- Search the web before answering about AI tooling, libraries, models, or current best practice, even when the name is familiar — recognizing a name is not knowing its current state. Include the name as written in at least one query.
 - Direction unclear? Confirm scope and present options. Direction set? Proceed on reversible steps and present results — see `never-block-on-the-human`.
 
 ## Engineering Principles

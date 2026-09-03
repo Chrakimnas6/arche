@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, or asks for test-first development.
+description: Test-driven development with red-green-refactor loop. Use when building a feature or fixing a bug test-first, or when the user mentions TDD or red-green-refactor.
 ---
 
 # Test-Driven Development (TDD)
@@ -11,7 +11,7 @@ description: Test-driven development with red-green-refactor loop. Use when user
 NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
 ```
 
-Write code before the test? Delete it. Start over. Delete means delete — not kept as "reference", not "adapted" while writing tests. Implement fresh from tests. No exceptions: not for code that's "too simple to test", not for code you already manually tested, not for exploration (throw the exploration away and start with TDD).
+Code written before its test is discarded and reimplemented from the test — not kept as a reference or adapted. That includes code that seems too simple to test, code you already checked by hand, and exploratory spikes.
 
 ## Philosophy
 
@@ -59,7 +59,7 @@ Before writing any code:
 
 Ask: "What should the public interface look like? Which seams should we test, and which behaviors matter most?"
 
-A **seam** is the public boundary you observe behavior at without reaching inside. Tests live at seams, never against internals. When the shape of the interface is itself in question — how deep the module is, where the seam belongs, what to expose — consult `docs/principles/module-depth.md` before agreeing the seams, not only when refactoring later. **You can't test everything** — agreeing the seams up front is how testing effort lands on critical paths and complex logic instead of every edge case. No test is written at a seam the user hasn't confirmed.
+A **seam** is the public boundary you observe behavior at without reaching inside. Tests live at seams, never against internals. When the shape of the interface is itself in question — how deep the module is, where the seam belongs, what to expose — consult `docs/principles/module-depth.md` before agreeing the seams, not only when refactoring later. **You can't test everything** — agreeing the seams up front is how testing effort lands on critical paths and complex logic instead of every edge case. No test is written at a seam the user hasn't confirmed. When running from a plan phase or brief, its Data structures and Verification sections are the confirmed seams and behaviors — don't re-ask.
 
 ### 2. Tracer Bullet
 

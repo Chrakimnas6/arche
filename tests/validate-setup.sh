@@ -65,7 +65,7 @@ for ref in testing-anti-patterns.md mocking.md; do
 done
 
 # Investigate references
-for ref in root-cause-tracing.md defense-in-depth.md condition-based-waiting.md; do
+for ref in root-cause-tracing.md condition-based-waiting.md; do
   f=".agents/skills/investigate/references/$ref"
   [ -f "$f" ] && pass "investigate/$ref" || fail "investigate/$ref missing"
 done
