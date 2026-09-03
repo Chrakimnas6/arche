@@ -109,6 +109,7 @@ After the two-pass review, re-examine the diff through domain-specific lenses. D
 | DB migrations, schema changes, ALTER TABLE | **Data Safety** |
 | API routes, handlers, request/response contracts | **API Contract** |
 | DB queries, loops over collections, data fetching | **Performance** |
+| Substantial new structure (roughly 100+ changed lines of application code) | **Simplification** (advisory) |
 
 Read [references/specialist-lenses.md](references/specialist-lenses.md) for the matched lenses' checklists. Lens findings use the same confidence calibration and finding format as Step 3 and flow into Step 6 (Fix-First).
 

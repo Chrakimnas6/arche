@@ -24,7 +24,7 @@ For each phase:
 2. **Implement.** Use the `tdd` skill when the phase adds testable behavior. Stay surgical (`docs/principles/surgical-changes.md`) — only what the phase describes, nothing opportunistic.
 3. **Verify.** Run the phase's verification section — both static and runtime checks. "It compiles" is not verification (`docs/principles/prove-it-works.md`).
 4. **Gate.** Do not start the next phase until this phase's verification passes. If it fails, use the `investigate` skill — no quick patches to reach the next phase.
-5. **Record completion.** Add a `Status: done` line at the top of the phase file so a future session can resume without re-deriving progress.
+5. **Record completion.** Add a `Status: done` line at the top of the phase file so a future session can resume without re-deriving progress. Name the evidence beside the marker — the verification command that passed and the commit SHA it passed at (e.g. `Status: done — go test ./internal/foo/... green at a1b2c3d`). A bare marker is a claim; a marker naming its evidence gives the resuming session a pointer to re-check instead of proof to re-derive.
 
 ### Delegating the Implement step
 

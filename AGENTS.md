@@ -34,6 +34,8 @@ Stages are skipped deliberately, not by omission — a trivial fix can go straig
 
 ## Conventions
 
+- **Closing report.** End with a recap that stands on its own for a reader who sees only the last message: what changed, what was skipped and why, what to watch. Cover those three and stop. A deliverable's own format comes from its skill; this governs the prose around it.
+
 <!-- Fill in per project. Only include things the agent cannot infer from the code. Examples: -->
 <!-- - Error messages describe failure state, not expectations -->
 <!-- - All public APIs validated at boundary; trust internal code -->
