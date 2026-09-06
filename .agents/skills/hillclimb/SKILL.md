@@ -39,7 +39,7 @@ Build the harness that produces the metric — a script, benchmark, or test you 
 
 Once proven, the harness is your **immutable ruler**: if it changes mid-run, no measurement is comparable. It is the artifact a reviewer reruns to replay your run. See `docs/principles/build-the-lever.md`.
 
-Record the **baseline** measurement before changing anything — sampled to clear the noise (median of N runs, never a single number) — plus a green run of the regression tests that must stay green, so a later failure is attributable. Fix an **attempt budget** for the run at the same time — use the one the user gave, or declare one at the top of the decision log and proceed (adjustable on async review). Give the stop predicate a **floor on attempts** as well as a target, so a lucky early win can't end the run.
+Record the **baseline** measurement before changing anything — sampled to clear the noise (median of N runs, never a single number) — plus a green run of the regression tests that must stay green, so a later failure is attributable. Baseline and attempt must measure the **same scenario**: if the baseline cannot run it at all (the behavior doesn't exist yet at baseline), don't report a ratio between unlike runs — set an absolute budget for the work the change adds and for the end-to-end state the user waits for, and gate on those instead. Fix an **attempt budget** for the run at the same time — use the one the user gave, or declare one at the top of the decision log and proceed (adjustable on async review). Give the stop predicate a **floor on attempts** as well as a target, so a lucky early win can't end the run.
 
 ### 3. One hypothesis, grounded in the system
 
