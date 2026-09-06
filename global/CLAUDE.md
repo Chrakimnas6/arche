@@ -20,7 +20,9 @@ Before acting on design or implementation tasks, read the principles index at `~
 
 ## Code Comments
 
-Comment only to state what the code cannot show: an invariant, an external system's quirk, why the obvious approach fails. Never write comments that narrate the change, justify a decision to a reviewer, or replay design discussion — that prose belongs in the PR description, not the file. The test: would the comment still earn its place if a human had written the code and no review conversation existed? Match the surrounding file's comment density. Comments a tool or convention requires — license headers, lint or codegen directives, doc comments on public APIs — are outside this rule; write them as the project expects.
+Write comments required by tools or project conventions, including license headers, lint or codegen directives, and required API documentation. Exported visibility alone does not establish a documentation requirement; follow the project's convention.
+
+For other comments, state only information the code cannot show: an invariant, an external system's quirk, why the obvious approach fails. Remove restatements of names, statements, or assertions. Keep implementation and review history in the PR description. Existing comment density is not a target. Before handing off a change that adds or edits handwritten comments, use the checklist at `~/src/github.com/Chrakimnas6/arche/.agents/skills/pre-landing-review/references/comment-review.md`.
 
 ## Commit Messages & PR Descriptions
 

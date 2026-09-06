@@ -93,7 +93,7 @@ Alternatively, make everything available in *every* project on your machine inst
 
 | Agent | Used by | What It Does |
 |-------|---------|-------------|
-| **implementer** | `execute-plan` | Cheap-model implementation worker (defaults to Sonnet): takes one phase brief, implements and verifies it, reports back with artifacts. The orchestrating session re-runs verification and gates the next phase — design judgment stays in the main loop. |
+| **implementer** | `execute-plan` | Implementation worker: takes one phase brief, implements and verifies it, reviews its added comments, and reports back with artifacts. Model and effort defaults live in its frontmatter. The orchestrating session re-runs verification and gates the next phase — design judgment stays in the main loop. |
 
 ## Workflow
 

@@ -55,8 +55,10 @@ else
 fi
 
 # Pre-landing-review references
-f=".agents/skills/pre-landing-review/references/specialist-lenses.md"
-[ -f "$f" ] && pass "pre-landing-review/specialist-lenses.md" || fail "pre-landing-review/specialist-lenses.md missing"
+for ref in specialist-lenses.md comment-review.md; do
+  f=".agents/skills/pre-landing-review/references/$ref"
+  [ -f "$f" ] && pass "pre-landing-review/$ref" || fail "pre-landing-review/$ref missing"
+done
 
 # TDD references
 for ref in testing-anti-patterns.md mocking.md; do

@@ -48,18 +48,12 @@ RIGHT (vertical):
 
 **Align with existing domain language.** Use the project's domain glossary and naming conventions so test names and interface vocabulary match the project's language; respect any design docs or ADRs (e.g. in `docs/design/`) governing the area you're touching. Consistent terms across tests and code make tests read as specifications.
 
-Before writing any code:
+Before writing code, identify the **seams** — the public boundaries tests observe — and list the requested behaviors to test, prioritizing critical paths and complex logic.
 
-- [ ] Confirm with user what interface changes are needed
-- [ ] Agree the **seams** — the public boundaries tests will attach to — before writing any test
-- [ ] Confirm with user which behaviors to test (prioritize)
-- [ ] List the behaviors to test (not implementation steps)
-- [ ] Design interfaces for testability
-- [ ] Get user approval on the plan
+- **Established scope:** A clear user request and existing interfaces, or a plan brief's Data structures and Verification sections, supply the seams and behaviors. Proceed without another approval round.
+- **Unresolved direction:** If the request and code leave materially different interface or behavior choices open, ask only about those choices before writing dependent tests. When the interface design is in question, consult `docs/principles/module-depth.md`.
 
-Ask: "What should the public interface look like? Which seams should we test, and which behaviors matter most?"
-
-A **seam** is the public boundary you observe behavior at without reaching inside. Tests live at seams, never against internals. When the shape of the interface is itself in question — how deep the module is, where the seam belongs, what to expose — consult `docs/principles/module-depth.md` before agreeing the seams, not only when refactoring later. **You can't test everything** — agreeing the seams up front is how testing effort lands on critical paths and complex logic instead of every edge case. No test is written at a seam the user hasn't confirmed. When running from a plan phase or brief, its Data structures and Verification sections are the confirmed seams and behaviors — don't re-ask.
+Test observable behavior through those seams, not internal implementation steps. Design new interfaces for testability within the agreed scope; do not invent additional behavior to test.
 
 ### 2. Tracer Bullet
 

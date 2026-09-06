@@ -8,11 +8,13 @@ description: |
 
 # Pre-Landing PR Review
 
-Analyze the current branch's diff against the base branch for structural issues that tests don't catch.
+Analyze the current branch's diff against the base branch for structural issues that tests don't catch. An explicit review scope or read-only request from the user takes precedence over this workflow's defaults.
 
 ---
 
-## Step 0: Detect base branch
+## Step 0: Load project rules and detect base branch
+
+Read the project's `AGENTS.md` or `CLAUDE.md`; after collecting the diff, read applicable instructions in changed directories. Project-specific conventions and blocking criteria take precedence over the generic categories below.
 
 Detect platform from `git remote get-url origin 2>/dev/null` (github.com -> GitHub, gitlab -> GitLab, otherwise unknown).
 
@@ -71,9 +73,11 @@ Apply the review against the diff in two passes:
 
 **Enum & Value Completeness** -- when the diff introduces a new enum value, status, tier, or type constant, use Grep to find ALL files that reference sibling values, then Read those files to check if the new value is handled. This is the one category where within-diff review is insufficient.
 
-### Pass 2 (INFORMATIONAL)
+### Pass 2 (Code quality)
 
-**AI Code Quality (advisory)** -- patterns common in AI-generated code: empty catch blocks that swallow errors, over-abstracted wrappers around single-use logic, defensive validation for impossible internal states, copy-paste patterns that should be a shared function, reviewer-facing comments (narrating the change, justifying a decision, replaying design discussion -- prose that belongs in the PR description, not the file), comment density far above the surrounding file's baseline.
+**AI Code Quality** -- patterns common in AI-generated code: empty catch blocks that swallow errors, over-abstracted wrappers around single-use logic, defensive validation for impossible internal states, copy-paste patterns that should be a shared function. Assess severity by the demonstrated consequence and project rules; this pass is informational by default.
+
+**Comment review** -- review every added or modified handwritten comment block using [references/comment-review.md](references/comment-review.md). Include its result in the final report. This applies to tests as well as production code; comment count or surrounding density is not a quality criterion.
 
 **Search-before-recommending:** When recommending a fix, verify it's current best practice for the framework version in use. Check if a built-in solution exists before recommending a workaround.
 
@@ -83,7 +87,7 @@ Every finding MUST include a confidence score (1-10):
 
 | Score | Meaning | Display rule |
 |-------|---------|-------------|
-| 9-10 | Verified by reading specific code. Concrete bug demonstrated. | Show normally |
+| 9-10 | Verified by reading specific code. Concrete defect or rule violation demonstrated. | Show normally |
 | 7-8 | High confidence pattern match. Very likely correct. | Show normally |
 | 5-6 | Moderate. Could be a false positive. | Show with caveat |
 | 3-4 | Low confidence. | Suppress from main report. Appendix only. |
@@ -117,7 +121,7 @@ Read [references/specialist-lenses.md](references/specialist-lenses.md) for the 
 
 ## Step 5: Test Coverage Analysis
 
-Evaluate every codepath changed in the diff and identify test gaps. Gaps become INFORMATIONAL findings that follow the Fix-First flow.
+Map requested behavior and material regression risks affected by the diff to existing tests. Report a gap when you can name a concrete failure those tests would miss; assess severity by its impact and project rules. Follow the Fix-First flow for those findings.
 
 **Diff is test-only changes:** skip this step: "No new application code paths to audit."
 
@@ -125,31 +129,35 @@ Evaluate every codepath changed in the diff and identify test gaps. Gaps become 
 
 Read AGENTS.md -- look for a `## Commands` section with test command and framework name; otherwise detect it from the project layout. If no framework is detected, still produce the coverage report, but skip test generation.
 
-### Trace codepaths and map tests
+### Trace behavior and map tests
 
-Read every changed file in full (not just the diff hunk). For each codepath, find the test that exercises it and rate quality: `***` edge cases + error paths, `**` happy path only, `*` smoke test / trivial assertion.
+Read the changed logic and relevant callers and tests until the contract and failure modes are clear; read full files when that context is needed. Check requested behavior, demonstrated regressions, and affected security, concurrency, data-loss, or API-contract risks. Do not turn untouched legacy gaps or every internal branch into new test work.
+
+For each behavior or risk, find the test that exercises it and rate quality: `***` relevant edge cases + error paths, `**` happy path only, `*` smoke test / trivial assertion.
 
 ### Output
 
-One line per codepath, then a summary:
+One line per behavior or risk, then a summary:
 
 ```
 [***] ProcessPayment: happy path + card declined + timeout -- billing_test.go:42
 [GAP] ProcessPayment: network timeout -- NO TEST
 [GAP] ProcessPayment: invalid currency -- NO TEST
 [** ] RefundPayment: full refund -- billing_test.go:89
-COVERAGE: 2/4 paths tested. GAPS: 2 paths need tests.
+COVERAGE: 2/4 behaviors covered. GAPS: 2 concrete failure cases.
 ```
 
 ### Generate tests for gaps (Fix-First)
 
-If a test framework is detected and gaps were identified:
-- **AUTO-FIX:** Simple unit tests for pure functions, edge cases of existing tested functions. Generate and run them, then leave the new tests unstaged for the user to commit (this skill never commits — see Important Rules).
-- **ASK:** E2E tests, tests requiring new infrastructure, tests for ambiguous behavior. Include in the Fix-First batch question.
+If a test framework is detected and the gaps above were identified:
+- **AUTO-FIX:** Focused tests for the identified behavior or failure, using the existing harness. Prefer extending a nearby case over adding a new file; match the scale of neighboring tests. Generate and run them, then leave the new tests unstaged for the user to commit (this skill never commits — see Important Rules).
+- **ASK:** Tests requiring new infrastructure or an unresolved behavior decision. Include in the Fix-First batch question. An E2E test that uses the existing harness and settled behavior does not itself require another approval round.
 
-If no test framework detected: include gaps as INFORMATIONAL findings only, no generation.
+If no test framework is detected, report gaps at their assessed severity without generating tests.
 
-**REGRESSION RULE (mandatory):** When the audit identifies a regression -- code that previously worked but the diff broke -- a regression test is written immediately. No asking. Regressions are the highest-priority test.
+**Regressions come first.** When the diff demonstrably breaks previously working behavior, write the regression test using the existing harness. If reproducing it needs new infrastructure, report the reproducer and include that infrastructure decision in the ASK batch.
+
+Scratch checks need not become committed tests. Complete the checks required by the project and the change; after fixes, re-run affected checks. Once those pass, broaden or repeat testing only for a new change, failure, or unresolved concern.
 
 ---
 
