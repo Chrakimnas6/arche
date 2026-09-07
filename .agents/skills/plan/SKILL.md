@@ -62,7 +62,7 @@ Spawn exploration subagents to:
 - Map architecture relevant to the change
 - Find tests, types, and related infrastructure
 
-Run multiple agents in parallel when investigating independent areas.
+Run multiple agents in parallel when investigating independent areas. Wait for every agent to return before writing the plan: hosts may run subagents in the background by default, so either request a foreground run when the next step depends on the result or wait for each completion notification — never write from partial findings.
 
 **Greenfield mode:** Focus subagents on reading requirements docs, researching technology choices, and exploring reference implementations if any exist.
 

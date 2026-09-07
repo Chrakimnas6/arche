@@ -52,8 +52,16 @@ Read `references/reviewer-lenses.md` for lens definitions — each lens carries 
 
 ## Step 3 — Preflight Check
 
-Before spawning, check `command -v codex` and that it is authenticated; if not, stop and tell
-the user to run `npm install -g @openai/codex` or `codex login`.
+Before spawning, check `command -v codex`, that the binary **actually runs** (`codex --version`),
+and that it is authenticated; if not, stop and tell the user to run `npm install -g @openai/codex`
+or `codex login`. A binary that is present but cannot execute (broken install, missing
+payload) passes the PATH check and then fails every reviewer — which Step 5 would report as
+missing coverage, but the run is wasted. Catch it here.
+
+Do not silently substitute Claude subagents for the missing reviewers: they share this
+session's model family, so their agreement is weaker evidence than a cross-model read. If
+the user opts for that fallback anyway, the verdict must say so in its first line
+("same-family review, not cross-model") so nobody over-weights the consensus.
 
 ## Step 4 — Spawn Reviewers via Codex
 
@@ -117,7 +125,9 @@ against a known coverage gap.
 ## Step 6 — Synthesize Verdict
 
 Read each reviewer's output file from `$REVIEW_DIR/`. Deduplicate overlapping findings.
-Produce a single verdict using the format in `references/verdict-format.md`.
+Produce a single verdict using the format in `references/verdict-format.md`, including the
+**Reviewed** line that pins the exact patch — a verdict describes a patch, not a branch, and
+the pin is what lets a later reader tell whether a rebase invalidated it.
 
 ## Step 7 — Render Lead Judgment
 
