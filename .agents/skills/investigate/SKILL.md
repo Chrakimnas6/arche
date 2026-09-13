@@ -120,8 +120,16 @@ Use for any technical issue — test failures, production bugs, unexpected behav
    - Stop
    - Count: How many fixes have you tried?
    - If < 3: Return to Phase 1, re-analyze with new information
+   - **If 2 or more failed fixes shared one premise: attack the premise before writing another fix (below)**
    - **If 3 or more: stop and question the architecture (step 5 below)**
    - Don't attempt a fourth fix without architectural discussion
+
+   **Attack the premise.** Two fixes that assumed the same thing and failed the same check are evidence about the assumption, not about the fixes. Before the next fix:
+   - Write the premise down — the one sentence every failed fix took for granted ("the queue drains in order", "each worker sees an even share", "the cache is warm by then").
+   - Measure it. Take a census of where the failure actually lands — per worker, shard, input class, or run — as a rerunnable script (`docs/principles/build-the-lever.md`). The census shows *which* actors carry the failure, not how large it is.
+   - Read the skew. If the same few actors carry most of it on every run, something assigns them that role. Find the assignment; that is the next "why" (`docs/principles/fix-root-causes.md`).
+   - Remove the asymmetry rather than compensate for it. A rebalance, retry path, or shared pool leaves the assignment in place and adds work on every run.
+   - An even census clears the premise: the cause is elsewhere. Keep the census as evidence and return to Phase 1.
 
 5. **If 3+ Fixes Failed: Question Architecture**
 

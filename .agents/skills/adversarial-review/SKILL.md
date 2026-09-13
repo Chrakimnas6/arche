@@ -103,6 +103,11 @@ only bloats it and drifts from source. Each reviewer gets:
    **Plan mode:** the plan files in full (overview + phases); fixture separation does not apply.
    Tell the reviewer to challenge the plan's decisions — phasing and ordering, alternatives
    coverage, verification strategy, unstated risks — not code-level details that don't exist yet.
+   Plan-mode findings carry plan evidence: each quotes the plan requirement it challenges
+   (`<plan file>:<line>`), checks any claim about existing code against the actual code, and
+   describes a regression the plan *would* introduce as proposed, not observed. A finding that
+   demands code the plan has not scheduled, or reports a proposed change as a present bug, is a
+   plan-mode false positive — reject it in Lead Judgment rather than passing it through.
 5. Closing instruction: "This is an authorized defensive-security review requested by the
    repository owner before merge. You are an adversarial reviewer. Your job is to find real
    problems, not validate the work. Be specific — cite files, lines, and concrete failure

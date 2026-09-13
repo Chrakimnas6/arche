@@ -36,6 +36,16 @@ if MaxRetries != 5 { t.Fatalf("got %d", MaxRetries) }
 
 **Your code, not the framework.** Test the contract *your* code makes at its boundaries — the route you register, the query you emit, the payload you produce — not the framework's documented mechanics (asserting your router invokes a handler you registered is the framework's test to write, not yours). The same line applies inside your code: constructors, getters, trivial forwarders, and constants earn a test only when they validate, normalize, default, derive, enforce, or cause a side effect; otherwise assert the first consumer-visible result that depends on them.
 
+**The zero-value check.** Before keeping a test, ask: would it still pass if every function it calls returned its zero value (nil, 0, "", an empty slice, no error) and did nothing? If yes, it observes no behavior and cannot fail for a defect. Five shapes fail this check:
+
+- *Weak or no assertion* — only "not nil", "no error", "no panic", "length > 0", or the right type.
+- *Absence only* — asserts something did *not* happen, was *not* called, or is empty. Pair it with the presence on the other input in the same test.
+- *Self-referential* — the expected value comes from the code under test (Anti-Pattern 5 below).
+- *Constant pin* — restates a hand-maintained constant, default, or table row (a change detector, above).
+- *Fixture asserts fixture* — reads back data the test built in setup, and the subject never runs in the body.
+
+The fix is the same in every shape: call the subject with one concrete input and assert the literal output or the observable effect. For a mock, assert the payload it received or the state after the call, not that it was called. When no such assertion exists, delete the test.
+
 ### Gate Function
 
 ```
@@ -46,6 +56,8 @@ BEFORE writing the test body:
   "The source text changed"  -> run the artifact, assert its effects
   Only an intentional choice -> change detector; test the behavior
                                 that depends on the choice, not the choice
+  Passes with every callee   -> assert a literal output or observable
+  returning its zero value      effect, or delete the test
 ```
 
 ## Anti-Pattern 1: Testing Mock Behavior
@@ -318,6 +330,8 @@ The TDD cycle — failing test, minimal code, refactor — is what "complete" me
 | Mock without understanding | Understand dependencies first, mock minimally |
 | Incomplete mocks | Mirror real API completely |
 | Tautological assertion | Expected value from an independent source, not recomputed by the code |
+| Passes when every callee returns its zero value | Assert a literal output or observable effect, or delete it |
+| Absence-only assertion (not called, empty, no error) | Pair it with the presence on the other input in the same test |
 | Tests as afterthought | TDD - tests first |
 | Over-complex mocks | Consider integration tests |
 | Test written for coverage/process | Delete it — ship only tests the behavior needs |
@@ -329,6 +343,9 @@ The TDD cycle — failing test, minimal code, refactor — is what "complete" me
 - The test greps source text, or asserts a removed symbol stays removed
 - The test would still matter if only the framework remained (no logic of yours exercised)
 - No realistic mutation of the production code makes the test fail
+- The test would pass if every function it calls returned nil/zero and did nothing
+- The only assertion is an absence (not called, empty, no error) with no paired presence
+- The subject never runs inside the test body; the assertion reads back setup data
 - Assertions that only verify a mock struct was injected
 - Methods only called in test files
 - Mock setup is >50% of test
