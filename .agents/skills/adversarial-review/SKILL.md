@@ -92,7 +92,10 @@ only bloats it and drifts from source. Each reviewer gets:
 3. The principles governing their lens: the absolute path to `docs/principles/index.md`
    plus the specific principle files identified in Step 1 — again paths, with an
    instruction to read them before reviewing
-4. The material under review.
+4. The material under review, pinned: the head SHA, base SHA, and patch-id that will
+   appear on the verdict's **Reviewed** line. Instruct the reviewer to echo the pin at the
+   top of its output and to list every finding it can support -- not only the first or the
+   worst -- so a later reader can tell which patch each finding describes.
    **Code mode:** the diff, with **fixture-aware separation**: provide the full diff for
    source code, but for test and fixture files (paths matching `test/`, `*fixture*`, `*.test.*`,
    `*.spec.*`) provide only a summary (file names, what changed, what they cover). Do not feed
@@ -122,6 +125,10 @@ Spawn all reviewers in parallel.
 output file is non-empty. If a reviewer fails, read its `.err` file and report the specific
 error (auth expired, binary missing, timeout).
 
+An output that does not echo the pin, or echoes a different one, did not review this
+patch: re-run that reviewer once with the same brief. A second miss is missing coverage,
+recorded as such -- never a pass.
+
 A failed or timed-out reviewer is **missing coverage, not a clean bill**. Do not synthesize
 as if that lens had reviewed and found nothing: the verdict must name which lens produced no
 output and state that its perspective is absent, so the reader weighs the remaining findings
@@ -130,6 +137,9 @@ against a known coverage gap.
 ## Step 6 — Synthesize Verdict
 
 Read each reviewer's output file from `$REVIEW_DIR/`. Deduplicate overlapping findings.
+Name each review source by what actually ran. A harness or CLI name is not a model name:
+claim cross-model diversity only when the runtime reported distinct models; otherwise say
+the model identity is unknown and weigh agreement accordingly.
 Produce a single verdict using the format in `references/verdict-format.md`, including the
 **Reviewed** line that pins the exact patch — a verdict describes a patch, not a branch, and
 the pin is what lets a later reader tell whether a rebase invalidated it.

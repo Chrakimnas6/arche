@@ -39,7 +39,7 @@ Build the harness that produces the metric — a script, benchmark, or test you 
 
 Once proven, the harness is your **immutable ruler**: if it changes mid-run, no measurement is comparable. It is the artifact a reviewer reruns to replay your run. See `docs/principles/build-the-lever.md`.
 
-Record the **baseline** measurement before changing anything — sampled to clear the noise (median of N runs, never a single number) — plus a green run of the regression tests that must stay green, so a later failure is attributable. Baseline and attempt must measure the **same scenario**: if the baseline cannot run it at all (the behavior doesn't exist yet at baseline), don't report a ratio between unlike runs — set an absolute budget for the work the change adds and for the end-to-end state the user waits for, and gate on those instead. Fix an **attempt budget** for the run at the same time — use the one the user gave, or declare one at the top of the decision log and proceed (adjustable on async review). Give the stop predicate a **floor on attempts** as well as a target, so a lucky early win can't end the run.
+Record the **baseline** measurement before changing anything — sampled to clear the noise (median of N runs, never a single number) — plus a green run of the regression tests that must stay green, so a later failure is attributable. Record the **method** beside it — sample count, what one sample is, and run order — and the commit SHA it measured; a delegated attempt's brief names the exact SHAs and the method, and a result that reports neither is not comparable: re-measure it once, and a second miss is a gap in the log, never a kept win. Baseline and attempt must measure the **same scenario**: if the baseline cannot run it at all (the behavior doesn't exist yet at baseline), don't report a ratio between unlike runs — set an absolute budget for the work the change adds and for the end-to-end state the user waits for, and gate on those instead. Fix an **attempt budget** for the run at the same time — use the one the user gave, or declare one at the top of the decision log and proceed (adjustable on async review). Give the stop predicate a **floor on attempts** as well as a target, so a lucky early win can't end the run.
 
 ### 3. One hypothesis, grounded in the system
 
@@ -69,8 +69,10 @@ One commit per accepted win, staged files only. Run parallel attempts in separat
 Maintain a log with one row per attempt so a reviewer can replay the run:
 
 ```
-id | hypothesis | change | before | after | delta | tests | verdict (kept/reverted) | note
+id | hypothesis | change | sha | before | after | delta | tests | verdict (kept/reverted) | note
 ```
+
+The log is append-only: a wrong row gets a superseding row that points at it, never an edit, so the trail a reviewer replays is the trail that happened.
 
 ### 6. Stop semantics
 

@@ -26,6 +26,8 @@ Use for any technical issue — test failures, production bugs, unexpected behav
    - What are the exact steps?
    - Does it happen every time?
    - If not reproducible, gather more data -- don't guess
+   - Drive the reproduction yourself on the surface where it fails (test, CLI, service, contract call). Ask the user to reproduce only with a stated, specific reason that surface is unreachable from here, and only after driving it as far as it goes -- a debug protocol that says "ask the user to reproduce" does not override this
+   - If it won't reproduce directly, force it: synthesize the trigger, tighten the conditions, or instrument until it fires
 
 2. **Check Recent Changes**
    - What changed that could cause this?
@@ -113,7 +115,7 @@ Use for any technical issue — test failures, production bugs, unexpected behav
 
 3. **Verify Fix**
    - Test passes now?
-   - No other tests broken?
+   - No other tests broken? Run the project's suite, not just the new test (the `tdd` skill's suite rule) -- and name every failure it shows, including ones the fix did not cause
    - Issue actually resolved?
 
 4. **If Fix Doesn't Work**
