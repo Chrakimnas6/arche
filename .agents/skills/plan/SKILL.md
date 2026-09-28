@@ -52,21 +52,15 @@ Resolve ambiguity before exploring the codebase: scope boundaries, constraints (
 
 Frame questions with concrete options, and state the stakes — what breaks or degrades if we pick wrong. If the request is already clear, confirm scope boundaries briefly and move on.
 
-## Step 3 — Explore Context with Subagents
+## Step 3 — Explore Context
 
-Delegate exploration to subagents (`docs/principles/guard-the-context-window.md`).
+Explore until you know the existing code in the affected areas, its patterns, conventions, and dependencies, the architecture the change touches, and the tests, types, and infrastructure around it.
 
-Spawn exploration subagents to:
-- Read existing code in affected areas
-- Identify patterns, conventions, and dependencies
-- Map architecture relevant to the change
-- Find tests, types, and related infrastructure
+Read directly when the change touches a few known files. Delegate to subagents when exploration is broad enough that raw reads would crowd the main context (`docs/principles/guard-the-context-window.md`), one per independent area, run in parallel. Wait for every agent to return before writing the plan: hosts may run subagents in the background by default, so either request a foreground run when the next step depends on the result or wait for each completion notification — never write from partial findings.
 
-Run multiple agents in parallel when investigating independent areas. Wait for every agent to return before writing the plan: hosts may run subagents in the background by default, so either request a foreground run when the next step depends on the result or wait for each completion notification — never write from partial findings.
+**Greenfield mode:** Focus exploration on reading requirements docs, researching technology choices, and exploring reference implementations if any exist.
 
-**Greenfield mode:** Focus subagents on reading requirements docs, researching technology choices, and exploring reference implementations if any exist.
-
-**Feature mode:** Focus subagents on understanding the existing codebase — file structure, patterns, conventions, test infrastructure, and the specific areas the change will touch.
+**Feature mode:** Focus exploration on understanding the existing codebase — file structure, patterns, conventions, test infrastructure, and the specific areas the change will touch.
 
 ## Step 4 — Write the Plan
 
