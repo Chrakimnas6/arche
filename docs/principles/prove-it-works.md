@@ -8,14 +8,10 @@ Unverified work has unknown correctness. Indirect verification (file mtimes, out
 
 ## Pattern
 
-After completing any task, ask: **"How do I prove this actually works?"**
-
 ### Check the real thing, not a proxy
 - **Check process liveness directly** (PID, process table), not indirectly (file mtime, cached status).
 - **Read the actual value**, not a cached or derived representation.
 - **When verification fails, suspect the observation method** before suspecting the system.
-
-Build it, run it end-to-end against real inputs -- including error paths and integration boundaries -- and prefer automated checks over manual inspection.
 
 ### Claimed limitations need evidence
 

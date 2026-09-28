@@ -22,7 +22,7 @@ For each phase:
 
 1. **Re-read the phase file.** Its Goal, Changes, and Data structures sections are the brief.
 2. **Implement.** Use the `tdd` skill when the phase adds testable behavior. Stay surgical (`docs/principles/surgical-changes.md`) — only what the phase describes, nothing opportunistic.
-3. **Verify.** Run the phase's verification section — both static and runtime checks. "It compiles" is not verification (`docs/principles/prove-it-works.md`).
+3. **Verify.** Run the phase's verification section — both static and runtime checks.
 4. **Gate.** Do not start the next phase until this phase's verification passes. If it fails, use the `investigate` skill — no quick patches to reach the next phase.
 5. **Record completion.** Add a `Status: done` line at the top of the phase file so a future session can resume without re-deriving progress. Name the evidence beside the marker — the verification command that passed and the commit SHA it passed at (e.g. `Status: done — go test ./internal/foo/... green at a1b2c3d`). A bare marker is a claim; a marker naming its evidence gives the resuming session a pointer to re-check instead of proof to re-derive.
 
@@ -31,7 +31,7 @@ For each phase:
 When an `implementer` agent is available, delegate step 2 to it instead of implementing inline — implementation churn (file reads, failed test iterations) stays in the worker's disposable context while this session keeps a clean phase-level view (`docs/principles/guard-the-context-window.md`):
 
 - **One phase per delegation** — brief granularity has an optimum; don't split finer. The brief is the phase file plus the overview context the worker can't discover itself. Skip delegation for a trivial phase where writing the brief costs more than the change.
-- **Escalate deliberately.** The worker's default effort (medium, set in its frontmatter) fits mechanical phases. Raise effort to high — or override the model — on that one invocation when the phase touches concurrency or shared state, a security boundary or smart contract, or a cross-cutting refactor, or after its verification fails once: retry hotter instead of looping at the same effort. If most phases of a plan qualify, that's evidence to revisit the default (or the phase cuts), not to escalate silently.
+- **Escalate deliberately.** The worker's default effort (medium, set in its frontmatter) fits mechanical phases. Raise effort (high, then xhigh) on that one invocation when the phase touches concurrency or shared state, a security boundary or smart contract, or a cross-cutting refactor, or after its verification fails once: retry hotter instead of looping at the same effort. If most phases of a plan qualify, that's evidence to revisit the default (or the phase cuts), not to escalate silently.
 - **Gate on artifacts, not self-reports.** Re-run the phase's Verification yourself and review the diff before starting the next phase.
 - **Keep design judgment here.** If the worker reports a divergence or its verification fails twice, take over in the main loop — don't re-delegate blindly.
 - **The worker never touches plan files.** Transcribe decisions from its report into the phase file's `## Decisions` section and write the `Status: done` marker yourself.
