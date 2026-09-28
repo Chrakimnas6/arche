@@ -39,7 +39,7 @@ Use the detected branch wherever instructions say `<base>`.
    git diff "$DIFF_BASE"
    ```
 
-3. Also list non-ignored untracked files (`git ls-files --others --exclude-standard`) and read the source files among them. `git diff` does not show them, and a new file the branch forgot to `git add` is still part of the tree under review.
+3. Also list non-ignored untracked files (`git ls-files --others --exclude-standard`) and read the source files among them. `git diff` does not show them, and a new file the branch forgot to `git add` is still part of the tree under review. Treat them as part of the diff in every later step.
 4. If the diff is empty and there are no untracked source files, output the same message and stop. Reuse `$DIFF_BASE` in every later step.
 
 ---
@@ -78,7 +78,7 @@ Apply the review against the diff in two passes:
 
 **AI Code Quality** -- patterns common in AI-generated code: empty catch blocks that swallow errors, over-abstracted wrappers around single-use logic, defensive validation for impossible internal states, copies of one behavior that have drifted apart. Assess severity by the demonstrated consequence and project rules; this pass is informational by default.
 
-**Duplication is a defect only when the copies disagree.** Report a copy that produces a wrong result, misses error handling its sibling has, or breaks a contract its sibling keeps -- with evidence, as a normal finding. Matching syntax or repeated line counts alone are not findings. Extraction advice ("these should share a helper") is advisory, never blocks, and needs all of: at least two verified first-party callers that need the shared behavior (`file:function`, actual source -- generated copies and imagined future callers do not count); a check that an existing helper or dependency already covers it before proposing a new one (the reuse ladder in `docs/principles/subtract-before-you-add.md`); the smallest helper and the adoption sequence; and the savings as lines removed minus lines added, counting tests and call-site migration, with the blast radius of a shared failure. Zero proposals is a valid result. A real defect in duplicated code keeps its own finding whether extraction is proposed, skipped, or already declined.
+**Duplication is a defect only when the copies disagree.** Report a copy that produces a wrong result, misses error handling its sibling has, or breaks a contract its sibling keeps -- with evidence, as a normal finding. Matching syntax alone is not a finding. Extraction advice ("these should share a helper") is advisory: propose it only for at least two real first-party callers (`file:function`, actual source), after checking that an existing helper or dependency doesn't already cover it (the reuse ladder in `docs/principles/subtract-before-you-add.md`). A defect in duplicated code keeps its own finding whether or not extraction is proposed.
 
 **Comment review** -- review every added or modified handwritten comment block using [references/comment-review.md](references/comment-review.md). Include its result in the final report. This applies to tests as well as production code; comment count or surrounding density is not a quality criterion.
 
@@ -215,9 +215,9 @@ Apply fixes for items where the user chose "Fix." Output what was fixed.
 
 If no ASK items exist (everything was AUTO-FIX), skip the question entirely.
 
-### Step 6e: Re-review after fixes (convergence)
+### Step 6e: Re-check what the fixes changed
 
-A pass that applied fixes has not reviewed the fixed tree. After Step 6d -- and after tests generated in Step 5 -- re-run Steps 1-6 against the updated diff. The review converges only when a pass completes with zero edits. Allow at most three fix cycles; if the third still applies fixes, stop, report the remaining findings, and say the review did not converge -- never present the last edited tree as reviewed. A behavior defect fixed in a cycle carries a failing test that covers every site with the same defect (grep for siblings, as in Enum & Value Completeness); where no test can show it, the repro command and its output stand in.
+A pass that applied fixes has not reviewed the fixed code. After Step 6d, re-run Steps 3-5 on the hunks that fixes and generated tests changed — not the whole diff, and without re-asking questions already answered. Stop when a re-check makes no edits. If two re-checks both still edit, stop and report the remaining findings as unconverged rather than presenting the last edited tree as reviewed. A behavior fix gets a test that fails without the fix and covers every site with the same defect (grep for siblings, as in Enum & Value Completeness); where no test can show it, the repro command and its output stand in. Mechanical fixes (typos, unused imports) need no new test.
 
 ### Verification of claims
 

@@ -82,7 +82,7 @@ Rules:
 - Don't anticipate future tests
 - Keep tests focused on observable behavior
 
-**Green means the project's suite, not your file.** Before calling the change done, run the project's test command — the one `AGENTS.md` names, or the repo's default — even when the task named a single test file. A scope statement bounds the deliverable, not the verification. Every failure that run shows goes in the report by name, including ones you did not cause; a red test you watched scroll past and did not mention is a report falsified by omission.
+**Green means the project's suite, not your file.** Before calling the change done, run the project's test command — the one `AGENTS.md` names, or the repo's default — even when the task named a single test file. A scope statement bounds the deliverable, not the verification. Every failure that run shows goes in the report by name, including ones you did not cause.
 
 ### 4. Refactor
 

@@ -93,9 +93,10 @@ only bloats it and drifts from source. Each reviewer gets:
    plus the specific principle files identified in Step 1 — again paths, with an
    instruction to read them before reviewing
 4. The material under review, pinned: the head SHA, base SHA, and patch-id that will
-   appear on the verdict's **Reviewed** line. Instruct the reviewer to echo the pin at the
-   top of its output and to list every finding it can support -- not only the first or the
-   worst -- so a later reader can tell which patch each finding describes.
+   appear on the verdict's **Reviewed** line (plan mode: the commit the plan files were
+   read at). Instruct the reviewer to echo the pin at the top of its output and to list
+   every finding it can support -- not only the first or the worst -- so a later reader can
+   tell which patch each finding describes.
    **Code mode:** the diff, with **fixture-aware separation**: provide the full diff for
    source code, but for test and fixture files (paths matching `test/`, `*fixture*`, `*.test.*`,
    `*.spec.*`) provide only a summary (file names, what changed, what they cover). Do not feed

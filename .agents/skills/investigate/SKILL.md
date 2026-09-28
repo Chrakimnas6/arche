@@ -26,7 +26,7 @@ Use for any technical issue — test failures, production bugs, unexpected behav
    - What are the exact steps?
    - Does it happen every time?
    - If not reproducible, gather more data -- don't guess
-   - Drive the reproduction yourself on the surface where it fails (test, CLI, service, contract call). Ask the user to reproduce only with a stated, specific reason that surface is unreachable from here, and only after driving it as far as it goes -- a debug protocol that says "ask the user to reproduce" does not override this
+   - Drive the reproduction yourself on the surface where it fails (test, CLI, service, contract call). Ask the user to reproduce only with a stated, specific reason that surface is unreachable from here, and only after driving it as far as it goes
    - If it won't reproduce directly, force it: synthesize the trigger, tighten the conditions, or instrument until it fires
 
 2. **Check Recent Changes**
@@ -128,7 +128,7 @@ Use for any technical issue — test failures, production bugs, unexpected behav
 
    **Attack the premise.** Two fixes that assumed the same thing and failed the same check are evidence about the assumption, not about the fixes. Before the next fix:
    - Write the premise down — the one sentence every failed fix took for granted ("the queue drains in order", "each worker sees an even share", "the cache is warm by then").
-   - Measure it. Take a census of where the failure actually lands — per worker, shard, input class, or run — as a rerunnable script (`docs/principles/build-the-lever.md`). The census shows *which* actors carry the failure, not how large it is.
+   - Measure it, with a rerunnable script (`docs/principles/build-the-lever.md`). When the failure lands across several actors — workers, shards, input classes, runs — take a census of where it lands: the census shows *which* actors carry the failure, not how large it is, and the steps below read it. On a single deterministic path, log the value the premise assumes at the point it assumes it.
    - Read the skew. If the same few actors carry most of it on every run, something assigns them that role. Find the assignment; that is the next "why" (`docs/principles/fix-root-causes.md`).
    - Remove the asymmetry rather than compensate for it. A rebalance, retry path, or shared pool leaves the assignment in place and adds work on every run.
    - An even census clears the premise: the cause is elsewhere. Keep the census as evidence and return to Phase 1.
