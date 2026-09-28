@@ -21,7 +21,7 @@ Format a round like so, separating questions with a horizontal rule:
 ➡️ <your recommended answer>
 ```
 
-Split **facts** from **decisions**. If a *fact* can be found by exploring the environment — the codebase, the filesystem, tools, docs — look it up rather than asking me; finding facts is your job, never mine. When a frontier question needs a fact, dispatch a subagent to find it and don't block the round on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait — ask the rest of the frontier now. The *decisions* are mine: put each one to me and wait for my answer. Don't answer a decision autonomously because you could infer it from the code — inference is not consent.
+Split **facts** from **decisions**. If a *fact* can be found by exploring the environment — the codebase, the filesystem, tools, docs — look it up rather than asking me; finding facts is your job, never mine. When a frontier question needs a fact, look it up — directly when it's a quick read, in a background subagent when it needs broad exploration — and don't block the round on a running exploration: it is an unsettled prerequisite, so only the questions downstream of it wait — ask the rest of the frontier now. The *decisions* are mine: put each one to me and wait for my answer. Don't answer a decision autonomously because you could infer it from the code — inference is not consent.
 
 ## Opening
 
