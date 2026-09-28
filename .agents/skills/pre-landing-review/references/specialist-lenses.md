@@ -53,4 +53,6 @@ Tag each finding with exactly one category:
 
 **Finding style: location + what to cut + what replaces it.** "This validator might be more complex than necessary" is not a finding; "`lib/email.go:12` — 27-line validator, `stdlib`: a contains-`@` check covers it; real validation is the confirmation mail" is.
 
+Shared-helper extraction proposals follow the extraction rule in Step 3 Pass 2 (two real callers, existing helper checked first); do not duplicate them here or turn a structural preference into a defect.
+
 Never flag for deletion: tests, error paths, edge-case branches, input validation, security measures, accessibility. A single smoke test is the completeness minimum, not bloat. Skip harmless redundancy that aids readability, consistency-only changes, and anything the diff itself already addresses. These findings map to `docs/principles/subtract-before-you-add.md` — cite the reuse-ladder rung the fix lands on.

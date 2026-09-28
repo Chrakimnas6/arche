@@ -26,6 +26,8 @@ Use for any technical issue — test failures, production bugs, unexpected behav
    - What are the exact steps?
    - Does it happen every time?
    - If not reproducible, gather more data -- don't guess
+   - Drive the reproduction yourself on the surface where it fails (test, CLI, service, contract call). Ask the user to reproduce only with a stated, specific reason that surface is unreachable from here, and only after driving it as far as it goes
+   - If it won't reproduce directly, force it: synthesize the trigger, tighten the conditions, or instrument until it fires
 
 2. **Check Recent Changes**
    - What changed that could cause this?
@@ -113,15 +115,23 @@ Use for any technical issue — test failures, production bugs, unexpected behav
 
 3. **Verify Fix**
    - Test passes now?
-   - No other tests broken?
+   - No other tests broken? Run the project's suite, not just the new test (the `tdd` skill's suite rule) -- and name every failure it shows, including ones the fix did not cause
    - Issue actually resolved?
 
 4. **If Fix Doesn't Work**
    - Stop
    - Count: How many fixes have you tried?
    - If < 3: Return to Phase 1, re-analyze with new information
+   - **If 2 or more failed fixes shared one premise: attack the premise before writing another fix (below)**
    - **If 3 or more: stop and question the architecture (step 5 below)**
    - Don't attempt a fourth fix without architectural discussion
+
+   **Attack the premise.** Two fixes that assumed the same thing and failed the same check are evidence about the assumption, not about the fixes. Before the next fix:
+   - Write the premise down — the one sentence every failed fix took for granted ("the queue drains in order", "each worker sees an even share", "the cache is warm by then").
+   - Measure it, with a rerunnable script (`docs/principles/build-the-lever.md`). When the failure lands across several actors — workers, shards, input classes, runs — take a census of where it lands: the census shows *which* actors carry the failure, not how large it is, and the steps below read it. On a single deterministic path, log the value the premise assumes at the point it assumes it.
+   - Read the skew. If the same few actors carry most of it on every run, something assigns them that role. Find the assignment; that is the next "why" (`docs/principles/fix-root-causes.md`).
+   - Remove the asymmetry rather than compensate for it. A rebalance, retry path, or shared pool leaves the assignment in place and adds work on every run.
+   - An even census clears the premise: the cause is elsewhere. Keep the census as evidence and return to Phase 1.
 
 5. **If 3+ Fixes Failed: Question Architecture**
 
