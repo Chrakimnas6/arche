@@ -17,6 +17,10 @@ Unverified work has unknown correctness. Indirect verification (file mtimes, out
 
 Verification applies to blockers, not just successes. A claimed limitation or requirement -- "the API can't do this", "X requires a credential", "that's impossible on this platform" -- is a material claim. State one only with the verbatim error, the documented statement, or a live probe in hand; pattern-matching a failure to a familiar story is not evidence. When a cheap probe settles the question, run it before declaring a step blocked or asking for help.
 
+### Measured numbers: explain them
+
+A run that went wrong still prints a plausible number — failed requests, cached or skipped work, an untuned side, and noise all look fine. Before reporting or acting on a measurement (latency, gas, throughput, eval score), name what limits it ("why isn't it twice as good?") from a profile or counters, not from reading code, and rule out each of those alternatives with evidence. Keep the run count, spread, and limiter beside the number. Labeling a number *measured* says you saw it, not that it means what you claim. The `hillclimb` skill applies this per attempt.
+
 ### Sweeps and migrations: verify per unit, not per batch
 In a run of similar edits, verify each change before starting the next -- known-good state, one change, run the check, proceed. Never batch the edits and verify once at the end: a break caught at the unit that caused it is cheap to localize; a break caught after the batch is buried under everything built on top of it.
 

@@ -126,7 +126,7 @@ Read [references/specialist-lenses.md](references/specialist-lenses.md) for the 
 
 Map requested behavior and material regression risks affected by the diff to existing tests. Report a gap when you can name a concrete failure those tests would miss; assess severity by its impact and project rules. Follow the Fix-First flow for those findings.
 
-**Diff is test-only changes:** skip this step: "No new application code paths to audit."
+**Diff is test-only changes:** skip the coverage map ("No new application code paths to audit"), but still hold the changed tests to the bar below.
 
 ### Detect test framework
 
@@ -137,6 +137,8 @@ Read AGENTS.md -- look for a `## Commands` section with test command and framewo
 Read the changed logic and relevant callers and tests until the contract and failure modes are clear; read full files when that context is needed. Check requested behavior, demonstrated regressions, and affected security, concurrency, data-loss, or API-contract risks. Do not turn untouched legacy gaps or every internal branch into new test work.
 
 For each behavior or risk, find the test that exercises it and rate quality: `***` relevant edge cases + error paths, `**` happy path only, `*` smoke test / trivial assertion.
+
+A behavior whose only test is `*` stays a `[GAP]`: a weak test never closes one. Hold tests the diff adds or changes — and tests you generate below — to the `tdd` skill's bar ([testing-anti-patterns.md](../tdd/references/testing-anti-patterns.md)). A test that names no break, duplicates a test that already catches it, or needs a production seam no production caller uses is a finding: rewrite it at the real boundary, fold it into the existing case, or drop it — never silently.
 
 ### Output
 
