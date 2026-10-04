@@ -32,9 +32,13 @@ if MaxRetries != 5 { t.Fatalf("got %d", MaxRetries) }
 // a failing call is retried 5 times and the 6th attempt never happens
 ```
 
+**Exception: declared contracts.** A pinned value is not a change detector when the exact bytes *are* a contract with outside consumers — a wire format, an ABI selector or event signature, a storage layout, a migration, a golden of generated output. A deliberate change still breaks those consumers, so the pin is the test.
+
 **Behavior, not text.** Asserting that a script, skill doc, or config *contains* an exact line proves only that the source is the source — it can't catch a behavioral break and fires on every reword. Run the artifact against controlled inputs and assert its outputs, side effects, or exit code. (`tests/validate-setup.sh` checks existence and structure, not prose; agent-facing docs are "tested" by the consuming agent's behavior; prose for humans earns no test.)
 
 **Your code, not the framework.** Test the contract *your* code makes at its boundaries — the route you register, the query you emit, the payload you produce — not the framework's documented mechanics (asserting your router invokes a handler you registered is the framework's test to write, not yours). The same line applies inside your code: constructors, getters, trivial forwarders, and constants earn a test only when they validate, normalize, default, derive, enforce, or cause a side effect; otherwise assert the first consumer-visible result that depends on them.
+
+**Not already caught.** Once you've named the break, look for a test that already fails on it. If one does, add a case to that test instead of writing a near-duplicate. Test a shared helper's contract once, at the helper, not again per caller.
 
 **The zero-value check.** Before keeping a test, ask: would it still pass if every function it calls returned its zero value (nil, 0, "", an empty slice, no error) and did nothing? If yes, it observes no behavior and cannot fail for a defect. Five shapes fail this check:
 
@@ -56,6 +60,9 @@ BEFORE writing the test body:
   "The source text changed"  -> run the artifact, assert its effects
   Only an intentional choice -> change detector; test the behavior
                                 that depends on the choice, not the choice
+                                (unless the value is a declared contract)
+  An existing test already   -> extend that test, don't add a
+  fails on this change          near-duplicate
   Passes with every callee   -> assert a literal output or observable
   returning its zero value      effect, or delete the test
 ```
@@ -322,7 +329,8 @@ The TDD cycle — failing test, minimal code, refactor — is what "complete" me
 | Anti-Pattern | Fix |
 |--------------|-----|
 | Can't name the break it catches | Redesign around an observable behavior, or don't write it |
-| Change detector (constant/wording/structure) | Test the behavior that depends on the decision |
+| Change detector (constant/wording/structure) | Test the behavior that depends on the decision — unless the bytes are a declared contract (ABI, wire format, storage layout) |
+| Break already caught by an existing test | Extend that test, or don't add one |
 | Asserts a script/doc contains a line | Run the artifact, assert outputs/side effects/exit code |
 | Tests the framework's mechanics | Test your boundary contract, not upstream mechanics |
 | Assert on mock elements | Test real component or unmock it |
