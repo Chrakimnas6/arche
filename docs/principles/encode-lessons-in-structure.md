@@ -10,9 +10,9 @@ Textual instructions ("always run fmt", "do not skip linting") are routinely ign
 
 When you catch yourself writing the same instruction a second time:
 
-1. Ask: can this be a lint rule, a metadata flag, a runtime check, or a script?
-2. If yes, encode it. Delete the instruction.
-3. If no (genuinely requires judgment), make the instruction more prominent and add an example of the failure mode.
+1. Fix it at the highest level that works: make it impossible by design (one owner, one way, unreachable internals) → unrepresentable in types → a lint or CI check whose error names what to use instead (on a pattern already common, fail only when a change adds more) → a test → text, only for genuine judgment calls, made prominent with an example of the failure mode.
+2. Prove the new check fails on a real past instance of the mistake.
+3. Delete the instruction it replaces. A written rule that was broken again is a repeat: escalate it a level in the same change.
 
 **Corollary -- don't paper over symptoms.** If the fix is structural, ONLY use the structural fix. The instruction IS the symptom -- if you're writing "don't do X" in a prompt, ask whether you can make X impossible instead.
 
