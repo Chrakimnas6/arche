@@ -37,6 +37,8 @@ Read the actual architecture at the same time, so hypotheses in step 3 name a sp
 
 Build the harness that produces the metric — a script, benchmark, or test you can rerun identically. Before trusting it, **prove it is sensitive**: run contrasting realistic workloads and confirm the target case shows the symptom while easier cases separate as expected. A ruler that can't distinguish a slow case from a fast one can't measure a win. If it can't, revise the workload or the metric before proceeding.
 
+**Explain the baseline before freezing.** Name what bounds it — the core, lock, disk, network, or load generator that stops it being twice as good — from a profile or counters taken in a run you don't report, not from reading code. Make the harness print an error count and a count of work done (rows written, calls that succeeded), so every keep-or-revert also proves the timed work happened and didn't fail. Run sides alternately (A, B, A, B) so warmup and drift favor neither; a gap inside run-to-run spread is no difference. Check each win against arithmetic: removing a piece that takes 10% of the run can't make it more than ~11% faster — a result past that limit measured a cache, a no-op, or a bug (`docs/principles/prove-it-works.md`, Measured numbers).
+
 Once proven, the harness is your **immutable ruler**: if it changes mid-run, no measurement is comparable. It is the artifact a reviewer reruns to replay your run. See `docs/principles/build-the-lever.md`.
 
 Record the **baseline** measurement before changing anything — sampled to clear the noise (median of N runs, never a single number) — plus a green run of the regression tests that must stay green, so a later failure is attributable. Record the **method** beside it — sample count, what one sample is, and run order — and the commit SHA it measured; a delegated attempt's brief names the exact SHAs and the method, and a result that reports neither is not comparable: re-measure it once, and a second miss is a gap in the log, never a kept win. Baseline and attempt must measure the **same scenario**: if the baseline cannot run it at all (the behavior doesn't exist yet at baseline), don't report a ratio between unlike runs — set an absolute budget for the work the change adds and for the end-to-end state the user waits for, and gate on those instead. Fix an **attempt budget** for the run at the same time — use the one the user gave, or declare one at the top of the decision log and proceed (adjustable on async review). Give the stop predicate a **floor on attempts** as well as a target, so a lucky early win can't end the run.
@@ -45,16 +47,15 @@ Record the **baseline** measurement before changing anything — sampled to clea
 
 Each attempt states a hypothesis: "Changing X should move the metric because Y," naming a specific mechanism in the architecture you read in step 1 ("defer X off the boot path because it blocks first paint"), not "try memoizing something."
 
-Most performance wins come from a small set of **strategy families**. Use them to generate hypotheses, not as a checklist — a family earns an attempt only when the measurement shows the signal it names (Elimination, whose signal no profile shows, is the exception), and a focused fix for the dominant cost beats spreading effort across all of them.
+For a performance metric, generate hypotheses from these, cheapest first. They are idea generators, not a checklist: each earns an attempt only when the measurement shows its signal (the first excepted — no profile shows unused work, so it needs reading the code), and a focused fix for the dominant cost beats spreading effort across all of them. When an earlier one meets the target, stop climbing the list.
 
-- **Elimination** — the work needn't exist at all: a result nobody consumes, a gate always off for this case, a redundant sync. No profile shows this signal, so it needs reading the code.
-- **Divide and conquer** — cost scales with input size.
-- **Caching** — the same computation or fetch repeats on identical inputs (name what invalidates it before claiming the win).
-- **Indirection** — the hot path lacks a cheaper intermediate: an index instead of a scan, a queue off the interactive path.
-- **Batching** — many small operations each pay a fixed overhead (RPC, query, syscall).
-- **Redundancy** — the wait hangs on one slow instance, and there's headroom to trade load for tail latency.
-- **Lazy evaluation** — cost lands on results never used or not needed yet (eager init on the boot path).
-- **Scheduling** — the work must happen, but not now. Distinct from lazy: scheduling often runs the work *earlier*, in the hot moment's shadow. The win is perceived latency, so measure the interactive path, not total work done.
+1. **Don't do it** — remove work whose result nothing uses, or a gate always off for this case.
+2. **Do it, but don't do it again** — cache repeated work on identical inputs (name what invalidates it before claiming the win).
+3. **Do it less** — batch small operations that each pay a fixed overhead; prune or partition work that scales with input size.
+4. **Do it later** — defer cost to first use.
+5. **Do it when they're not looking** — move it off the interactive path, often *earlier*, in the hot moment's shadow. The win is perceived latency, so measure that path, not total work.
+6. **Do it concurrently** — including redundant requests to cut tail latency when there's headroom.
+7. **Do it cheaper** — a better algorithm, an index instead of a scan, a cheaper instruction.
 
 ### 4. One change, measure, keep or revert
 
