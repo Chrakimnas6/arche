@@ -11,7 +11,7 @@ Language-specific applications of these principles (Go, smart contracts) live in
 
 ## Core
 
-- [Foundational Thinking](./foundational-thinking.md) — data structures first, scaffold first, optimize for option value. **Apply when** starting a feature or component: choosing core types, sequencing scaffold vs features, deciding what concurrent actors share.
+- [Foundational Thinking](./foundational-thinking.md) — data structures first, scaffold first, optimize for option value. **Apply when** starting a feature or component: choosing core types, sequencing scaffold vs features.
 - [Redesign from First Principles](./redesign-from-first-principles.md) — redesign as if the new requirement existed from day one. **Apply when** integrating a new requirement into an existing design.
 - [Subtract Before You Add](./subtract-before-you-add.md) — remove complexity first, then build. **Apply when** sequencing an addition, refactor, or rewrite — and continuously when sizing a diff or tempted to add abstraction.
 - [Experience First](./experience-first.md) — the user experience is the product. **Apply when** making product, UX, or feature-scope trade-offs.

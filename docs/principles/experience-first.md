@@ -1,30 +1,25 @@
 # Experience First
 
-**Principle:** The experience is the target. Implementation choices are subordinate. When a tradeoff exists between implementation convenience and the experience the system delivers, choose the experience.
+**Principle:** The experience is the target; implementation choices are subordinate. When implementation convenience and the experience the system delivers conflict, choose the experience.
 
-## Why
+"Experience" means whoever uses what you build: end users for products, integrators for libraries, operators for tools, callers for contracts. They live with your interface decisions; you live with your implementation decisions.
 
-"Experience" here means the experience of whoever uses what you build — end users for products, integrators for libraries, operators for tools, callers for contracts. They live with the consequences of your interface decisions; you live with the consequences of your implementation decisions. The asymmetry favors investing in the former.
+## Pattern
 
-This is not a principle about polish or aesthetics. It's a principle about *target*: it says foundations exist to serve experience, not the other way around. [Foundational thinking](./foundational-thinking.md) governs the *sequence* of work; this governs the *target*.
+- **Prototype the experience before committing the implementation.** A throwaway sketch a user or integrator can react to is cheaper than a production rewrite.
+- **Optimize the surface callers see, even at internal cost.** A more complex implementation behind a clean interface is almost always the right trade.
+- **Error messages are part of the interface.** Say which field failed, why, and what would be valid. Ask what the caller would see when this fails; "they'll figure it out" means the interface isn't done.
 
-## The Pattern
+## Integrator Heuristics
 
-- **Prototype the experience before committing the implementation.** A throwaway sketch that an integrator/user can react to is cheaper than a production rewrite. This is distinct from [exhaust-the-design-space](./exhaust-the-design-space.md), which prototypes *implementation alternatives*; this prototypes the *interface that will be lived with*.
-- **Optimize the surface that callers see, even at internal cost.** A slightly more complex implementation behind a clean interface is almost always the right tradeoff. (See [module-depth](./module-depth.md): deep modules earn their keep here.)
-- **Error messages are part of the interface.** A function that returns "invalid input" without saying which field, why, or what would be valid has a worse interface than the same function with no validation at all — at least the latter is honest about what it does.
+For libraries, SDKs, CLIs, contracts, and anything called by external code:
 
-## Integrator-Experience Heuristics
-
-For libraries, SDKs, CLIs, contracts, and other things called by external code:
-
-- **Predictable signatures.** Same operation, same shape. If `get(key)` returns `(value, error)`, then `getAll(query)` should also return `(values, error)` — not a new shape.
-- **Minimal surprise in state transitions.** If calling `start()` does anything other than start, document it loudly or rename it.
-- **Documentation that matches actual behavior.** Docs that lag the code are worse than no docs — they teach a mental model that breaks at the worst time. When you change behavior, change the docs in the same commit.
-- **Failure modes you'd want to debug.** When this fails, what would the caller see? If the answer is "they'll figure it out," the interface isn't done.
+- **Predictable signatures.** Same operation, same shape: if `get(key)` returns `(value, error)`, `getAll(query)` returns `(values, error)`.
+- **No surprise in state transitions.** If `start()` does anything besides start, rename it or document it loudly.
+- **Docs match behavior.** Change the docs in the same commit as the behavior; stale docs teach a mental model that breaks at the worst time.
 
 ## When This Doesn't Apply
 
-- Internal helpers called only by code in the same module
+- Internal helpers called only within the same module
 - One-off scripts where you are the only user
-- Cases where a clear constraint (performance, gas cost, security) dominates
+- A clear constraint (performance, gas cost, security) dominates

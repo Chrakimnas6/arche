@@ -1,51 +1,17 @@
 # Foundational Thinking
 
-**Structural decisions** (data models, phase ordering, infrastructure) optimize for option value. **Code-level decisions** (helpers, abstractions, patterns) optimize for simplicity.
-
-"Over-engineering" means making premature decisions that **close doors** -- unnecessary abstractions, speculative features, indirection layers. Choosing the right foundational data structure **opens doors** -- it preserves option value.
-
-- Bad complexity: helper classes for one-time operations, feature flags for hypothetical needs, abstraction layers "in case we swap X"
-- Good complexity: choosing the data structure that matches actual access patterns, even if a simpler one works for now
+**Principle:** Structural decisions (data models, phase ordering, infrastructure) optimize for option value. Code-level decisions (helpers, abstractions, patterns) optimize for simplicity. Over-engineering closes doors (one-use helpers, flags for hypothetical needs, layers "in case we swap X"); the data structure that matches real access patterns opens them, even when a simpler one works for now.
 
 ## Data Structures First
 
-Get the data structures right before writing logic. The right structure makes downstream code obvious; the wrong one fights you at every turn.
-
-- Define core types early and let them drive the architecture
-- Trace every access pattern through a proposed structure: reads, writes, iterations, lookups, serialization
-- Choose structures that match the dominant access pattern
-- A data structure change late in the project is a rewrite; early is a one-line diff
-
-**Name the organizing structure the code is missing.** "Get the data structure right" is not just picking a container — it is choosing the model that makes illegal states unrepresentable: a state machine over scattered booleans, a table or registry over spread-out branching, a typed model over repeated shape assumptions. The test is whether the structure *deletes* branches and invalid states rather than adding indirection. Boring, explicit code stays when the shape is already clear and local; reach for a model only when it removes possibilities, not when it merely relocates them. Another tell the structure is wrong: modules named for execution phases (load, validate, transform, save) that repeat the same domain rules across steps — execution order is not ownership; group code by the knowledge it protects.
-
-**Types are constructions, not restrictions.** Build the type up from the values you want instead of carving them out of a looser type with runtime checks — a non-empty list is a head plus a rest, not a list with a length check; a valid time range is a start plus a duration, not two timestamps kept ordered by discipline. Strengthen a type only where partiality appears: a runtime assertion, nil check, or "should never happen" branch marks the place a type is too weak — push that check up into the type, then stop. Precision beyond what keeps operations total costs reuse and ceremony and buys no safety.
-
-At the code level, simplicity preserves options:
-
-- **DRY at the structural level** (types, data models) -- but three similar lines of code is better than a premature abstraction
-- **Explicit over clever** -- cleverness obscures intent = closing doors
-- **No placeholder source files** -- create files only when there's real code
-- **Well-tested** -- test behavior and edge cases, not line coverage
-
-**Concurrency corollary:** Before sharing state between actors, ask: "What happens if another actor modifies this concurrently?" If the answer isn't "nothing", isolate.
+- **Settle the core types before writing logic.** Trace every access pattern (reads, writes, iterations, lookups, serialization) through a proposed structure and pick the one that fits the dominant pattern. A structure change late is a rewrite; early it is a one-line diff.
+- **Name the organizing structure the code is missing.** Choose the model that makes illegal states unrepresentable: a state machine over scattered booleans, a table or registry over spread-out branching, a typed model over repeated shape assumptions. It must *delete* branches and invalid states, not relocate them; keep boring explicit code when the shape is already clear and local. Modules named for execution phases (load, validate, transform, save) that repeat the same domain rules signal the wrong structure: group code by the knowledge it protects.
+- **Types are constructions, not restrictions.** Build the type from the values you want (a non-empty list is a head plus a rest; a time range is a start plus a duration) rather than carving a looser type down with runtime checks. A runtime assertion, nil check, or "should never happen" branch marks where a type is too weak: push that check into the type, then stop. Precision beyond keeping operations total buys no safety.
+- **DRY the types and data models, not the code.** Three similar lines beat a premature abstraction.
+- **No placeholder source files.** Create a file only when it has real code.
 
 ## Scaffold First
 
-If something benefits all future work, do it first. Ask: "does every subsequent phase benefit from this existing?" If yes, it's scaffold -- Phase 1, not the end.
-
-- CI, linting, testing infra -> scaffold
-- Shared types, project config -> scaffold
-
-Applies to commits too -- sequence for maximum option value:
-
-- Infra/setup before features, tests before fixes
-- Keep commits small and single-purpose
-- Prefer commits that are easy to review, revert, and cherry-pick independently
-- **Order the stack so the sequence proves itself to a reviewer**: the failing test lands before the fix (red, then green), the subtraction before the reshape, the baseline capture before the treatment. Each commit stands alone and the sequence reads as an argument.
-- **Each increment lands a coherent abstraction or deepens one that exists.** Don't spread a new capability across callers as special-case coordination.
-
-Subtraction ([subtract-before-you-add](./subtract-before-you-add.md)) comes before scaffolding -- remove dead weight first, then lay foundations.
-
-Ask: "does this decision reduce my future options, or preserve them?"
-
-See also [redesign-from-first-principles](./redesign-from-first-principles.md).
+- **If every later phase benefits from it, it is Phase 1:** CI, linting, test infra, shared types, project config. Subtraction ([subtract-before-you-add](./subtract-before-you-add.md)) comes before scaffolding.
+- **Order the stack so the sequence proves itself to a reviewer:** the failing test before the fix, the subtraction before the reshape, the baseline capture before the treatment. Each commit stands alone; the sequence reads as an argument.
+- **Each increment lands a coherent abstraction or deepens an existing one.** Don't spread a new capability across callers as special-case coordination.

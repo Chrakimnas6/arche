@@ -1,23 +1,15 @@
 # Make Operations Idempotent
 
-**Principle:** Design operations so they converge to the correct state regardless of how many times they run or where they start from. Every state-mutating operation should answer: "What happens if this runs twice? What happens if the previous run crashed halfway?"
+**Principle:** Design operations so they converge to the correct state regardless of how many times they run or where they start from.
 
-## Why
+**Why:** crashes, restarts, and retries are normal; an operation whose rerun depends on the partial state it left behind turns every restart into a debugging session.
 
-CLI commands, lifecycle operations, and scheduling loops run in environments where crashes, restarts, and retries are normal. If an operation leaves partial state that causes a different outcome on re-execution, every restart becomes a debugging session.
+## Pattern
 
-## The Pattern
-
-- **Idempotent migrations:** check current schema state before applying changes so re-running is always safe (`CREATE TABLE IF NOT EXISTS`, conditional schema checks).
-- **Idempotent deploys:** check whether the desired version is already running before deploying. If a deploy crashed mid-rollout, re-running should detect partial state and converge to the target.
-- **Initialization guards:** any state-establishing operation should refuse re-execution rather than corrupt state if called twice (initializer flags, version checks, atomic swaps).
-- **Convergent startup:** scan for existing processes/state, clean stale artifacts, adopt live resources — converging to the correct state regardless of what the previous run left behind.
+- **Check before applying.** Migrations check current schema state; deploys check whether the target version is already running and converge from a crashed mid-rollout.
+- **Guard initialization.** A state-establishing operation refuses re-execution rather than corrupting state (initializer flags, version checks, atomic swaps).
+- **Converge on startup.** Scan for existing processes and state, clean stale artifacts, adopt live resources.
 
 ## The Test
 
-Before shipping a state-mutating operation, ask:
-1. What happens if this runs twice in a row?
-2. What happens if the previous run crashed at every possible point?
-3. Does re-execution converge to the same end state?
-
-If any answer is "it depends on what state was left behind," the operation needs a reconciliation step.
+Before shipping a state-mutating operation, ask what happens if it runs twice in a row, and if the previous run crashed at each possible point. If any answer is "it depends on what state was left behind," add a reconciliation step.

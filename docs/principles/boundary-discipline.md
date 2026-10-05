@@ -2,37 +2,16 @@
 
 **Principle:** Place validation, type narrowing, and error handling at system boundaries. Trust internal code unconditionally. Business logic lives in pure functions; the shell is thin and mechanical.
 
-## Why
+**Why:** validating each piece of data once, where it enters, lets it flow freely afterward; logic tangled with framework wiring can't be tested or reused without the framework.
 
-Validation scattered throughout a codebase is noisy, redundant, and gives a false sense of safety. Concentrating it at boundaries means each piece of data is validated exactly once -- at the point it enters the system -- and flows freely after that. Similarly, logic tangled with framework wiring can't be tested without the framework and can't be reused across contexts.
+## Pattern
 
-## The Pattern
-
-- **At boundaries** (CLI args, config files, external APIs, user input, RPC calls): validate, surface errors, handle defensively.
-- **Inside the system:** typed data, error propagation as values, no re-validation. Trust the types.
-- **Across the boundary:** expose domain concepts, not the boundary's private representation. Keep general-purpose mechanism inside and special-purpose policy at the edge.
-
-## Applications
-
-### Validation and error handling
-
-- All boundary entry points return values + errors. Errors are handled at the boundary, never silently swallowed and never raised as global aborts in production paths.
-- Validate config at parse time (the config boundary), not inside business logic.
-- Parse raw data into a **named domain type** at the boundary — don't pass raw payloads inward for internal code to interpret. The boundary's generic representation (a raw map, string-keyed dictionary, or untyped blob, whatever the language spells it as) stops at that parse: it must not appear in any internal signature. Storing a raw payload and parsing lazily spreads the parse failure mode to every use-site and makes internal code distrust its inputs.
-- Do not re-export transport, storage, framework, or wire types through the public surface — that leaks the boundary's private representation into internal code (see [module-depth](./module-depth.md) red flags).
-
-### Code organization
-
-Business logic lives in pure functions with no framework dependencies. The shell — CLI routing, HTTP handlers, event dispatching — is thin and mechanical.
-
-- **Parse functions:** pure transforms from raw input to structured state. No framework dependencies.
-- **Computation:** pure transforms from input to output. No side effects.
-- **Orchestration:** thin wiring that calls pure functions and handles I/O.
+- **At boundaries** (CLI args, config, external APIs, user input, RPC): validate, surface errors, handle defensively. Return errors as values; never swallow them or abort globally on production paths.
+- **Inside the system:** typed data, errors propagated as values, no re-validation.
+- **Across the boundary:** expose domain concepts, not the boundary's private representation. Do not re-export transport, storage, framework, or wire types.
+- **Parse into a named domain type at the boundary.** The generic representation (raw map, string-keyed dictionary, untyped blob) stops at that parse and appears in no internal signature. Storing a raw payload and parsing lazily spreads the parse failure to every use site and makes internal code distrust its inputs.
 
 ## The Tests
 
-Before adding a validation check, ask: **"Is this data crossing a system boundary right now?"** If not, the validation is redundant — trust the types.
-
-Before putting logic in a handler, hook, or framework integration point, ask: **"Can this be a pure function that the shell just calls?"** If yes, extract it.
-
-See also [foundational-thinking](./foundational-thinking.md), [threat-modeling](./threat-modeling.md).
+- Before adding a validation check: **"Is this data crossing a system boundary right now?"** If not, trust the types.
+- Before putting logic in a handler, hook, or framework integration point: **"Can this be a pure function the shell just calls?"** If yes, extract it.

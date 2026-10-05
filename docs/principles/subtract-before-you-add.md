@@ -1,54 +1,37 @@
 # Subtract Before You Add
 
-**Principle:** When evolving a system, remove complexity first, then build. Deletion creates a simpler substrate that makes subsequent additions cleaner, smaller, and less error-prone. The corollaries: migrate callers and delete legacy APIs in the same wave; converge directly on the target state rather than preserving every intermediate state.
+**Principle:** When evolving a system, remove complexity first, then build on the simpler base. Migrate callers and delete legacy APIs in the same wave; converge directly on the target state rather than preserving every intermediate one.
 
-## Why
+## Pattern
 
-Adding to a complex system compounds complexity. Removing first reduces the surface area, reveals the essential structure, and makes the addition's design more obvious. The default action should be subtraction. The principle generalizes to *ordering*: subtract first, then build; migrate callers before deleting an old API; converge to the end state without paying the cost of indefinite intermediate compatibility.
+- **Sequence removal before construction.** In plans, deletion phases come before build phases.
+- **Cut before you polish.** Scope the feature set to the minimum before investing in quality; half-finished features are worse than missing ones.
+- **Design for observed usage.** If the real workflow is single-process or low-concurrency, fit that; add edge-case machinery only after usage shows the need.
+- **Delete a reference with no novel content** rather than leaving a stub.
+- **Borrow a maintainer's fatigue.** Writing code is cheap for an agent, so over-engineering is easy. When asked to improve, prefer deletion; make the smallest change that solves the problem; when a task wants a new signal threaded through types, schemas, or pipelines, stop and look for a more direct path. If a human would find the result exhausting to maintain, it's a bad solution.
+- **Sweat the small leaks.** In code you are already changing, remove tiny pass-throughs, representation leaks, and duplicated decisions before they spread; leave it slightly simpler, behind the same or smaller surface. Code you aren't changing is [surgical-changes](./surgical-changes.md) territory.
 
-## The Pattern
-
-- **Sequence removal before construction.** In plans, schedule deletion phases before build phases. Each piece of dead code, unused feature, or unnecessary abstraction removed makes the subsequent work simpler.
-- **Cut before you polish.** When scoping a feature set, cut ruthlessly to the minimum before investing in quality. Half-finished features are worse than missing ones.
-- **Design for observed usage, not speculative edge cases.** If the real workflow is single-process or low-concurrency, prefer simpler designs that fit that reality. Add edge-case machinery only after usage data says it's needed.
-- **When a reference has no novel content, delete it** rather than leaving a stub.
-
-**Corollary — borrow a maintainer's fatigue.** Writing code is cheap for an agent, which makes over-engineering easy. Counter it continuously, not just when sequencing: prefer deletion when asked to improve, make the smallest change that solves the problem, and when a task wants a new signal threaded through types, schemas, or pipelines, stop and look for a more direct path. If a human would find the result exhausting to maintain, it's a bad solution.
-
-**Corollary — climb the reuse ladder before writing new code.** Stop at the first rung that holds:
+**Climb the reuse ladder before writing new code.** Stop at the first rung that holds:
 
 1. Does this need to exist at all? Name what you skip in one line; a vague request gets the smallest version that does the core job.
-2. Does the codebase already have it? Reuse the helper or pattern that's there, the way the surrounding code uses it.
-3. Does the standard library or platform do it? Use it — unless the codebase has its own; the house version wins.
+2. Does the codebase already have it? Reuse it the way the surrounding code does.
+3. Does the standard library or platform do it? Unless the codebase has its own; the house version wins.
 4. Does an already-installed dependency solve it? Never add a dependency for a few lines.
 5. Can it be one line a reader gets at a glance?
 6. Only then: write the minimum that works.
 
-The ladder runs *after* understanding the problem, not instead of it — read the code the change touches, trace the real flow, and list every place the change must reach (callers, tests, fixtures, config, exports) before picking a rung. Be lazy about the solution, never about the change: the smallest diff still updates everything on that list. It never cuts what correctness requires: trust-boundary validation, error handling that prevents data loss, security, accessibility. The result is small because it is necessary, not golfed.
-
-**Corollary — sweat the small leaks.** Within the code you are already changing, remove tiny pass-throughs, representation leaks, and duplicated decisions before they spread — small leaks compound into permanent coordination costs. Aim to leave the code you touched slightly simpler, behind the same or smaller surface, than you found it. This is continual investment inside your change's scope, not license for opportunistic cleanup of code you aren't changing — that boundary belongs to [surgical-changes](./surgical-changes.md).
+Climb it after reading the code the change touches, not instead of it, and after listing every place the change must reach (callers, tests, fixtures, config, exports): be lazy about the solution, never about the change. It never cuts what correctness requires: trust-boundary validation, error handling that prevents data loss, security, accessibility.
 
 ## Migrate Callers, Then Delete Legacy APIs
 
-When a new API is the right design, migrate callers and remove the old API in the *same* refactor wave instead of preserving compatibility layers.
+When a new API is the right design, inventory the callers, migrate them, and delete the old API in the same wave. Don't keep a legacy path alive because internal callers still exist; temporary adapters are exceptional and time-boxed. Update tests to assert the new contract and delete tests that only protect pre-refactor implementation details.
 
-- Do not keep legacy API paths alive just because internal callers still exist.
-- Inventory callers, migrate them, and delete the old API immediately. Code you move or merge keeps its validation and error handling.
-- Treat temporary adapters as exceptional and time-boxed, not default architecture.
-- Update tests to assert the new contract; delete tests that only protect pre-refactor implementation details.
-
-**When this applies:** no external users depend on backward compatibility, the project can absorb coordinated breaking changes, and the new API is part of a simplification/refactor initiative. Keeping both old and new APIs creates dual-path complexity, slows cleanup, and makes the codebase feel append-only.
+**Applies when** no external users depend on backward compatibility and the project can absorb a coordinated breaking change. Code you move or merge keeps its validation and error handling.
 
 ## Converge to the End State
 
-Optimize for the intended, verifiable end state rather than preserving smooth intermediate states.
+In planned rewrites and migrations with explicit phase boundaries, converge on the target architecture instead of keeping every intermediate step green with compatibility code that outlives the migration.
 
-- **Prioritize end-state integrity** over transitional stability.
-- **Intermediate breakage is acceptable** when it is planned, scoped, and reversible.
-- **Final verification is non-negotiable.**
-
-In large refactors and migrations, forcing every intermediate step to stay fully stable often creates temporary compatibility code that becomes long-lived debt. The cleaner strategy is to converge directly on the target architecture and prove correctness at explicit verification boundaries.
-
-**Guardrails.** Use this for planned rewrites/migrations with explicit phase boundaries. Declare where temporary breakage is acceptable and where it is not. Keep high-signal checks for actively touched areas while migrating. Require full static and runtime verification at plan completion.
-
-**Anti-pattern:** preserving obsolete paths only to keep every intermediate step green when no long-term compatibility is needed.
+- Declare where temporary breakage is acceptable and where it is not; it must be planned, scoped, and reversible.
+- Keep high-signal checks on actively touched areas while migrating.
+- Full static and runtime verification at completion is non-negotiable.
