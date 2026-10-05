@@ -2,6 +2,8 @@
 
 **How to read this index:** read the **Always read** baseline on every task. Then read in full each principle whose **Apply when** clause matches the task at hand — the [routing matrix](#routing-matrix) covers common task shapes. Read the whole corpus only when genuinely unsure which apply.
 
+Language-specific applications of these principles (Go, smart contracts) live in [docs/applications/](../applications/); read the matching file when the task is in that language. Sources backing each principle are in [CITATIONS.md](./CITATIONS.md), which a task never needs to read.
+
 ## Always read
 
 - [Prove It Works](./prove-it-works.md) — verify the real thing directly, not proxies or self-reports. Every task ends with verification.

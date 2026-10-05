@@ -14,14 +14,4 @@ Before allowing any parallel execution:
 2. **If shared state exists, serialize access.** Mutexes, lockfiles, sequential phases, or exclusive ownership.
 3. **If serialization is impractical, eliminate the sharing.** Give each actor its own copy (separate files, isolated state directories, per-caller mappings).
 
-The principle generalizes across paradigms: process-level mutexes, contract-level reentrancy guards, deploy-level concurrency groups. Language-specific applications (Go mutex/channel patterns, smart-contract reentrancy guards, CI deploy locks) live in [docs/applications/](../applications/).
-
-## Relationship to Other Principles
-
-[Make operations idempotent](./make-operations-idempotent.md) makes reruns safe; this principle prevents concurrent runs. They are complementary, not redundant.
-
-[Encode lessons in structure](./encode-lessons-in-structure.md) is the meta-principle -- this is what to encode when the lesson is about concurrency.
-
-## Citations
-
-Lamport, "Time, Clocks, and the Ordering of Events in a Distributed System" (CACM 21:7, 1978) — ordering and causality in concurrent systems. Hoare, "Communicating Sequential Processes" (CACM, 1978; book Prentice Hall, 1985) — channels-and-processes model that informs Go's concurrency primitives. Kleppmann, *Designing Data-Intensive Applications* (2017) — serialization, locks, and transactional isolation in practice.
+The principle generalizes across paradigms: process-level mutexes, contract-level reentrancy guards, deploy-level concurrency groups.

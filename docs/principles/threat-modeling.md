@@ -13,6 +13,8 @@
 - State that an adversary can influence (storage, queues, files, parameters)
 - Operations that are expensive, irreversible, or visible to others
 
+A change in any of these is "security-sensitive" in the sense [never block on the human](./never-block-on-the-human.md) escalates on.
+
 ## When It Doesn't
 
 - Pure computation with no external input
@@ -33,15 +35,3 @@
 - **Complete mediation.** Every access to a protected resource is checked. No fast paths around the check.
 - **Don't roll your own crypto.** Use audited primitives. Novel cryptographic constructions are how breaches happen.
 - **Adversaries get better.** The threat model is dated the day you write it. Revisit when the attack surface changes.
-
-## Relationship to Other Principles
-
-[Boundary discipline](./boundary-discipline.md) governs *where* validation happens; this governs *what* validation is for and *whom* it defends against. Without a threat model, boundary validation is shape-checking, not security.
-
-[Never block on the human](./never-block-on-the-human.md) requires escalation on security-sensitive changes. This principle defines when "security-sensitive" applies: any change that affects an enumerated threat or trust boundary.
-
-Language-specific applications live in [docs/applications/](../applications/).
-
-## Citations
-
-Saltzer & Schroeder, "The Protection of Information in Computer Systems" (*Proc. IEEE* 63:1278-1308, 1975) — least privilege, fail-safe defaults, complete mediation, separation of privilege, economy of mechanism. Shostack, *Threat Modeling: Designing for Security* (Wiley, 2014) — STRIDE methodology and operational threat modeling. Schneier, *Secrets and Lies* (Wiley, 2000) — "attacks always get better"; security as a continuous discipline.

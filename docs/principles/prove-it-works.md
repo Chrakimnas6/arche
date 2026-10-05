@@ -28,15 +28,3 @@ In a run of similar edits, verify each change before starting the next -- known-
 ### Delegation: trust artifacts, not self-reports
 
 When verifying delegated work, inspect the actual output artifact (`git diff --stat`, file contents, runtime behavior) -- never the delegate's summary of what they claim to have done. Agents report what they intended, not always what happened. Scope violations and silent failures are invisible in self-reports but obvious in artifacts.
-
-Language-specific applications (testnet deployment for contracts, integration test patterns in Go) live in [docs/applications/](../applications/).
-
-## Relationship to Other Principles
-
-[Fix root causes](./fix-root-causes.md) extends this to debugging — check the real cause, not the proxied symptom.
-
-[Observability](./observability.md) extends this to production — verify continuously through emitted signal, not just at task completion.
-
-## Citations
-
-Dijkstra, "Notes on Structured Programming" (EWD 249, 1970) — "Program testing can be used to show the presence of bugs, but never to show their absence." Beck, *Test-Driven Development by Example* (Addison-Wesley, 2002) — automated tests as proof of behavior. Goodhart's Law (Goodhart, 1975; popularized by Strathern, 1997) — when a measure becomes a target, it ceases to be a good measure. Verify the real thing, not the proxy.

@@ -220,11 +220,18 @@ done
 # "15 principles" README. See docs/principles/encode-lessons-in-structure.md.
 for f in docs/principles/*.md; do
   name=$(basename "$f" .md)
-  [ "$name" = "index" ] && continue
+  case "$name" in index|CITATIONS) continue ;; esac
   case " $EXPECTED_PRINCIPLES " in
     *" $name "*) pass "$name is registered in EXPECTED_PRINCIPLES" ;;
     *) fail "$name exists on disk but is NOT in EXPECTED_PRINCIPLES (tests/validate-setup.sh)" ;;
   esac
+done
+
+# Citations live in CITATIONS.md so agents applying a principle don't load them.
+for p in $EXPECTED_PRINCIPLES; do
+  grep -q '^## Citations' "docs/principles/$p.md" \
+    && fail "$p has a Citations section; move it to docs/principles/CITATIONS.md" \
+    || pass "$p keeps citations in CITATIONS.md"
 done
 
 # ---------------------------------------------------------------------------

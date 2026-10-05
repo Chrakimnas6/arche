@@ -24,13 +24,3 @@ Code doesn't change between runs. State does. When "fails after restart," suspec
 Follow the bug to its root even when the root is "pre-existing" or sits in code you didn't write. Don't stop at the nearest symptom because the real cause lives in another file, an older commit, or someone else's module — the causal chain is yours to chase to bedrock.
 
 This governs *depth*, not *breadth*. Owning the cause means tracing the bug you were asked to fix all the way down; it does not mean adopting every unrelated lint error or smell in a file you happened to open. For issues that are not on the causal path, follow [surgical-changes](./surgical-changes.md): surface them, don't bundle the fix.
-
-## Relationship to Other Principles
-
-[Prove it works](./prove-it-works.md) says to check real state, not proxies. This extends that to debugging: check the real cause, not the proxied symptom.
-
-[Encode lessons in structure](./encode-lessons-in-structure.md) provides the encoding mechanism once a root cause is understood -- make it structurally impossible to recur.
-
-## Citations
-
-Imai, *Kaizen: The Key to Japan's Competitive Success* (McGraw-Hill, 1986) — Toyota's "5 Whys" methodology for tracing causes back to bedrock. Hunt & Thomas, *The Pragmatic Programmer* (1999) — "Programming by Coincidence" anti-pattern; debug deliberately. Agans, *Debugging: The 9 Indispensable Rules* (AMACOM, 2002) — "Understand the system" + "Make it fail" as systematic root-cause discipline.

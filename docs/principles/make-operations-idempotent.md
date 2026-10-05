@@ -13,8 +13,6 @@ CLI commands, lifecycle operations, and scheduling loops run in environments whe
 - **Initialization guards:** any state-establishing operation should refuse re-execution rather than corrupt state if called twice (initializer flags, version checks, atomic swaps).
 - **Convergent startup:** scan for existing processes/state, clean stale artifacts, adopt live resources — converging to the correct state regardless of what the previous run left behind.
 
-Language-specific applications (database migrations, contract initializer pattern, deploy scripts) live in [docs/applications/](../applications/).
-
 ## The Test
 
 Before shipping a state-mutating operation, ask:
@@ -23,13 +21,3 @@ Before shipping a state-mutating operation, ask:
 3. Does re-execution converge to the same end state?
 
 If any answer is "it depends on what state was left behind," the operation needs a reconciliation step.
-
-## Relationship to Other Principles
-
-- Extends [fix root causes](./fix-root-causes.md) by preventing a class of root causes (partial completion) at design time
-- Complements [fix root causes](./fix-root-causes.md) by making state self-correcting rather than requiring debugging
-- Distinct from [encode lessons in structure](./encode-lessons-in-structure.md) (which is about how to encode rules, not operation design)
-
-## Citations
-
-Fielding, *Architectural Styles and the Design of Network-based Software Architectures* (UC Irvine PhD dissertation, 2000) — idempotency as a REST architectural constraint. Gray & Reuter, *Transaction Processing: Concepts and Techniques* (Morgan Kaufmann, 1992) — recovery semantics. Kleppmann, *Designing Data-Intensive Applications* (O'Reilly, 2017) — idempotency in distributed systems and exactly-once delivery.

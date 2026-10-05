@@ -29,8 +29,6 @@ Business logic lives in pure functions with no framework dependencies. The shell
 - **Computation:** pure transforms from input to output. No side effects.
 - **Orchestration:** thin wiring that calls pure functions and handles I/O.
 
-Language-specific applications (Go error patterns, smart-contract external/internal split) live in [docs/applications/](../applications/).
-
 ## The Tests
 
 Before adding a validation check, ask: **"Is this data crossing a system boundary right now?"** If not, the validation is redundant — trust the types.
@@ -38,7 +36,3 @@ Before adding a validation check, ask: **"Is this data crossing a system boundar
 Before putting logic in a handler, hook, or framework integration point, ask: **"Can this be a pure function that the shell just calls?"** If yes, extract it.
 
 See also [foundational-thinking](./foundational-thinking.md), [threat-modeling](./threat-modeling.md).
-
-## Citations
-
-Meyer, *Object-Oriented Software Construction* (1988/1997) — Design by Contract: preconditions checked at the boundary, internals trust the contract. Hunt & Thomas, *The Pragmatic Programmer* (1999) — assertive programming and contracts. Eric Evans, *Domain-Driven Design* (2003) — bounded contexts and anti-corruption layers at integration boundaries. Alexis King, "Parse, don't validate" (2019) — parsing into domain types at the boundary so internal code never re-checks.

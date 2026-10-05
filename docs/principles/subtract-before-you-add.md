@@ -52,13 +52,3 @@ In large refactors and migrations, forcing every intermediate step to stay fully
 **Guardrails.** Use this for planned rewrites/migrations with explicit phase boundaries. Declare where temporary breakage is acceptable and where it is not. Keep high-signal checks for actively touched areas while migrating. Require full static and runtime verification at plan completion.
 
 **Anti-pattern:** preserving obsolete paths only to keep every intermediate step green when no long-term compatibility is needed.
-
-Language-specific applications live in [docs/applications/](../applications/).
-
-## Relationship to Other Principles
-
-This is not about *what* to build ([foundational-thinking](./foundational-thinking.md)) or *how* to redesign it ([redesign-from-first-principles](./redesign-from-first-principles.md)). It's about *when* to act — an ordering principle that says subtraction comes before addition, migration comes before deletion, and the end state comes before transitional stability.
-
-## Citations
-
-Saint-Exupéry, *Wind, Sand and Stars* (1939) — "Perfection is finally attained not when there is no longer anything to add, but when there is no longer anything to take away." Brooks, *The Mythical Man-Month* (1975) — second-system effect; less is more. Hunt & Thomas, *The Pragmatic Programmer* (1999) — "Program Deliberately" (the antidote to programming by coincidence) and the DRY principle. Fowler, "StranglerFigApplication" (martinfowler.com bliki, 2004) — incremental replacement of legacy systems for caller migration. Fowler, "Yagni" (martinfowler.com bliki, 2015) — the reuse ladder's first rung. Fowler, *Refactoring* (2nd ed., 2018) — refactor in the direction of deletion.
