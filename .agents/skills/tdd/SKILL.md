@@ -48,7 +48,7 @@ RIGHT (vertical):
 
 **Align with existing domain language.** Use the project's domain glossary and naming conventions so test names and interface vocabulary match the project's language; respect any design docs or ADRs (e.g. in `docs/design/`) governing the area you're touching. Consistent terms across tests and code make tests read as specifications.
 
-Before writing code, identify the **seams** — the public boundaries tests observe — and list the requested behaviors to test, prioritizing critical paths and complex logic.
+Before writing code, identify the **seams** — the public boundaries tests observe — and list the requested behaviors to test, prioritizing critical paths and complex logic. Give each seam a one-line note on what breaks it catches and what it misses, so the seam choice is a visible tradeoff, not a default.
 
 - **Established scope:** A clear user request and existing interfaces, or a plan brief's Data structures and Verification sections, supply the seams and behaviors. Proceed without another approval round.
 - **Unresolved direction:** If the request and code leave materially different interface or behavior choices open, ask only about those choices before writing dependent tests. When the interface design is in question, consult `docs/principles/module-depth.md`.
