@@ -82,6 +82,8 @@ Rules:
 - Don't anticipate future tests
 - Keep tests focused on observable behavior
 
+**Green is earned, not granted.** Never reach green by weakening the gate — deleting, skipping, or narrowing a test; loosening an assertion, tolerance, timeout, or retry count; adding a suppression (`//nolint`, `slither-disable`); `--no-verify`; branching product code on a test environment; or rewriting a plan's acceptance text to match what was built. If the gate itself is wrong, say so and leave that change for the user.
+
 **Green means the project's suite, not your file.** Before calling the change done, run the project's test command — the one `AGENTS.md` names, or the repo's default — even when the task named a single test file. A scope statement bounds the deliverable, not the verification. Every failure that run shows goes in the report by name, including ones you did not cause.
 
 ### 4. Refactor

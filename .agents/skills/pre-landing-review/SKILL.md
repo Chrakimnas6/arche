@@ -50,7 +50,7 @@ Before reviewing code quality, check: **did they build what was requested -- not
 
 1. Identify the **stated intent** from the PR description (`gh pr view --json body --jq .body 2>/dev/null || true`) and commit messages (`git log origin/<base>..HEAD --oneline`). If no PR exists, commit messages carry the intent — common, since this skill runs before creating a PR.
 2. Compare `git diff "$DIFF_BASE" --stat` against the intent, with skepticism in both directions:
-   - **Scope creep** — files unrelated to the stated intent, features or refactors nothing mentions, "while I was in there" changes that expand blast radius.
+   - **Scope creep** — files unrelated to the stated intent, features or refactors nothing mentions, "while I was in there" changes that expand blast radius, and behavior the diff changes that the intent doesn't state (a default, an exit code, a stored value, a side effect).
    - **Missing requirements** — stated requirements the diff doesn't address, partial implementations, test gaps for stated behavior.
 3. For each partial or missing requirement, investigate **why** before reporting: check `git log origin/<base>..HEAD` for started, reverted, or abandoned work, and read the code to see what was built instead. Was it intentionally cut, abandoned mid-way, misunderstood, blocked by a dependency, or forgotten? State the reason **with evidence**, plus the impact (HIGH/MEDIUM/LOW — what breaks or degrades if undelivered).
 4. Output before the main review begins:
@@ -72,7 +72,11 @@ Apply the review against the diff in two passes:
 
 ### Pass 1 (CRITICAL)
 
-**Enum & Value Completeness** -- when the diff introduces a new enum value, status, tier, or type constant, use Grep to find ALL files that reference sibling values, then Read those files to check if the new value is handled. This is the one category where within-diff review is insufficient.
+**Enum & Value Completeness** -- when the diff introduces a new enum value, status, tier, or type constant, or loosens what an input accepts (a widened validator, parser, or guard), use Grep to find ALL consumers of sibling values or of that field, then Read each to check it handles the new value or shape. The broken consumer is usually outside the diff.
+
+**Gate Integrity** -- read every hunk that removes, skips, or loosens a check (test, assertion, tolerance, timeout, retry count, lint suppression, CI step, snapshot, plan acceptance text) or branches product code on a test environment, and ask: does this silence the failure the check was added for, or is it justified by a measurement or decision visible in the diff? A failing answer is always ASK, never AUTO-FIX; a commit message claiming a measurement doesn't settle it. A test-only flake fix is a relaxation unless a forced probe shows the test still fails when the behavior breaks.
+
+**Sibling sweep (every finding)** -- treat a finding as a defect class, not a line: grep its pattern at every other entry point and call site, list the siblings under one finding, and rate severity on the worst. Data loss, a trust-boundary bypass, and uncapped spend are CRITICAL whatever the lens.
 
 ### Pass 2 (Code quality)
 
@@ -219,7 +223,7 @@ If no ASK items exist (everything was AUTO-FIX), skip the question entirely.
 
 ### Step 6e: Re-check what the fixes changed
 
-A pass that applied fixes has not reviewed the fixed code. After Step 6d, re-run Steps 3-5 on the hunks that fixes and generated tests changed — not the whole diff, and without re-asking questions already answered. Stop when a re-check makes no edits. If two re-checks both still edit, stop and report the remaining findings as unconverged rather than presenting the last edited tree as reviewed. A behavior fix gets a test that fails without the fix and covers every site with the same defect (grep for siblings, as in Enum & Value Completeness); where no test can show it, the repro command and its output stand in. Mechanical fixes (typos, unused imports) need no new test.
+A pass that applied fixes has not reviewed the fixed code. After Step 6d, re-run Steps 3-5 on the hunks that fixes and generated tests changed — not the whole diff, and without re-asking questions already answered. Stop when a re-check makes no edits. If two re-checks both still edit, stop and report the remaining findings as unconverged rather than presenting the last edited tree as reviewed. A behavior fix gets a test that fails without the fix and covers every site with the same defect (the sibling sweep in Step 3); where no test can show it, the repro command and its output stand in. Mechanical fixes (typos, unused imports) need no new test.
 
 ### Verification of claims
 

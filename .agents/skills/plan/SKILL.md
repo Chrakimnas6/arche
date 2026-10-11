@@ -60,7 +60,7 @@ Read directly when the change touches a few known files. Delegate to subagents w
 
 **Greenfield mode:** Focus exploration on reading requirements docs, researching technology choices, and exploring reference implementations if any exist.
 
-**Feature mode:** Focus exploration on understanding the existing codebase — file structure, patterns, conventions, test infrastructure, and the specific areas the change will touch.
+**Feature mode:** Focus exploration on understanding the existing codebase — file structure, patterns, conventions, test infrastructure, and the specific areas the change will touch. Check each factual premise before designing on it: every command, flag, route, or API the plan names exists (`--help`, the source), and the work isn't already on base (`git log origin/<base> -- <files>`). List a premise you couldn't check as unverified under Constraints.
 
 ## Step 4 — Write the Plan
 

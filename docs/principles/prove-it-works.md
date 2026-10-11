@@ -12,6 +12,7 @@ Unverified work has unknown correctness. Indirect verification (file mtimes, out
 - **Check process liveness directly** (PID, process table), not indirectly (file mtime, cached status).
 - **Read the actual value**, not a cached or derived representation.
 - **When verification fails, suspect the observation method** before suspecting the system.
+- **An exit code is not evidence the work ran.** A test run that selected nothing passes — `go test` prints `[no tests to run]` and exits 0. Confirm the run's count names the tests you meant.
 
 ### Claimed limitations need evidence
 
