@@ -55,10 +55,8 @@ else
 fi
 
 # Pre-landing-review references
-for ref in specialist-lenses.md; do
-  f=".agents/skills/pre-landing-review/references/$ref"
-  [ -f "$f" ] && pass "pre-landing-review/$ref" || fail "pre-landing-review/$ref missing"
-done
+f=".agents/skills/pre-landing-review/references/specialist-lenses.md"
+[ -f "$f" ] && pass "pre-landing-review/specialist-lenses.md" || fail "pre-landing-review/specialist-lenses.md missing"
 
 # TDD references
 for ref in testing-anti-patterns.md mocking.md; do
@@ -92,10 +90,8 @@ check_symlink() {
 
 check_symlink ".claude/skills" "../.agents/skills"
 
-# Verify symlink targets actually resolve
-for link in .claude/skills; do
-  [ -e "$link" ] && pass "$link resolves" || fail "$link is a broken symlink"
-done
+# Verify the symlink target actually resolves
+[ -e .claude/skills ] && pass ".claude/skills resolves" || fail ".claude/skills is a broken symlink"
 
 # Claude Code reads AGENTS.md only when no CLAUDE.md exists in the project.
 for f in CLAUDE.md .claude/CLAUDE.md; do
