@@ -2,6 +2,8 @@
 
 **How to read this index:** read the **Always read** baseline on every task. Then read in full each principle whose **Apply when** clause matches the task at hand — the [routing matrix](#routing-matrix) covers common task shapes. Read the whole corpus only when genuinely unsure which apply.
 
+Language-specific applications of these principles (Go, smart contracts) live in [docs/applications/](../applications/); read the matching file when the task is in that language. Sources backing each principle are in [CITATIONS.md](./CITATIONS.md), which a task never needs to read.
+
 ## Always read
 
 - [Prove It Works](./prove-it-works.md) — verify the real thing directly, not proxies or self-reports. Every task ends with verification.
@@ -9,7 +11,7 @@
 
 ## Core
 
-- [Foundational Thinking](./foundational-thinking.md) — data structures first, scaffold first, optimize for option value. **Apply when** starting a feature or component: choosing core types, sequencing scaffold vs features, deciding what concurrent actors share.
+- [Foundational Thinking](./foundational-thinking.md) — data structures first, scaffold first, optimize for option value. **Apply when** starting a feature or component: choosing core types, sequencing scaffold vs features.
 - [Redesign from First Principles](./redesign-from-first-principles.md) — redesign as if the new requirement existed from day one. **Apply when** integrating a new requirement into an existing design.
 - [Subtract Before You Add](./subtract-before-you-add.md) — remove complexity first, then build. **Apply when** sequencing an addition, refactor, or rewrite — and continuously when sizing a diff or tempted to add abstraction.
 - [Experience First](./experience-first.md) — the user experience is the product. **Apply when** making product, UX, or feature-scope trade-offs.

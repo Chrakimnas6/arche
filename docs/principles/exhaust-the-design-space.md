@@ -1,36 +1,20 @@
 # Exhaust the Design Space Before Committing
 
-When facing a novel interaction or architectural decision with no established precedent, explore multiple concrete alternatives before committing to implementation. The cost of building the wrong thing dwarfs the cost of exploring three options.
+**Principle:** When the right answer isn't obvious, build 2-3 competing prototypes or sketches, compare them side by side, and only then commit. Building the wrong thing costs far more than exploring three options.
 
-## The Rule
-
-For decisions where the right answer isn't obvious, build 2-3 competing prototypes or sketches. Compare them side-by-side. Only then commit.
-
-**Design It Twice** (Ousterhout, "A Philosophy of Software Design"): your first idea is unlikely to be the best. For interface design specifically, explore radically different interfaces -- not variations on one theme. A second flavor of the first shape does not count as a second design. Contrast by depth (leverage at the interface), locality (where change concentrates), and seam placement. Screen every candidate against the [module-depth](./module-depth.md) red flags before committing, and between viable candidates prefer the one that hides more complexity behind a smaller, simpler interface.
-
-**Coverage vs kind:** Alternatives usually differ in kind (fundamentally different architectures), not coverage (more vs less of the same thing). Compare on tradeoffs — performance, complexity, flexibility — not on a single completeness axis. Don't force-rank qualitatively different approaches with numerical scores; explain the tradeoff that matters for this specific decision.
+- **Make the alternatives differ in kind.** For interfaces especially, explore radically different designs; a second flavor of the first shape does not count. Contrast them by depth (leverage at the interface), locality (where change concentrates), and seam placement.
+- **Screen candidates against the [module-depth](./module-depth.md) red flags.** Between viable ones, prefer the one that hides more complexity behind a smaller interface.
+- **Explain the trade-off; don't score it.** Compare on the trade-offs that matter for this decision (performance, complexity, flexibility). Don't force-rank qualitatively different approaches with numerical scores.
 
 ## When It Applies
 
-- Novel interactions (no prior art in the codebase)
+- Novel interactions with no prior art in the codebase
 - Architectural choices with multiple viable approaches
-- API surface design where downstream consumers depend on stability
+- API surfaces downstream consumers will depend on
 - Decisions that are hard to reverse after deployment
 
 ## When It Doesn't
 
 - Mechanical implementation where the pattern is established
 - Bug fixes or refactors with a clear target state
-- Changes where constraints dictate a single viable approach
-
-After a direction is chosen, see [subtract-before-you-add](./subtract-before-you-add.md) for implementation discipline. Language-specific applications live in [docs/applications/](../applications/).
-
-## Distinction from Other Principles
-
-[Redesign from first principles](./redesign-from-first-principles.md) governs how to *integrate* a change. This governs how to *discover which change to make* when the answer isn't obvious.
-
-See also [redesign-from-first-principles](./redesign-from-first-principles.md), [module-depth](./module-depth.md).
-
-## Citations
-
-Ousterhout, *A Philosophy of Software Design* (2nd ed., 2021) — "Design It Twice." Brooks, *The Mythical Man-Month* (1975), chapter 11 "Plan to Throw One Away" — the first system informs the second.
+- Constraints that dictate a single viable approach
