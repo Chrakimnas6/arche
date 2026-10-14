@@ -28,6 +28,8 @@ Use for any technical issue — test failures, production bugs, unexpected behav
    - If not reproducible, gather more data -- don't guess
    - Drive the reproduction yourself on the surface where it fails (test, CLI, service, contract call). Ask the user to reproduce only with a stated, specific reason that surface is unreachable from here, and only after driving it as far as it goes
    - If it won't reproduce directly, force it: synthesize the trigger, tighten the conditions, or instrument until it fires
+   - Intermittent: run it N≥10 times on base and on the branch (e.g. `go test -count=N -race`) and record failed/N for each; failing on base means the cause predates the change. A rerun, wider timeout, retry, or skip is never a hypothesis
+   - Race: inject a yield or sleep at the suspected window until it fails every time, and keep that interleaving in the regression test. The fix is an atomic primitive (compare-and-swap, conditional update, owned lock); a check-then-act with a smaller window is not a fix
 
 2. **Check Recent Changes**
    - What changed that could cause this?

@@ -48,7 +48,7 @@ RIGHT (vertical):
 
 **Align with existing domain language.** Use the project's domain glossary and naming conventions so test names and interface vocabulary match the project's language; respect any design docs or ADRs (e.g. in `docs/design/`) governing the area you're touching. Consistent terms across tests and code make tests read as specifications.
 
-Before writing code, identify the **seams** — the public boundaries tests observe — and list the requested behaviors to test, prioritizing critical paths and complex logic.
+Before writing code, identify the **seams** — the public boundaries tests observe — and list the requested behaviors to test, prioritizing critical paths and complex logic. Give each seam a one-line note on what breaks it catches and what it misses, so the seam choice is a visible tradeoff, not a default.
 
 - **Established scope:** A clear user request and existing interfaces, or a plan brief's Data structures and Verification sections, supply the seams and behaviors. Proceed without another approval round.
 - **Unresolved direction:** If the request and code leave materially different interface or behavior choices open, ask only about those choices before writing dependent tests. When the interface design is in question, consult `docs/principles/module-depth.md`.
@@ -81,6 +81,8 @@ Rules:
 - Only enough code to pass current test
 - Don't anticipate future tests
 - Keep tests focused on observable behavior
+
+**Green is earned, not granted.** Never reach green by weakening the gate — deleting, skipping, or narrowing a test; loosening an assertion, tolerance, timeout, or retry count; adding a suppression (`//nolint`, `slither-disable`); `--no-verify`; branching product code on a test environment; or rewriting a plan's acceptance text to match what was built. If the gate itself is wrong, say so and leave that change for the user.
 
 **Green means the project's suite, not your file.** Before calling the change done, run the project's test command — the one `AGENTS.md` names, or the repo's default — even when the task named a single test file. A scope statement bounds the deliverable, not the verification. Every failure that run shows goes in the report by name, including ones you did not cause.
 

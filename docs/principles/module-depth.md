@@ -28,12 +28,16 @@ Use these terms consistently when discussing architecture. Don't substitute "com
 
 ## Red Flags
 
-Screen every interface — proposed or existing — against these. Each is a reason to revise the shape.
+Screen every interface — proposed or existing — against these. Each is a reason to revise the shape. Screen assuming the next contributor is an agent that sees only the files it opened, copies the nearest example, and takes the shortest path that compiles: prefer the shape where a change that looks right from one file is right for the whole system.
 
 - **Shallow module.** The interface is nearly as complex as what it hides. Signs: callers coordinate several calls to complete one operation; public options expose internal stages or implementation choices; learning the interface doesn't spare the caller from learning the implementation.
 - **Information leakage.** One internal decision — a representation, policy, or protocol detail — appears in more than one module, so changing it requires coordinated edits. Re-exporting transport, storage, or framework types through a public surface is leakage; parse external data into domain types behind the interface (see [boundary-discipline](./boundary-discipline.md)).
 - **Temporal decomposition.** Modules organized by execution order (load, validate, transform, save) instead of the knowledge they own, repeating one representation and its invariants across several boundaries. Group code by domain knowledge and ownership; methods that run at different times can share a module when they protect the same decisions. Execution order is not ownership.
 - **Pass-through method.** Forwards the same arguments to another method with the same shape — a layer that hides nothing. Remove it or move the responsibility to the module that can complete the operation; keep a forwarding boundary only when it adds policy, adaptation, or a distinct abstraction. The deletion test above catches these.
+- **Split ownership.** More than one module writes the same state or keeps its own copy, so editing one writer lets the others' rules drift. Give each piece of state one owner; others read it or ask the owner to change it.
+- **Two ways to do one task.** Whichever way is found first gets copied, so every way keeps gaining callers. Keep one; move callers off the others and delete them in the same change.
+- **Importable internals.** Whatever compiles becomes interface. Make internals unreachable from outside the module, so an outside import fails the build.
+- **Hand-synced list.** Adding an item means editing several lists, and an editor who sees one updates one. Derive the others from a single list; if one can't be derived, fail the build when they disagree.
 
 Don't confuse a deep module with a deep call chain: a chain scatters understanding across layers, a deep module concentrates capability behind one interface. A rich interface can keep call chains short.
 
