@@ -34,7 +34,7 @@ done
 section "2. Skills structure"
 # ---------------------------------------------------------------------------
 
-EXPECTED_SKILLS="adversarial-review execute-plan grill-me handoff hillclimb investigate plan pre-landing-review reflect resolving-merge-conflicts tdd teach writing-great-skills"
+EXPECTED_SKILLS="adversarial-review execute-plan grill-me handoff hillclimb investigate plan pre-landing-review reflect resolving-merge-conflicts tdd teach unslop writing-great-skills"
 
 for skill in $EXPECTED_SKILLS; do
   skill_file=".agents/skills/$skill/SKILL.md"
@@ -55,10 +55,8 @@ else
 fi
 
 # Pre-landing-review references
-for ref in specialist-lenses.md comment-review.md; do
-  f=".agents/skills/pre-landing-review/references/$ref"
-  [ -f "$f" ] && pass "pre-landing-review/$ref" || fail "pre-landing-review/$ref missing"
-done
+f=".agents/skills/pre-landing-review/references/specialist-lenses.md"
+[ -f "$f" ] && pass "pre-landing-review/specialist-lenses.md" || fail "pre-landing-review/specialist-lenses.md missing"
 
 # TDD references
 for ref in testing-anti-patterns.md mocking.md; do
@@ -90,12 +88,14 @@ check_symlink() {
   fi
 }
 
-check_symlink ".claude/CLAUDE.md" "../AGENTS.md"
 check_symlink ".claude/skills" "../.agents/skills"
 
-# Verify symlink targets actually resolve
-for link in .claude/CLAUDE.md .claude/skills; do
-  [ -e "$link" ] && pass "$link resolves" || fail "$link is a broken symlink"
+# Verify the symlink target actually resolves
+[ -e .claude/skills ] && pass ".claude/skills resolves" || fail ".claude/skills is a broken symlink"
+
+# Claude Code reads AGENTS.md only when no CLAUDE.md exists in the project.
+for f in CLAUDE.md .claude/CLAUDE.md; do
+  [ -e "$f" ] && fail "$f exists, so Claude Code would skip AGENTS.md" || pass "no $f shadowing AGENTS.md"
 done
 
 # ---------------------------------------------------------------------------
@@ -293,7 +293,7 @@ fi
 section "10. Agents"
 # ---------------------------------------------------------------------------
 
-EXPECTED_AGENTS="implementer"
+EXPECTED_AGENTS="implementer comment-reviewer"
 
 for agent in $EXPECTED_AGENTS; do
   agent_file=".agents/agents/$agent.md"
@@ -322,12 +322,11 @@ for f in .agents/agents/*.md; do
   esac
 done
 
-# README mentions the agent
-if grep -q "implementer" README.md; then
-  pass "README mentions implementer agent"
-else
-  fail "README missing implementer agent"
-fi
+for agent in $EXPECTED_AGENTS; do
+  grep -q "\*\*$agent\*\*" README.md \
+    && pass "README mentions $agent agent" \
+    || fail "README missing $agent agent"
+done
 
 # ---------------------------------------------------------------------------
 # Summary

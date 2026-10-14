@@ -9,7 +9,7 @@ My personal setup for working with AI coding agents — engineering principles, 
 This is my setup, not a one-command template. Take what's useful:
 
 - **Principles** (`docs/principles/`) and **skills** (`.agents/skills/`) are the most portable — copy the individual files you want straight into your own project.
-- If you want the whole layout, copy it with a tool that preserves symlinks. The `.claude/` entries are symlinks into `.agents/`, and a plain `cp -r` flattens them into duplicate files (especially on macOS):
+- If you want the whole layout, copy it with a tool that preserves symlinks. `.claude/skills` is a symlink into `.agents/`, and a plain `cp -r` flattens it into duplicate files (especially on macOS):
 
 ```bash
 # rsync -a (or tar) preserves the .claude -> .agents symlinks; plain `cp -r` would flatten them
@@ -41,9 +41,9 @@ Alternatively, make everything available in *every* project on your machine inst
 │       ├── handoff/          # Session handoff doc (for a fresh agent)
 │       ├── teach/            # Multi-session guided learning workspace
 │       ├── resolving-merge-conflicts/ # Resolve merge/rebase conflicts
+│       ├── unslop/           # Cut AI tells from English prose
 │       └── writing-great-skills/ # Rubric for authoring & auditing skills
 ├── .claude/
-│   ├── CLAUDE.md             # -> ../AGENTS.md (symlink)
 │   ├── skills                # -> ../.agents/skills (symlink)
 │   └── settings.json         # Claude Code settings (currently empty)
 ├── .github/
@@ -67,8 +67,8 @@ Alternatively, make everything available in *every* project on your machine inst
 ### Why This Structure?
 
 - **`.agents/`** is the canonical source for all agent configuration
-- **`.claude/`** contains symlinks back to `.agents/`, so Claude Code discovers everything automatically
-- **`AGENTS.md`** at the root is read by both Claude Code (via symlink) and Codex (natively)
+- **`.claude/skills`** links back to `.agents/skills`, because Claude Code doesn't look under `.agents/`
+- **`AGENTS.md`** at the root is read natively by both Claude Code and Codex; adding a `CLAUDE.md` would make Claude Code skip it
 - **`docs/`** provides persistent context that both humans and agents reference
 
 ## Skills
@@ -87,13 +87,15 @@ Alternatively, make everything available in *every* project on your machine inst
 | **handoff** | `/handoff` (manual only) | Pause/pickup notes at `.handoff/<branch>.md` (git-ignored) so a fresh session resumes without being told a path |
 | **teach** | `/teach` (manual only) | Multi-session guided learning — turns a dir into a teaching workspace (mission, curated resources, HTML lessons) |
 | **resolving-merge-conflicts** | "resolve merge conflict", mid-merge/rebase | Resolves an in-progress conflict by recovering each side's intent, then runs the project's checks |
+| **unslop** | handoff of English prose (global `CLAUDE.md`), `/unslop` | Cuts AI tells from English prose people will read (PR descriptions, READMEs, docs) without changing what it claims |
 | **writing-great-skills** | `/writing-great-skills` (manual only) | Rubric for writing & auditing skills — invocation, info hierarchy, leading words, failure modes |
 
 ## Agents
 
 | Agent | Used by | What It Does |
 |-------|---------|-------------|
-| **implementer** | `execute-plan` | Implementation worker: takes one phase brief, implements and verifies it, reviews its added comments, and reports back with artifacts. Model and effort defaults live in its frontmatter. The orchestrating session re-runs verification and gates the next phase — design judgment stays in the main loop. |
+| **implementer** | `execute-plan` | Implementation worker: takes one phase brief, implements and verifies it, and reports back with artifacts. Model and effort defaults live in its frontmatter. The orchestrating session re-runs verification and gates the next phase — design judgment stays in the main loop. |
+| **comment-reviewer** | handoff (global `CLAUDE.md`), `pre-landing-review` | Fresh-context comment pass: removes comments the code doesn't need, flags code a comment is excusing. The author's own context makes every comment look necessary, so the review runs without it. |
 
 ## Workflow
 

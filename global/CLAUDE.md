@@ -22,13 +22,17 @@ Before acting on design or implementation tasks, read the principles index at `~
 
 Write comments required by tools or project conventions, including license headers, lint or codegen directives, and required API documentation. Exported visibility alone does not establish a documentation requirement; follow the project's convention.
 
-For other comments, state only information the code cannot show: an invariant, an external system's quirk, why the obvious approach fails. Remove restatements of names, statements, or assertions. Keep implementation and review history in the PR description. Existing comment density is not a target. Before handing off a change that adds or edits handwritten comments, use the checklist at `~/src/github.com/Chrakimnas6/arche/.agents/skills/pre-landing-review/references/comment-review.md`.
+For other comments, state only information the code cannot show: an invariant, an external system's quirk, why the obvious approach fails. Remove restatements of names, statements, or assertions. Keep implementation and review history in the PR description. Existing comment density is not a target. Before handing off a change that adds or edits handwritten comments, run the `comment-reviewer` agent on it. Then check its edits in the diff, and restore a removed comment only when you can name the fact it carried that the code does not show.
 
 ## Commit Messages & PR Descriptions
 
 Follow the classic rules (tpope's note, cbea.ms/git-commit), yielding to project convention where they conflict: imperative subject ≤50 chars, no trailing period; when the subject alone doesn't suffice, a blank line then a body wrapped at 72 explaining what and why — the diff shows how.
 
 Write for the repository's history, not the conversation: no "as discussed" or "per feedback", no chronology of attempts — describe the final change as one coherent story. A PR description says what changed, why, and how to review or verify it — in the repo's PR template if one exists. It is not a file-by-file tour, a feature checklist restating the diff, or a transcript of the session that produced it.
+
+## Prose for Others
+
+Before handing off prose other people will read (a PR description, README, doc, or report), run the `unslop` skill on English text or the `yomiyasu` skill on Japanese text. On a machine without yomiyasu, apply unslop's "Keep the meaning" rules to the Japanese text instead.
 
 ## GitHub Repo Fetching
 When needing to read/explore a GitHub repo, first check if it's already cloned locally:
