@@ -34,7 +34,7 @@ done
 section "2. Skills structure"
 # ---------------------------------------------------------------------------
 
-EXPECTED_SKILLS="adversarial-review execute-plan grill-me handoff hillclimb investigate plan pre-landing-review reflect resolving-merge-conflicts tdd teach writing-great-skills"
+EXPECTED_SKILLS="adversarial-review execute-plan grill-me handoff hillclimb investigate plan pre-landing-review reflect resolving-merge-conflicts tdd teach unslop writing-great-skills"
 
 for skill in $EXPECTED_SKILLS; do
   skill_file=".agents/skills/$skill/SKILL.md"

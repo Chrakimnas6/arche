@@ -30,6 +30,10 @@ Follow the classic rules (tpope's note, cbea.ms/git-commit), yielding to project
 
 Write for the repository's history, not the conversation: no "as discussed" or "per feedback", no chronology of attempts — describe the final change as one coherent story. A PR description says what changed, why, and how to review or verify it — in the repo's PR template if one exists. It is not a file-by-file tour, a feature checklist restating the diff, or a transcript of the session that produced it.
 
+## Prose for Others
+
+Before handing off prose other people will read (a PR description, README, doc, or report), run the `unslop` skill on English text or the `yomiyasu` skill on Japanese text. On a machine without yomiyasu, apply unslop's "Keep the meaning" rules to the Japanese text instead.
+
 ## GitHub Repo Fetching
 When needing to read/explore a GitHub repo, first check if it's already cloned locally:
 - To find an existing local repo, run `ghq list --full-path | grep <repo-name>`

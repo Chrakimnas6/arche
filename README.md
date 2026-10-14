@@ -41,6 +41,7 @@ Alternatively, make everything available in *every* project on your machine inst
 │       ├── handoff/          # Session handoff doc (for a fresh agent)
 │       ├── teach/            # Multi-session guided learning workspace
 │       ├── resolving-merge-conflicts/ # Resolve merge/rebase conflicts
+│       ├── unslop/           # Cut AI tells from English prose
 │       └── writing-great-skills/ # Rubric for authoring & auditing skills
 ├── .claude/
 │   ├── CLAUDE.md             # -> ../AGENTS.md (symlink)
@@ -87,6 +88,7 @@ Alternatively, make everything available in *every* project on your machine inst
 | **handoff** | `/handoff` (manual only) | Pause/pickup notes at `.handoff/<branch>.md` (git-ignored) so a fresh session resumes without being told a path |
 | **teach** | `/teach` (manual only) | Multi-session guided learning — turns a dir into a teaching workspace (mission, curated resources, HTML lessons) |
 | **resolving-merge-conflicts** | "resolve merge conflict", mid-merge/rebase | Resolves an in-progress conflict by recovering each side's intent, then runs the project's checks |
+| **unslop** | handoff of English prose (global `CLAUDE.md`), `/unslop` | Cuts AI tells from English prose people will read (PR descriptions, READMEs, docs) without changing what it claims |
 | **writing-great-skills** | `/writing-great-skills` (manual only) | Rubric for writing & auditing skills — invocation, info hierarchy, leading words, failure modes |
 
 ## Agents
