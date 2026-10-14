@@ -80,7 +80,7 @@ Apply the review against the diff in two passes:
 
 **Duplication is a defect only when the copies disagree.** Report a copy that produces a wrong result, misses error handling its sibling has, or breaks a contract its sibling keeps -- with evidence, as a normal finding. Matching syntax alone is not a finding. Extraction advice ("these should share a helper") is advisory: propose it only for at least two real first-party callers (`file:function`, actual source), after checking that an existing helper or dependency doesn't already cover it (the reuse ladder in `docs/principles/subtract-before-you-add.md`). A defect in duplicated code keeps its own finding whether or not extraction is proposed.
 
-**Comment review** -- review every added or modified handwritten comment block using [references/comment-review.md](references/comment-review.md). Include its result in the final report. This applies to tests as well as production code; comment count or surrounding density is not a quality criterion.
+**Comment review** -- run the `comment-reviewer` agent on the diff, read-only when the change is someone else's, and include its report in the final report. Without that agent, apply the rules in `~/.claude/agents/comment-reviewer.md` yourself.
 
 **Search-before-recommending:** When recommending a fix, verify it's current best practice for the framework version in use. Check if a built-in solution exists before recommending a workaround.
 

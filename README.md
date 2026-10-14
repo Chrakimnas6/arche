@@ -93,7 +93,8 @@ Alternatively, make everything available in *every* project on your machine inst
 
 | Agent | Used by | What It Does |
 |-------|---------|-------------|
-| **implementer** | `execute-plan` | Implementation worker: takes one phase brief, implements and verifies it, reviews its added comments, and reports back with artifacts. Model and effort defaults live in its frontmatter. The orchestrating session re-runs verification and gates the next phase — design judgment stays in the main loop. |
+| **implementer** | `execute-plan` | Implementation worker: takes one phase brief, implements and verifies it, and reports back with artifacts. Model and effort defaults live in its frontmatter. The orchestrating session re-runs verification and gates the next phase — design judgment stays in the main loop. |
+| **comment-reviewer** | handoff (global `CLAUDE.md`), `pre-landing-review` | Fresh-context comment pass: removes comments the code doesn't need, flags code a comment is excusing. The author's own context makes every comment look necessary, so the review runs without it. |
 
 ## Workflow
 

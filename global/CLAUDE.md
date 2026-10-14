@@ -22,7 +22,7 @@ Before acting on design or implementation tasks, read the principles index at `~
 
 Write comments required by tools or project conventions, including license headers, lint or codegen directives, and required API documentation. Exported visibility alone does not establish a documentation requirement; follow the project's convention.
 
-For other comments, state only information the code cannot show: an invariant, an external system's quirk, why the obvious approach fails. Remove restatements of names, statements, or assertions. Keep implementation and review history in the PR description. Existing comment density is not a target. Before handing off a change that adds or edits handwritten comments, use the checklist at `~/src/github.com/Chrakimnas6/arche/.agents/skills/pre-landing-review/references/comment-review.md`.
+For other comments, state only information the code cannot show: an invariant, an external system's quirk, why the obvious approach fails. Remove restatements of names, statements, or assertions. Keep implementation and review history in the PR description. Existing comment density is not a target. Before handing off a change that adds or edits handwritten comments, run the `comment-reviewer` agent on it. Then check its edits in the diff, and restore a removed comment only when you can name the fact it carried that the code does not show.
 
 ## Commit Messages & PR Descriptions
 

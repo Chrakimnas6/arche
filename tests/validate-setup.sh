@@ -55,7 +55,7 @@ else
 fi
 
 # Pre-landing-review references
-for ref in specialist-lenses.md comment-review.md; do
+for ref in specialist-lenses.md; do
   f=".agents/skills/pre-landing-review/references/$ref"
   [ -f "$f" ] && pass "pre-landing-review/$ref" || fail "pre-landing-review/$ref missing"
 done
@@ -293,7 +293,7 @@ fi
 section "10. Agents"
 # ---------------------------------------------------------------------------
 
-EXPECTED_AGENTS="implementer"
+EXPECTED_AGENTS="implementer comment-reviewer"
 
 for agent in $EXPECTED_AGENTS; do
   agent_file=".agents/agents/$agent.md"
@@ -322,12 +322,11 @@ for f in .agents/agents/*.md; do
   esac
 done
 
-# README mentions the agent
-if grep -q "implementer" README.md; then
-  pass "README mentions implementer agent"
-else
-  fail "README missing implementer agent"
-fi
+for agent in $EXPECTED_AGENTS; do
+  grep -q "\*\*$agent\*\*" README.md \
+    && pass "README mentions $agent agent" \
+    || fail "README missing $agent agent"
+done
 
 # ---------------------------------------------------------------------------
 # Summary
