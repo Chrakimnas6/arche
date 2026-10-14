@@ -10,7 +10,7 @@ Adding to a complex system compounds complexity. Removing first reduces the surf
 
 - **Sequence removal before construction.** In plans, schedule deletion phases before build phases. Each piece of dead code, unused feature, or unnecessary abstraction removed makes the subsequent work simpler.
 - **Cut before you polish.** When scoping a feature set, cut ruthlessly to the minimum before investing in quality. Half-finished features are worse than missing ones.
-- **Design for observed usage, not speculative edge cases.** If the real workflow is single-process or low-concurrency, prefer simpler designs that fit that reality. Add edge-case machinery only after usage data says it's needed. Mark the known limit at the site with a grep-able comment — `shortcut: <the limit>, <when to upgrade>` (e.g. `shortcut: linear scan of validators, fine below ~100; index when the set grows`) — a sized design choice, not a bug workaround ([fix-root-causes](./fix-root-causes.md)).
+- **Design for observed usage, not speculative edge cases.** If the real workflow is single-process or low-concurrency, prefer simpler designs that fit that reality. Add edge-case machinery only after usage data says it's needed.
 - **When a reference has no novel content, delete it** rather than leaving a stub.
 
 **Corollary — borrow a maintainer's fatigue.** Writing code is cheap for an agent, which makes over-engineering easy. Counter it continuously, not just when sequencing: prefer deletion when asked to improve, make the smallest change that solves the problem, and when a task wants a new signal threaded through types, schemas, or pipelines, stop and look for a more direct path. If a human would find the result exhausting to maintain, it's a bad solution.
