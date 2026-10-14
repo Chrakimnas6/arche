@@ -90,12 +90,16 @@ check_symlink() {
   fi
 }
 
-check_symlink ".claude/CLAUDE.md" "../AGENTS.md"
 check_symlink ".claude/skills" "../.agents/skills"
 
 # Verify symlink targets actually resolve
-for link in .claude/CLAUDE.md .claude/skills; do
+for link in .claude/skills; do
   [ -e "$link" ] && pass "$link resolves" || fail "$link is a broken symlink"
+done
+
+# Claude Code reads AGENTS.md only when no CLAUDE.md exists in the project.
+for f in CLAUDE.md .claude/CLAUDE.md; do
+  [ -e "$f" ] && fail "$f exists, so Claude Code would skip AGENTS.md" || pass "no $f shadowing AGENTS.md"
 done
 
 # ---------------------------------------------------------------------------

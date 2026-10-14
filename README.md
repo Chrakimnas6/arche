@@ -9,7 +9,7 @@ My personal setup for working with AI coding agents — engineering principles, 
 This is my setup, not a one-command template. Take what's useful:
 
 - **Principles** (`docs/principles/`) and **skills** (`.agents/skills/`) are the most portable — copy the individual files you want straight into your own project.
-- If you want the whole layout, copy it with a tool that preserves symlinks. The `.claude/` entries are symlinks into `.agents/`, and a plain `cp -r` flattens them into duplicate files (especially on macOS):
+- If you want the whole layout, copy it with a tool that preserves symlinks. `.claude/skills` is a symlink into `.agents/`, and a plain `cp -r` flattens it into duplicate files (especially on macOS):
 
 ```bash
 # rsync -a (or tar) preserves the .claude -> .agents symlinks; plain `cp -r` would flatten them
@@ -44,7 +44,6 @@ Alternatively, make everything available in *every* project on your machine inst
 │       ├── unslop/           # Cut AI tells from English prose
 │       └── writing-great-skills/ # Rubric for authoring & auditing skills
 ├── .claude/
-│   ├── CLAUDE.md             # -> ../AGENTS.md (symlink)
 │   ├── skills                # -> ../.agents/skills (symlink)
 │   └── settings.json         # Claude Code settings (currently empty)
 ├── .github/
@@ -68,8 +67,8 @@ Alternatively, make everything available in *every* project on your machine inst
 ### Why This Structure?
 
 - **`.agents/`** is the canonical source for all agent configuration
-- **`.claude/`** contains symlinks back to `.agents/`, so Claude Code discovers everything automatically
-- **`AGENTS.md`** at the root is read by both Claude Code (via symlink) and Codex (natively)
+- **`.claude/skills`** links back to `.agents/skills`, because Claude Code doesn't look under `.agents/`
+- **`AGENTS.md`** at the root is read natively by both Claude Code and Codex; adding a `CLAUDE.md` would make Claude Code skip it
 - **`docs/`** provides persistent context that both humans and agents reference
 
 ## Skills
