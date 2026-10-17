@@ -34,7 +34,7 @@ done
 section "2. Skills structure"
 # ---------------------------------------------------------------------------
 
-EXPECTED_SKILLS="adversarial-review execute-plan grill-me handoff hillclimb investigate plan pre-landing-review reflect resolving-merge-conflicts tdd teach unslop writing-great-skills"
+EXPECTED_SKILLS="adversarial-review execute-plan grill-me handoff hillclimb investigate plan reflect resolving-merge-conflicts tdd teach unslop writing-great-skills"
 
 for skill in $EXPECTED_SKILLS; do
   skill_file=".agents/skills/$skill/SKILL.md"
@@ -53,10 +53,6 @@ if [ ! -f ".agents/skills/adversarial-review/references/reviewer-prompt.md" ]; t
 else
   fail "reviewer-prompt.md should not exist (was inlined into SKILL.md)"
 fi
-
-# Pre-landing-review references
-f=".agents/skills/pre-landing-review/references/specialist-lenses.md"
-[ -f "$f" ] && pass "pre-landing-review/specialist-lenses.md" || fail "pre-landing-review/specialist-lenses.md missing"
 
 # TDD references
 for ref in testing-anti-patterns.md mocking.md; do

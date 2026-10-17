@@ -33,7 +33,6 @@ Alternatively, make everything available in *every* project on your machine inst
 │       ├── plan/             # Systematic implementation planning
 │       ├── execute-plan/     # Phase-by-phase plan execution
 │       ├── tdd/              # Test-driven development
-│       ├── pre-landing-review/ # Pre-landing PR review
 │       ├── adversarial-review/ # Cross-model adversarial review
 │       ├── investigate/      # Root cause debugging
 │       ├── hillclimb/        # Keep-or-revert metric optimization
@@ -79,7 +78,6 @@ Alternatively, make everything available in *every* project on your machine inst
 | **plan** | "plan this", "break this down" | Creates phased implementation plans in `docs/plans/` |
 | **execute-plan** | "implement the plan", "execute the plan" | Implements a plan phase by phase; each phase's verification gates the next |
 | **tdd** | "use TDD", "red-green-refactor" | Enforces test-driven development with iron law discipline |
-| **pre-landing-review** | "review my changes", "check my diff" | Two-pass code review with scope drift detection |
 | **adversarial-review** | "adversarial review" | Deep multi-lens review via Codex (Architect/Skeptic/Minimalist lenses) |
 | **investigate** | "debug this", "why is this broken" | 4-phase root cause debugging (no fixes without root cause) |
 | **hillclimb** | "optimize this metric", "hillclimb the latency" | Keep-or-revert optimization loop toward a target metric |
@@ -95,7 +93,7 @@ Alternatively, make everything available in *every* project on your machine inst
 | Agent | Used by | What It Does |
 |-------|---------|-------------|
 | **implementer** | `execute-plan` | Implementation worker: takes one phase brief, implements and verifies it, and reports back with artifacts. Model and effort defaults live in its frontmatter. The orchestrating session re-runs verification and gates the next phase — design judgment stays in the main loop. |
-| **comment-reviewer** | handoff (global `CLAUDE.md`), `pre-landing-review` | Fresh-context comment pass: removes comments the code doesn't need, flags code a comment is excusing. The author's own context makes every comment look necessary, so the review runs without it. |
+| **comment-reviewer** | handoff (global `CLAUDE.md`) | Fresh-context comment pass: removes comments the code doesn't need, flags code a comment is excusing. The author's own context makes every comment look necessary, so the review runs without it. |
 
 ## Workflow
 
@@ -105,7 +103,7 @@ For non-trivial work the skills chain into a pipeline, each stage handing the ne
 2. `plan` — decision record + codebase exploration → phased plan in `docs/plans/<name>/`
 3. `adversarial-review` (plan mode) — challenge the design before any code exists
 4. `execute-plan` — implement phase by phase; each phase's verification gates the next
-5. `pre-landing-review` — add `adversarial-review` for large or high-stakes diffs
+5. `/code-review` (built into Claude Code) — add `adversarial-review` for large or high-stakes diffs
 6. `reflect` — route learnings back into the setup
 
 The chain is encoded in `AGENTS.md`, so any session can pick it up mid-stream. Stages are skipped deliberately, not by omission.
