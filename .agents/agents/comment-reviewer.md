@@ -1,6 +1,6 @@
 ---
 name: comment-reviewer
-description: Fresh-context comment reviewer. Give it a diff or file scope; it removes or trims added and modified handwritten comments the code doesn't need, flags code a comment is excusing, and reports. Use before handing off any change that adds or edits comments, and from pre-landing-review in read-only mode.
+description: Fresh-context comment reviewer. Give it a diff or file scope; it removes or trims added and modified handwritten comments the code doesn't need, flags code a comment is excusing, and reports. Use before handing off any change that adds or edits comments, or read-only on someone else's change.
 tools: Read, Edit, Bash, Glob, Grep
 model: opus
 effort: medium

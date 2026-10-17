@@ -18,7 +18,7 @@ Non-trivial work moves through stages. Each stage hands the next a durable artif
 2. **Plan** (`plan`) — decision record + codebase exploration → phased plan in `docs/plans/<name>/`
 3. **Review the plan** (`adversarial-review`, plan mode) — challenge the design before any code exists
 4. **Execute** (`execute-plan`) — implement phase by phase, delegating implementation to the `implementer` agent where available; each phase's verification gates the next
-5. **Review the code** (`pre-landing-review`; add `adversarial-review` for large or high-stakes diffs)
+5. **Review the code** (`/code-review`; add `adversarial-review` for large or high-stakes diffs)
 6. **Reflect** (`reflect`) — route what was learned back into skills, principles, and this file
 
 Stages are skipped deliberately, not by omission — a trivial fix can go straight to implementation, but say so. When picking up mid-chain, read the upstream artifacts first.

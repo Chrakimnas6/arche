@@ -48,5 +48,5 @@ After the final phase:
 
 1. Run the overview's project-level Verification commands.
 2. Summarize what was built per phase, every divergence from the original plan, and each phase file's `## Decisions` entries.
-3. Suggest `pre-landing-review` — preferably in a fresh session, since this session authored the diff and a reviewer carrying the author's reasoning misses what the author never considered — plus `adversarial-review` for large or high-stakes diffs (its external reviewers get fresh context by construction), then `reflect`.
+3. Suggest `/code-review` — preferably in a fresh session, since this session authored the diff and a reviewer carrying the author's reasoning misses what the author never considered — plus `adversarial-review` for large or high-stakes diffs (its external reviewers get fresh context by construction), then `reflect`.
 4. Suggest deleting the plan directory once the work has landed — a completed plan left in `docs/plans/` reads as live guidance while git already preserves it. Salvage any still-forward-looking decisions to `docs/design/` first.
