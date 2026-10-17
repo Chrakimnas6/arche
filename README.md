@@ -27,6 +27,7 @@ Alternatively, make everything available in *every* project on your machine inst
 ├── AGENTS.md                 # Project instructions (single source of truth)
 ├── .agents/
 │   ├── agents/               # Subagent definitions
+│   │   ├── comment-reviewer.md # Fresh-context comment reviewer
 │   │   └── implementer.md    # Implementation worker (plan big, execute small)
 │   └── skills/               # AI agent skills
 │       ├── grill-me/         # Relentless design questioning
