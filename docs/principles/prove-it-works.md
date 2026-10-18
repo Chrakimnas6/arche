@@ -6,7 +6,7 @@
 
 ## Pattern
 
-- **Check the real thing, not a proxy.** Process liveness from the PID or process table, not a file mtime or cached status; the actual value, not a cached or derived representation.
+- **Check the real thing, not a proxy.** Process liveness from the PID or process table, not a file mtime or cached status; the actual value, not a cached or derived representation. Ready means usable, not a process answering. A pass in a stand-in (a container for a fresh VM, a local stack for a remote one) leaves every setup step the stand-in did that the target won't unverified; list them.
 - **When verification fails, suspect the observation method** before suspecting the system.
 - **An exit code is not evidence the work ran.** A test run that selected nothing passes (`go test` prints `[no tests to run]` and exits 0). Confirm the run's count names the tests you meant.
 - **Claimed limitations need evidence.** "The API can't do this", "X requires a credential", "that's impossible on this platform" are material claims. State one only with the verbatim error, the documented statement, or a live probe in hand; pattern-matching a failure to a familiar story is not evidence. When a cheap probe settles it, run it before declaring a step blocked or asking for help.
