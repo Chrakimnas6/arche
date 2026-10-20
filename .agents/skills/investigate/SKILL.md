@@ -30,6 +30,7 @@ Use for any technical issue — test failures, production bugs, unexpected behav
    - If it won't reproduce directly, force it: synthesize the trigger, tighten the conditions, or instrument until it fires
    - Intermittent: run it N≥10 times on base and on the branch (e.g. `go test -count=N -race`) and record failed/N for each; failing on base means the cause predates the change. A rerun, wider timeout, retry, or skip is never a hypothesis
    - Race: inject a yield or sleep at the suspected window until it fails every time, and keep that interleaving in the regression test. The fix is an atomic primitive (compare-and-swap, conditional update, owned lock); a check-then-act with a smaller window is not a fix
+   - Timing assertion (an elapsed time checked against a bound): log the asserted value and run N≥20 times on base and on the branch under the same load; report min/p50/p95/max for each. A distribution that moved is a regression in the change; the same distribution on both is a test that depends on machine load. Fix the measurement — assert on the outcome, an injected clock, or a deadline poll ([condition-based-waiting.md](references/condition-based-waiting.md)) — never the bound: raising it is not a fix
 
 2. **Check Recent Changes**
    - What changed that could cause this?
@@ -130,10 +131,9 @@ Use for any technical issue — test failures, production bugs, unexpected behav
 
    **Attack the premise.** Two fixes that assumed the same thing and failed the same check are evidence about the assumption, not about the fixes. Before the next fix:
    - Write the premise down — the one sentence every failed fix took for granted ("the queue drains in order", "each worker sees an even share", "the cache is warm by then").
-   - Measure it, with a rerunnable script (`docs/principles/build-the-lever.md`). When the failure lands across several actors — workers, shards, input classes, runs — take a census of where it lands: the census shows *which* actors carry the failure, not how large it is, and the steps below read it. On a single deterministic path, log the value the premise assumes at the point it assumes it.
-   - Read the skew. If the same few actors carry most of it on every run, something assigns them that role. Find the assignment; that is the next "why" (`docs/principles/fix-root-causes.md`).
-   - Remove the asymmetry rather than compensate for it. A rebalance, retry path, or shared pool leaves the assignment in place and adds work on every run.
-   - An even census clears the premise: the cause is elsewhere. Keep the census as evidence and return to Phase 1.
+   - Test it directly, with a rerunnable script (`docs/principles/build-the-lever.md`): find an observation that would come out differently if the premise were false, and make it. Look at how the failures are distributed, not only how large they are — when they land across several actors (workers, shards, input classes, runs), a census of where they land; on a single deterministic path, the value the premise assumes, logged where it assumes it.
+   - Follow the evidence. If it contradicts the premise, the cause is elsewhere: keep it as evidence, look for what the failures share that the premise didn't predict, and return to Phase 1. If it confirms the premise, ask the next "why" (`docs/principles/fix-root-causes.md`) — the earlier fixes may have treated a consequence. If the same few actors carry the failure on every run, something assigns them that role; that assignment is the next "why".
+   - Remove the condition rather than compensate for it. A rebalance, retry path, or shared pool leaves the cause in place and adds work on every run.
 
 5. **If 3+ Fixes Failed: Question Architecture**
 

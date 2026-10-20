@@ -6,9 +6,9 @@
 
 ## Pattern
 
-- **Check before applying.** Migrations check current schema state; deploys check whether the target version is already running and converge from a crashed mid-rollout.
+- **Derive each step from the state that exists, not from what the previous run meant to do.** Read current state, compare it to the goal, apply only the difference; a repeat finds nothing left to do. Migrations check current schema state; deploys check whether the target version is already running and converge from a crashed mid-rollout.
 - **Guard initialization.** A state-establishing operation refuses re-execution rather than corrupting state (initializer flags, version checks, atomic swaps).
-- **Converge on startup.** Scan for existing processes and state, clean stale artifacts, adopt live resources.
+- **Leave nothing the next run can't judge.** A lock, temp file, half-written record, or claimed job must be recognizable as stale by evidence that holds wherever the previous run stopped, not only in the common case: write to a temp path and rename into place, compare artifacts by content rather than creation order. On startup, scan for existing processes and state, clean what is stale, adopt what is live.
 
 ## The Test
 
