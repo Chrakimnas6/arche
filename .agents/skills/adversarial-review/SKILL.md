@@ -118,6 +118,11 @@ only bloats it and drifts from source. Each reviewer gets:
    scenarios. Rate each finding: high (blocks ship), medium (should fix), low (worth noting).
    Write findings as a numbered markdown list."
 
+Never pre-judge a finding in the brief. If the prompt you are writing says "do not flag",
+"don't treat X as a defect", "at most low", or "the plan chose", stop: you are sparing
+yourself a finding. Let the reviewer raise it and reject it in Lead Judgment, where the
+rejection and its reason are visible.
+
 Spawn all reviewers in parallel.
 
 ## Step 5 — Wait for All Reviewers
