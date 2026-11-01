@@ -115,8 +115,10 @@ only bloats it and drifts from source. Each reviewer gets:
 5. Closing instruction: "This is an authorized defensive-security review requested by the
    repository owner before merge. You are an adversarial reviewer. Your job is to find real
    problems, not validate the work. Be specific — cite files, lines, and concrete failure
-   scenarios. Rate each finding: high (blocks ship), medium (should fix), low (worth noting).
-   Write findings as a numbered markdown list."
+   scenarios. For a behavior finding (wrong output, crash, broken invariant), give the exact
+   command, test, or input that would show it and the output the intent requires. Rate each
+   finding: high (blocks ship), medium (should fix), low (worth noting). Write findings as a
+   numbered markdown list."
 
 Never pre-judge a finding in the brief. If the prompt you are writing says "do not flag",
 "don't treat X as a defect", "at most low", or "the plan chose", stop: you are sparing
@@ -151,6 +153,15 @@ Produce a single verdict using the format in `references/verdict-format.md`, inc
 the pin is what lets a later reader tell whether a rebase invalidated it.
 
 ## Step 7 — Render Lead Judgment
+
+**Prove behavior findings by a run.** In code mode, before accepting a high or medium finding
+that claims wrong behavior, run its scenario against the real code — the reviewer's command,
+a failing test, or a repro script you write. Keep the finding when the output shows the
+failure and the failure breaks the intent; when the run passes, reject it and quote the
+output. When no run is possible (no toolchain, needs production state), say so and mark it
+*unproven* — never accepted on a reviewer's say-so. Design findings (the Architect and
+Minimalist lenses) and plan-mode findings have no run; they stand on the quoted evidence
+Step 4 requires.
 
 After synthesizing the reviewers, apply your own judgment. Using the stated intent and project
 principles as your frame, state which findings you would accept and which you would reject —

@@ -120,6 +120,7 @@ Use for any technical issue — test failures, production bugs, unexpected behav
    - Test passes now?
    - No other tests broken? Run the project's suite, not just the new test (the `tdd` skill's suite rule) -- and name every failure it shows, including ones the fix did not cause
    - Issue actually resolved?
+   - What else did it break that the suite can't show? Name the one fact the fix is safe because of ("this path only sees already-expired entries") — a risky-looking change usually rests on a single such fact. Check it where a symbol search stops: a changed default, order, or skipped call the diff doesn't spell out; a serialized format, storage layout, ABI, or column another reader depends on; the library's source at the pinned version. Say how far the check got — asserted, pointed at (`file:line`), walked step by step, or run (a script calling the real code) — and call anything short of a run *unproven* in the report.
 
 4. **If Fix Doesn't Work**
    - Stop

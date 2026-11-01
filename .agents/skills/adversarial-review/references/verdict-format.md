@@ -24,7 +24,8 @@ For each finding:
 <1-3 things the reviewers found no issue with -- acknowledge good work>
 
 ## Lead Judgment
-<for each finding: accept or reject with a one-line rationale>
+<for each finding: accept or reject with a one-line rationale; for a behavior finding,
+ the command run and the output that proved or disproved it, or "unproven" and why>
 
 ## Recommendation
 Recommendation: <action> because <one-line reason citing the most critical accepted finding>
