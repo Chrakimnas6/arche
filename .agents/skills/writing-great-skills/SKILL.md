@@ -91,7 +91,7 @@ Two corollaries, both about not reopening the negotiation:
 
 When you can't tell which form will bind, micro-test the wording: run the guidance against a **no-guidance control** on a task that tempts the failure, several fresh samples each, and read every sample by hand. If the control doesn't exhibit the failure, there's nothing to fix. When guidance binds, the samples converge on one shape; five different readings across five samples means the wording isn't binding yet.
 
-Re-run the control **per model generation**: a fence validated against an older model is unvalidated for the current one — its baseline failure may no longer exist, leaving the fence as pure load.
+Re-run the control **per model generation**: a fence validated against an older model is unvalidated for the current one — its baseline failure may no longer exist, leaving the fence as pure load. When a re-run shows no gain, run one **why-null** pass before cutting: did the agent actually use the guidance, did the task tempt the failure, and was the baseline below ceiling with room to show a gain? Then keep, fix the test, or cut — and say which. One null result is a lead, not a verdict.
 
 ## Failure modes
 

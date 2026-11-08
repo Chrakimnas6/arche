@@ -118,7 +118,8 @@ only bloats it and drifts from source. Each reviewer gets:
    scenarios. For a behavior finding (wrong output, crash, broken invariant), give the exact
    command, test, or input that would show it and the output the intent requires. Rate each
    finding: high (blocks ship), medium (should fix), low (worth noting). Write findings as a
-   numbered markdown list."
+   numbered markdown list. End with exactly `VERDICT: CLEAN` (no findings) or
+   `VERDICT: FINDINGS` as the last line."
 
 Never pre-judge a finding in the brief. If the prompt you are writing says "do not flag",
 "don't treat X as a defect", "at most low", or "the plan chose", stop: you are sparing
@@ -130,11 +131,12 @@ Spawn all reviewers in parallel.
 ## Step 5 — Wait for All Reviewers
 
 **Do NOT proceed until every reviewer has finished** — each background task exited and its
-output file is non-empty. If a reviewer fails, read its `.err` file and report the specific
+output file ends with a `VERDICT:` line. An output without one was cut off or went off-format;
+silence after some findings is not a clean bill. If a reviewer fails, read its `.err` file and report the specific
 error (auth expired, binary missing, timeout).
 
-An output that does not echo the pin, or echoes a different one, did not review this
-patch: re-run that reviewer once with the same brief. A second miss is missing coverage,
+An output that does not echo the pin, echoes a different one, or lacks the final
+`VERDICT:` line did not finish reviewing this patch: re-run that reviewer once with the same brief. A second miss is missing coverage,
 recorded as such -- never a pass.
 
 A failed or timed-out reviewer is **missing coverage, not a clean bill**. Do not synthesize
