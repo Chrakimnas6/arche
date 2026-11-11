@@ -12,7 +12,7 @@ Implement an existing plan from `docs/plans/<plan-name>/`, one phase at a time. 
 
 ## Step 1 — Load the Plan and Principles
 
-Read the plan's `overview.md` and every phase file. Read `docs/principles/index.md`, then the principles the overview cites.
+Read the plan's `overview.md` and every phase file, then the principles the overview cites (in the project's `docs/principles/`, or `~/src/github.com/Chrakimnas6/arche/docs/principles/` when it has none).
 
 Determine where to start: check phase files for `Status: done` markers, then verify against the actual code — a marker is a claim, the code is the evidence. Resume from the first unfinished phase and state which phases you consider already done.
 
@@ -23,7 +23,7 @@ For each phase:
 1. **Re-read the phase file.** Its Goal, Changes, and Data structures sections are the brief.
 2. **Implement.** Use the `tdd` skill when the phase adds testable behavior. Stay surgical (`docs/principles/surgical-changes.md`) — only what the phase describes, nothing opportunistic.
 3. **Verify.** Run the phase's verification section — both static and runtime checks.
-4. **Gate.** Do not start the next phase until this phase's verification passes. If it fails, use the `investigate` skill — no quick patches to reach the next phase.
+4. **Gate.** Do not start the next phase until this phase's verification passes. If it fails, find the cause before changing anything (`docs/principles/fix-root-causes.md`) — no quick patches to reach the next phase.
 5. **Record completion.** Add a `Status: done` line at the top of the phase file so a future session can resume without re-deriving progress. Name the evidence beside the marker — the verification command that passed and the commit SHA it passed at (e.g. `Status: done — go test ./internal/foo/... green at a1b2c3d`). A bare marker is a claim; a marker naming its evidence gives the resuming session a pointer to re-check instead of proof to re-derive.
 
 ### Delegating the Implement step

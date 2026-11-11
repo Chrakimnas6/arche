@@ -1,154 +1,44 @@
 # Arché (ἀρχή)
 
-My personal setup for working with AI coding agents — engineering principles, a handful of skills, and a self-updating upstream monitor. Built around Claude Code (with Codex for cross-model review); the principles and most skills are portable. This is not a polished template — it's my working setup, shared so you can steal whatever's useful.
+My personal setup for working with AI coding agents: a few engineering principles, a handful of skills, and a weekly upstream report. It is built around Claude Code, with Codex for cross-model review. This is my working setup, not a template, shared so you can take whatever is useful.
 
-*The first principle — a foundation that exists to be superseded.*
+*The first principle — a foundation that exists to be superseded.* I trim it as models improve, and a line stays only if it still changes what the agent does.
 
-## Using This
+## What's here
 
-This is my setup, not a one-command template. Take what's useful:
+- `.agents/skills/` — the skills. Each `SKILL.md` says what it does and when it triggers.
+- `.agents/agents/` — two Claude Code subagents: `implementer` runs one plan phase, and `comment-reviewer` removes comments the code doesn't need.
+- `docs/principles/` — engineering principles. The `plan` skill reads them all; other skills cite the ones they use.
+- `AGENTS.md` — project instructions, including the workflow that chains the skills: grill, plan, review the plan, execute, review the code, reflect.
+- `global/CLAUDE.md` — my `~/.claude/CLAUDE.md`. It has my name and machine-specific tooling, so read it as a reference, not something to copy.
+- `.github/upstream-monitor.md` — the prompt for a weekly scheduled agent that reports what changed in the upstream repos below.
 
-- **Principles** (`docs/principles/`) and **skills** (`.agents/skills/`) are the most portable — copy the individual files you want straight into your own project.
-- If you want the whole layout, copy it with a tool that preserves symlinks. `.claude/skills` is a symlink into `.agents/`, and a plain `cp -r` flattens it into duplicate files (especially on macOS):
+Two layout choices are deliberate. Claude Code doesn't look under `.agents/`, so `.claude/skills` is a symlink to `.agents/skills`. Both Claude Code and Codex read `AGENTS.md`, but a `CLAUDE.md` beside it would make Claude Code skip it.
+
+## Using it
+
+Copy the individual skill or principle files you want. To copy the whole layout, use a tool that keeps symlinks, because a plain `cp -r` flattens `.claude/skills` into duplicate files:
 
 ```bash
-# rsync -a (or tar) preserves the .claude -> .agents symlinks; plain `cp -r` would flatten them
 rsync -a AGENTS.md .agents .claude docs /path/to/your/project/
 ```
 
-Then fill in the project-specific sections in `AGENTS.md` (build/test commands, conventions).
-
-Alternatively, make everything available in *every* project on your machine instead of copying per project: `bash scripts/sync-global.sh` compares `~/.claude/`, `~/.agents/` (the tool-agnostic [Agent Skills](https://agentskills.io) location), and `~/.codex/` against this repo and symlinks any skill the global configs are missing — all three read the same SKILL.md format, so one skill source serves every tool (subagent definitions are Claude Code-specific and sync only to `~/.claude/agents/`). It also prunes links left dangling by renamed or removed skills, reports global-only entries (personal skills with no arche counterpart — candidates to adopt), and diffs `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` against the committed `global/CLAUDE.md`. Re-run it after adding a skill or agent; it's idempotent and never touches entries that don't point into this repo. `--check` runs the same comparison without changing anything and exits non-zero when out of sync.
-
-## Structure
-
-```
-.
-├── AGENTS.md                 # Project instructions (single source of truth)
-├── .agents/
-│   ├── agents/               # Subagent definitions
-│   │   ├── comment-reviewer.md # Fresh-context comment reviewer
-│   │   └── implementer.md    # Implementation worker (plan big, execute small)
-│   └── skills/               # AI agent skills
-│       ├── grill-me/         # Relentless design questioning
-│       ├── plan/             # Systematic implementation planning
-│       ├── execute-plan/     # Phase-by-phase plan execution
-│       ├── tdd/              # Test-driven development
-│       ├── adversarial-review/ # Cross-model adversarial review
-│       ├── investigate/      # Root cause debugging
-│       ├── hillclimb/        # Keep-or-revert metric optimization
-│       ├── reflect/          # Post-task learning capture
-│       ├── handoff/          # Session handoff doc (for a fresh agent)
-│       ├── teach/            # Multi-session guided learning workspace
-│       ├── resolving-merge-conflicts/ # Resolve merge/rebase conflicts
-│       ├── unslop/           # Cut AI tells from English prose
-│       └── writing-great-skills/ # Rubric for authoring & auditing skills
-├── .claude/
-│   ├── skills                # -> ../.agents/skills (symlink)
-│   └── settings.json         # Claude Code settings (currently empty)
-├── .github/
-│   ├── upstream-monitor.md   # Scheduled agent prompt (weekly upstream adoption)
-│   ├── upstream-shas.json    # Last-seen SHAs for monitored upstream repos
-│   └── workflows/ci.yml      # validate-setup + shellcheck + markdown-links
-├── docs/
-│   ├── principles/           # Engineering principles
-│   ├── applications/         # Language overlays (Go, smart contracts)
-│   ├── plans/                # Implementation plans (skill output)
-│   └── design/               # Design documents
-├── scripts/
-│   └── sync-global.sh        # Compare ~/.claude, ~/.agents & ~/.codex with this repo; link what's missing
-├── tests/
-│   ├── validate-setup.sh     # Structural invariants (runs in CI)
-│   └── test-adversarial-review.sh # Manual smoke test (requires codex CLI)
-└── global/
-    └── CLAUDE.md             # My ~/.claude/CLAUDE.md (personal — edit before reuse)
-```
-
-### Why This Structure?
-
-- **`.agents/`** is the canonical source for all agent configuration
-- **`.claude/skills`** links back to `.agents/skills`, because Claude Code doesn't look under `.agents/`
-- **`AGENTS.md`** at the root is read natively by both Claude Code and Codex; adding a `CLAUDE.md` would make Claude Code skip it
-- **`docs/`** provides persistent context that both humans and agents reference
-
-## Skills
-
-| Skill | Trigger | What It Does |
-|-------|---------|-------------|
-| **grill-me** | "grill me", "stress-test this plan" | Interviews you relentlessly about every design decision |
-| **plan** | "plan this", "break this down" | Creates phased implementation plans in `docs/plans/` |
-| **execute-plan** | "implement the plan", "execute the plan" | Implements a plan phase by phase; each phase's verification gates the next |
-| **tdd** | "use TDD", "red-green-refactor" | Enforces test-driven development with iron law discipline |
-| **adversarial-review** | "adversarial review" | Deep multi-lens review via Codex (Architect/Skeptic/Minimalist lenses) |
-| **investigate** | "debug this", "why is this broken" | 4-phase root cause debugging (no fixes without root cause) |
-| **hillclimb** | "optimize this metric", "hillclimb the latency" | Keep-or-revert optimization loop toward a target metric |
-| **reflect** | "reflect", "what did we learn" | Captures session learnings back into AGENTS.md, skills, and docs |
-| **handoff** | `/handoff` (manual only) | Pause/pickup notes at `.handoff/<branch>.md` (git-ignored) so a fresh session resumes without being told a path |
-| **teach** | `/teach` (manual only) | Multi-session guided learning — turns a dir into a teaching workspace (mission, curated resources, HTML lessons) |
-| **resolving-merge-conflicts** | "resolve merge conflict", mid-merge/rebase | Resolves an in-progress conflict by recovering each side's intent, then runs the project's checks |
-| **unslop** | handoff of English prose (global `CLAUDE.md`), `/unslop` | Cuts AI tells from English prose people will read (PR descriptions, READMEs, docs) without changing what it claims |
-| **writing-great-skills** | `/writing-great-skills` (manual only) | Rubric for writing & auditing skills — invocation, info hierarchy, leading words, failure modes |
-
-## Agents
-
-| Agent | Used by | What It Does |
-|-------|---------|-------------|
-| **implementer** | `execute-plan` | Implementation worker: takes one phase brief, implements and verifies it, and reports back with artifacts. Model and effort defaults live in its frontmatter. The orchestrating session re-runs verification and gates the next phase — design judgment stays in the main loop. |
-| **comment-reviewer** | handoff (global `CLAUDE.md`) | Fresh-context comment pass: removes comments the code doesn't need, flags code a comment is excusing. The author's own context makes every comment look necessary, so the review runs without it. |
-
-## Workflow
-
-For non-trivial work the skills chain into a pipeline, each stage handing the next a durable artifact so the chain survives session boundaries:
-
-1. `grill-me` — stress-test the requirement → decision record in `docs/design/`
-2. `plan` — decision record + codebase exploration → phased plan in `docs/plans/<name>/`
-3. `adversarial-review` (plan mode) — challenge the design before any code exists
-4. `execute-plan` — implement phase by phase; each phase's verification gates the next
-5. `/code-review` (built into Claude Code) — add `adversarial-review` for large or high-stakes diffs
-6. `reflect` — route learnings back into the setup
-
-The chain is encoded in `AGENTS.md`, so any session can pick it up mid-stream. Stages are skipped deliberately, not by omission.
-
-## Principles
-
-Engineering principles in `docs/principles/`, grouped as:
-
-- **Core**: foundational thinking, redesign from first principles, subtract before you add, experience first, exhaust the design space
-- **Architecture**: module depth, boundary discipline, idempotent operations, serialize shared state, threat modeling, observability
-- **Verification**: prove it works, fix root causes, surgical changes, build the lever
-- **Delegation**: guard the context window, never block on the human
-- **Meta**: encode lessons in structure
-
-Language-specific applications (Go, smart contracts) live in `docs/applications/`, kept separate so the principles stay paradigm-agnostic.
-
-## Global Config
-
-`global/CLAUDE.md` is my personal `~/.claude/CLAUDE.md` — it carries my name, GitHub handle, and machine-specific tooling. Don't copy it verbatim; read it as a reference for shaping your own.
-
-## Recommended Plugin
-
-Install the [Codex plugin for Claude Code](https://github.com/openai/codex-plugin-cc) for seamless Codex integration:
+To make the skills available in every project on your machine instead, run the sync script:
 
 ```bash
-/plugin marketplace add openai/codex-plugin-cc
-/plugin install codex@openai-codex
-/reload-plugins
-/codex:setup
+bash scripts/sync-global.sh
 ```
 
-This gives you `/codex:review`, `/codex:adversarial-review`, and `/codex:rescue` commands. The `adversarial-review` skill in this setup provides deeper multi-lens analysis using `codex exec` directly — the plugin is recommended but not required for the skill. Both paths require the Codex CLI (`npm install -g @openai/codex`) and authentication (`codex login`).
+It symlinks each skill into `~/.claude/skills/`, `~/.agents/skills/` and `~/.codex/skills/`, and each agent into `~/.claude/agents/`. It prunes links left behind by removed skills and never touches entries that don't point into this repo. `--check` reports without changing anything.
 
-## Self-Updating
+The `adversarial-review` skill needs the Codex CLI (`npm install -g @openai/codex`, then `codex login`). The [Codex plugin for Claude Code](https://github.com/openai/codex-plugin-cc) adds `/codex:review` and `/codex:adversarial-review` for quicker single-reviewer passes.
 
-A weekly Claude Code scheduled agent monitors upstream repos for changes in the paths we care about. When relevant updates are found, it reads the actual source files, implements adaptations directly, and opens or updates a rolling adoption PR. Managed via `/schedule` in Claude Code. Full routine prompt lives at [`.github/upstream-monitor.md`](./.github/upstream-monitor.md).
+## Upstream sources
 
-Upstream sources: [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack) (pstack — poteto's successor to noodle), [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) (lazy-senior-dev reuse ladder), [garrytan/gstack](https://github.com/garrytan/gstack), [mattpocock/skills](https://github.com/mattpocock/skills), [obra/superpowers](https://github.com/obra/superpowers).
+Much of this is adapted from other people's work; licenses are in `THIRD-PARTY-NOTICES`.
 
-## Customization
-
-This is a starting point. Per-project, you should:
-
-1. Fill in `AGENTS.md` with your build/test/lint commands and project conventions
-2. Add or remove skills as needed (use the `skill-creator` plugin)
-3. Add project-specific principles to `docs/principles/`
-4. Let skills and docs evolve as you work — the setup is designed to self-improve
+- [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack) — pstack, poteto's successor to [noodle](https://github.com/poteto/noodle), where the principles and the adversarial review came from
+- [mattpocock/skills](https://github.com/mattpocock/skills)
+- [garrytan/gstack](https://github.com/garrytan/gstack) — a few lines in `plan`, `tdd` and `adversarial-review`; no longer tracked
+- [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) — the reuse ladder in `subtract-before-you-add`
+- [obra/superpowers](https://github.com/obra/superpowers) — a few lines of wording; no longer tracked

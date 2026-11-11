@@ -54,7 +54,7 @@ SOFTWARE.
 ================================================================================
 
 garrytan/gstack — https://github.com/garrytan/gstack
-Adapted: patterns in the investigate, plan, tdd and adversarial-review skills
+Adapted: patterns in the plan, tdd and adversarial-review skills
 
 Copyright (c) 2026 Garry Tan
 
@@ -79,7 +79,7 @@ SOFTWARE.
 ================================================================================
 
 mattpocock/skills — https://github.com/mattpocock/skills
-Adapted: grill-me skill, tdd skill (merged with superpowers), handoff skill, teach skill, resolving-merge-conflicts skill, writing-great-skills skill
+Adapted: grill-me skill, tdd skill, handoff skill, teach skill
 
 Copyright (c) 2026 Matt Pocock
 
@@ -104,7 +104,7 @@ SOFTWARE.
 ================================================================================
 
 obra/superpowers — https://github.com/obra/superpowers
-Adapted: investigate skill, tdd skill references (merged with mattpocock)
+Adapted: wording in the tdd skill and docs/principles/guard-the-context-window.md
 
 Copyright (c) 2025 Jesse Vincent
 

@@ -5,13 +5,9 @@ description: Test-driven development with red-green-refactor loop. Use when buil
 
 # Test-Driven Development (TDD)
 
-## The Iron Law
+**Red before green.** Write the test first and watch it fail for the reason you expect; a test you never saw fail proves nothing. When the code already exists, write the test, then break the code to confirm the test catches it.
 
-```
-NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
-```
-
-Code written before its test is discarded and reimplemented from the test — not kept as a reference or adapted. That includes code that seems too simple to test, code you already checked by hand, and exploratory spikes.
+**When no honest test is cheap** — it would need a broad harness, brittle mocks, or production-only state — say so and use the closest executable check instead: a repro script, or a command and its output. Prefer no new test over a bad one.
 
 ## Philosophy
 
@@ -97,7 +93,8 @@ After all tests pass, look for refactor candidates:
 
 **Never refactor while RED.** Get to GREEN first.
 
-## References
+## Tests Worth Keeping
 
-- See [testing-anti-patterns.md](references/testing-anti-patterns.md) for how to write tests that catch real breaks — name the break, avoid change detectors, the mutation check — and common pitfalls when adding mocks or test utilities
-- See [mocking.md](references/mocking.md) for guidelines on when and how to mock
+- **Name the break.** Before writing a test, name the bug that would make it fail. If you can't, don't write it.
+- **No change detectors.** Don't pin a constant, exact wording, or private structure; test the behavior that depends on it. The exception is a declared contract with outside consumers — an ABI selector, event signature, storage layout, or wire format — where the exact bytes are the behavior.
+- **Independent expected values.** Take the expected result from the spec or a worked example, never recomputed the way the code computes it.

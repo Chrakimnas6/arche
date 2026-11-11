@@ -1,29 +1,11 @@
 ---
 name: hillclimb
-description: Iterative optimization of one measurable metric toward a target via keep-or-revert experiments. Use when sustainedly improving a metric (latency, gas cost, throughput, accuracy, bundle size) against a goal — not when debugging a defect (use investigate) or building a feature (use tdd).
+description: Iterative optimization of one measurable metric toward a target via keep-or-revert experiments. Use when sustainedly improving a metric (latency, gas cost, throughput, accuracy, bundle size) against a goal — not when debugging a defect or building a feature.
 ---
 
 # Hillclimb
 
 Sustained, scientific improvement of **one metric** against a **target**. You own the metric and the experiment's integrity: supervise and review, delegate the attempts.
-
-## The Iron Law
-
-```
-ONE CHANGE, ONE MEASUREMENT, KEEP OR REVERT.
-```
-
-Never stack untested changes. Never claim a win from reading the code — only a measurement counts.
-
-## When to Use
-
-Use when the goal is a number moving toward a target over many iterations:
-- Latency, throughput, gas/transaction cost, memory, bundle size, accuracy, pass rate.
-
-**Don't use for:**
-- Debugging a defect → use `investigate` (find one root cause, fix, stop).
-- Building a feature → use `tdd`.
-- A single known optimization → just make it and verify; you don't need a loop.
 
 ## The Loop
 
@@ -37,25 +19,15 @@ Read the actual architecture at the same time, so hypotheses in step 3 name a sp
 
 Build the harness that produces the metric — a script, benchmark, or test you can rerun identically. Before trusting it, **prove it is sensitive**: run contrasting realistic workloads and confirm the target case shows the symptom while easier cases separate as expected. A ruler that can't distinguish a slow case from a fast one can't measure a win. If it can't, revise the workload or the metric before proceeding.
 
-**Explain the baseline before freezing.** Name what bounds it — the core, lock, disk, network, or load generator that stops it being twice as good — from a profile or counters taken in a run you don't report, not from reading code. Make the harness print an error count and a count of work done (rows written, calls that succeeded), so every keep-or-revert also proves the timed work happened and didn't fail. Run sides alternately (A, B, A, B) so warmup and drift favor neither; a gap inside run-to-run spread is no difference. Check each win against arithmetic: removing a piece that takes 10% of the run can't make it more than ~11% faster — a result past that limit measured a cache, a no-op, or a bug (`docs/principles/prove-it-works.md`, Measured numbers).
+**Make the harness show the work happened.** Have it print an error count and a count of work done (rows written, calls that succeeded), so every keep-or-revert also proves the timed work happened and didn't fail. Run sides alternately (A, B, A, B) so warmup and drift favor neither; a gap inside run-to-run spread is no difference. Check each win against arithmetic: removing a piece that takes 10% of the run can't make it more than ~11% faster — a result past that limit measured a cache, a no-op, or a bug (`docs/principles/prove-it-works.md`, Measured numbers).
 
 Once proven, the harness is your **immutable ruler**: if it changes mid-run, no measurement is comparable. It is the artifact a reviewer reruns to replay your run. See `docs/principles/build-the-lever.md`.
 
-Record the **baseline** measurement before changing anything — sampled to clear the noise (median of N runs, never a single number) — plus a green run of the regression tests that must stay green, so a later failure is attributable. Record the **method** beside it — sample count, what one sample is, and run order — and the commit SHA it measured; a delegated attempt's brief names the exact SHAs and the method, and a result that reports neither is not comparable: re-measure it once, and a second miss is a gap in the log, never a kept win. Baseline and attempt must measure the **same scenario**: if the baseline cannot run it at all (the behavior doesn't exist yet at baseline), don't report a ratio between unlike runs — set an absolute budget for the work the change adds and for the end-to-end state the user waits for, and gate on those instead. Fix an **attempt budget** for the run at the same time — use the one the user gave, or declare one at the top of the decision log and proceed (adjustable on async review). Give the stop predicate a **floor on attempts** as well as a target, so a lucky early win can't end the run.
+Record the **baseline** measurement before changing anything — sampled to clear the noise (median of N runs, never a single number) — plus a green run of the regression tests that must stay green, so a later failure is attributable. Record the **method** beside it — sample count, what one sample is, and run order — and the commit SHA it measured. Baseline and attempt must measure the **same scenario**: if the baseline cannot run it at all (the behavior doesn't exist yet at baseline), don't report a ratio between unlike runs — set an absolute budget for the work the change adds and for the end-to-end state the user waits for, and gate on those instead. Fix an **attempt budget** for the run at the same time — use the one the user gave, or declare one at the top of the decision log and proceed (adjustable on async review). Give the stop predicate a **floor on attempts** as well as a target, so a lucky early win can't end the run.
 
 ### 3. One hypothesis, grounded in the system
 
 Each attempt states a hypothesis: "Changing X should move the metric because Y," naming a specific mechanism in the architecture you read in step 1 ("defer X off the boot path because it blocks first paint"), not "try memoizing something."
-
-For a performance metric, generate hypotheses from these, cheapest first. They are idea generators, not a checklist: each earns an attempt only when the measurement shows its signal (the first excepted — no profile shows unused work, so it needs reading the code), and a focused fix for the dominant cost beats spreading effort across all of them. When an earlier one meets the target, stop climbing the list.
-
-1. **Don't do it** — remove work whose result nothing uses, or a gate always off for this case.
-2. **Do it, but don't do it again** — cache repeated work on identical inputs (name what invalidates it before claiming the win).
-3. **Do it less** — batch small operations that each pay a fixed overhead; prune or partition work that scales with input size.
-4. **Do it later** — defer cost to first use.
-5. **Do it when they're not looking** — move it off the interactive path, often *earlier*, in the hot moment's shadow. The win is perceived latency, so measure that path, not total work.
-6. **Do it concurrently** — including redundant requests to cut tail latency when there's headroom.
-7. **Do it cheaper** — a better algorithm, an index instead of a scan, a cheaper instruction.
 
 ### 4. One change, measure, keep or revert
 
@@ -73,18 +45,8 @@ Maintain a log with one row per attempt so a reviewer can replay the run:
 id | hypothesis | change | sha | before | after | delta | tests | verdict (kept/reverted) | note
 ```
 
-The log is append-only: a wrong row gets a superseding row that points at it, never an edit, so the trail a reviewer replays is the trail that happened.
-
 ### 6. Stop semantics
 
 Stop **only** when: the predicate is met (metric hits target and the attempt floor is spent), remaining ideas lack meaningful cost-benefit, or the attempt budget is exhausted — then keep the best accepted state and present the decision log. A budget stop is a defined outcome, not a failure. The budget bounds the whole run, pivots included; it never licenses quitting at the first plateau.
 
 **A plateau is not a stop.** Two flat iterations mean *pivot the approach*, not *quit*: pivot category, combine near-misses, re-read the source, or try something more radical. Surface a genuine dead end honestly rather than spinning on variants of a failed attempt.
-
-> This is the inverse of `investigate`'s Circles Detection: there, repetition on a *failed fix* means stop and reassess. Here, a *measurement plateau* in an optimization loop means pivot and push past it. Don't confuse thrashing (stop) with plateauing (pivot).
-
-## Relationship to Principles
-
-- `build-the-lever` — the frozen harness *is* the lever; it does and proves the work.
-- `prove-it-works` — measure the real metric, never a proxy or a code-inspection guess.
-- `never-block-on-the-human` — run the loop autonomously; present the decision log for async review rather than asking per-attempt.

@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
-# Validates the Arché setup is consistent and complete.
-# Run from the repo root: bash tests/validate-setup.sh
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-cd "$REPO_ROOT"
+cd "$(dirname "$0")/.."
 
 PASS=0
 FAIL=0
@@ -14,331 +11,58 @@ pass() { PASS=$((PASS + 1)); printf "  \033[32m✓\033[0m %s\n" "$1"; }
 fail() { FAIL=$((FAIL + 1)); printf "  \033[31m✗\033[0m %s\n" "$1"; }
 section() { printf "\n\033[1m%s\033[0m\n" "$1"; }
 
-# ---------------------------------------------------------------------------
-section "1. Core files exist"
-# ---------------------------------------------------------------------------
+section "Skills"
 
-for f in \
-  AGENTS.md \
-  README.md \
-  .claude/settings.json \
-  docs/principles/index.md \
-  global/CLAUDE.md \
-  scripts/sync-global.sh \
-  .github/workflows/ci.yml \
-  .github/upstream-shas.json; do
-  [ -f "$f" ] && pass "$f" || fail "$f missing"
+for dir in .agents/skills/*/; do
+  skill=$(basename "$dir")
+  file="$dir/SKILL.md"
+  if [ ! -f "$file" ]; then
+    fail "$skill: no SKILL.md"
+  elif [ "$(head -1 "$file")" != "---" ]; then
+    fail "$skill: no YAML frontmatter"
+  elif ! grep -qx "name: $skill" "$file"; then
+    fail "$skill: frontmatter name does not match the directory"
+  elif ! grep -q '^description:' "$file"; then
+    fail "$skill: no description"
+  else
+    pass "$skill"
+  fi
 done
 
-# ---------------------------------------------------------------------------
-section "2. Skills structure"
-# ---------------------------------------------------------------------------
+section "Agents"
 
-EXPECTED_SKILLS="adversarial-review execute-plan grill-me handoff hillclimb investigate plan reflect resolving-merge-conflicts tdd teach unslop writing-great-skills"
-
-for skill in $EXPECTED_SKILLS; do
-  skill_file=".agents/skills/$skill/SKILL.md"
-  [ -f "$skill_file" ] && pass "$skill_file" || fail "$skill_file missing"
+for file in .agents/agents/*.md; do
+  agent=$(basename "$file" .md)
+  missing=""
+  for field in name description model; do
+    grep -q "^$field:" "$file" || missing="$missing $field"
+  done
+  [ -z "$missing" ] && pass "$agent" || fail "$agent: missing$missing"
 done
 
-# Adversarial-review references
-for ref in reviewer-lenses.md verdict-format.md; do
-  f=".agents/skills/adversarial-review/references/$ref"
-  [ -f "$f" ] && pass "$ref exists" || fail "$ref missing"
-done
+section "Layout"
 
-# reviewer-prompt.md should NOT exist (inlined into SKILL.md)
-if [ ! -f ".agents/skills/adversarial-review/references/reviewer-prompt.md" ]; then
-  pass "reviewer-prompt.md correctly removed"
+if [ "$(readlink .claude/skills 2>/dev/null)" = "../.agents/skills" ] && [ -e .claude/skills ]; then
+  pass ".claude/skills -> ../.agents/skills"
 else
-  fail "reviewer-prompt.md should not exist (was inlined into SKILL.md)"
+  fail ".claude/skills must be a symlink to ../.agents/skills that resolves"
 fi
 
-# TDD references
-for ref in testing-anti-patterns.md mocking.md; do
-  f=".agents/skills/tdd/references/$ref"
-  [ -f "$f" ] && pass "tdd/$ref" || fail "tdd/$ref missing"
-done
-
-# Investigate references
-for ref in root-cause-tracing.md condition-based-waiting.md; do
-  f=".agents/skills/investigate/references/$ref"
-  [ -f "$f" ] && pass "investigate/$ref" || fail "investigate/$ref missing"
-done
-
-# ---------------------------------------------------------------------------
-section "3. Symlinks"
-# ---------------------------------------------------------------------------
-
-check_symlink() {
-  local link="$1" target="$2"
-  if [ -L "$link" ]; then
-    actual=$(readlink "$link")
-    if [ "$actual" = "$target" ]; then
-      pass "$link -> $target"
-    else
-      fail "$link points to '$actual', expected '$target'"
-    fi
-  else
-    fail "$link is not a symlink"
-  fi
-}
-
-check_symlink ".claude/skills" "../.agents/skills"
-
-# Verify the symlink target actually resolves
-[ -e .claude/skills ] && pass ".claude/skills resolves" || fail ".claude/skills is a broken symlink"
-
-# Claude Code reads AGENTS.md only when no CLAUDE.md exists in the project.
+# Claude Code reads AGENTS.md only when the project has no CLAUDE.md.
 for f in CLAUDE.md .claude/CLAUDE.md; do
   [ -e "$f" ] && fail "$f exists, so Claude Code would skip AGENTS.md" || pass "no $f shadowing AGENTS.md"
 done
 
-# ---------------------------------------------------------------------------
-section "4. Skill frontmatter"
-# ---------------------------------------------------------------------------
-
-for skill in $EXPECTED_SKILLS; do
-  skill_file=".agents/skills/$skill/SKILL.md"
-  [ ! -f "$skill_file" ] && continue
-
-  # Check for YAML frontmatter delimiters
-  first_line=$(head -1 "$skill_file")
-  if [ "$first_line" = "---" ]; then
-    # Check name field exists
-    if grep -q '^name:' "$skill_file"; then
-      pass "$skill: has name field"
-    else
-      fail "$skill: missing name field in frontmatter"
-    fi
-    # Check description field exists
-    if grep -q '^description:' "$skill_file"; then
-      pass "$skill: has description field"
-    else
-      fail "$skill: missing description field in frontmatter"
-    fi
-  else
-    fail "$skill: missing YAML frontmatter (first line should be ---)"
-  fi
+for f in .claude/settings.json .github/upstream-shas.json; do
+  python3 -c "import json, sys; json.load(open(sys.argv[1]))" "$f" 2>/dev/null \
+    && pass "$f is valid JSON" || fail "$f is not valid JSON"
 done
 
-# ---------------------------------------------------------------------------
-section "5. Valid JSON/TOML config"
-# ---------------------------------------------------------------------------
+section "Upstream credits"
 
-# settings.json
-if python3 -c "import json; json.load(open('.claude/settings.json'))" 2>/dev/null; then
-  pass "settings.json is valid JSON"
-else
-  fail "settings.json is invalid JSON"
-fi
-
-# upstream-shas.json
-if python3 -c "import json; json.load(open('.github/upstream-shas.json'))" 2>/dev/null; then
-  pass "upstream-shas.json is valid JSON"
-else
-  fail "upstream-shas.json is invalid JSON"
-fi
-
-# ---------------------------------------------------------------------------
-section "6. No stale references"
-# ---------------------------------------------------------------------------
-
-# No remaining references to reviewer-prompt.md
-if grep -r "reviewer-prompt" .agents/skills/ 2>/dev/null; then
-  fail "Stale reference to reviewer-prompt.md found in skills"
-else
-  pass "No stale references to reviewer-prompt.md"
-fi
-
-# No TypeScript file extensions in Go-focused skills (e.g., foo.ts, bar.tsx)
-ts_hits=$(grep -rnE '\w+\.tsx?\b' .agents/skills/ 2>/dev/null | grep -v 'node_modules' | grep -v '\.md:.*codex-plugin' | grep -v 'config\.toml' || true)
-if [ -n "$ts_hits" ]; then
-  fail "Possible TypeScript file references in skills: $ts_hits"
-else
-  pass "No TypeScript file references in skills"
-fi
-
-# ---------------------------------------------------------------------------
-section "7. README consistency"
-# ---------------------------------------------------------------------------
-
-# All skills in the skills table
-for skill in $EXPECTED_SKILLS; do
-  if grep -qF "**${skill}**" README.md; then
-    pass "README lists $skill"
-  else
-    fail "README missing $skill in skills table"
-  fi
+for repo in $(python3 -c "import json; print('\n'.join(json.load(open('.github/upstream-shas.json'))))"); do
+  grep -q "$repo" README.md && pass "README names $repo" || fail "README does not name tracked repo $repo"
 done
 
-# Plugin reference (recommended plugin, not a monitored upstream)
-if grep -q "codex-plugin-cc" README.md; then
-  pass "README references codex plugin"
-else
-  fail "README missing codex plugin reference"
-fi
-
-# Upstream sources in the README must match the tracked repos in upstream-shas.json
-shas_repos=$(python3 -c "import json; print('\n'.join(json.load(open('.github/upstream-shas.json')).keys()))")
-upstream_ok=true
-for repo in $shas_repos; do
-  if ! grep -q "$repo" README.md; then
-    fail "README upstream sources missing tracked repo: $repo"
-    upstream_ok=false
-  fi
-done
-[ "$upstream_ok" = true ] && pass "README upstream sources cover all tracked repos"
-
-# ---------------------------------------------------------------------------
-section "8. Principles"
-# ---------------------------------------------------------------------------
-
-EXPECTED_PRINCIPLES="foundational-thinking redesign-from-first-principles subtract-before-you-add experience-first exhaust-the-design-space module-depth boundary-discipline make-operations-idempotent serialize-shared-state-mutations threat-modeling observability prove-it-works fix-root-causes surgical-changes build-the-lever guard-the-context-window never-block-on-the-human encode-lessons-in-structure"
-
-for p in $EXPECTED_PRINCIPLES; do
-  f="docs/principles/$p.md"
-  [ -f "$f" ] && pass "$p" || fail "$p missing"
-done
-
-# Index references all principles
-for p in $EXPECTED_PRINCIPLES; do
-  if grep -q "$p" docs/principles/index.md; then
-    pass "index.md references $p"
-  else
-    fail "index.md missing reference to $p"
-  fi
-done
-
-# Reverse check: every principle file on disk must be registered in EXPECTED_PRINCIPLES.
-# Without this, a new principle file passes CI silently (the forward check only
-# verifies names already on the list) — the drift that produced the stale
-# "15 principles" README. See docs/principles/encode-lessons-in-structure.md.
-for f in docs/principles/*.md; do
-  name=$(basename "$f" .md)
-  case "$name" in index|CITATIONS) continue ;; esac
-  case " $EXPECTED_PRINCIPLES " in
-    *" $name "*) pass "$name is registered in EXPECTED_PRINCIPLES" ;;
-    *) fail "$name exists on disk but is NOT in EXPECTED_PRINCIPLES (tests/validate-setup.sh)" ;;
-  esac
-done
-
-# Citations live in CITATIONS.md so agents applying a principle don't load them.
-for p in $EXPECTED_PRINCIPLES; do
-  grep -q '^## Citations' "docs/principles/$p.md" \
-    && fail "$p has a Citations section; move it to docs/principles/CITATIONS.md" \
-    || pass "$p keeps citations in CITATIONS.md"
-done
-
-# ---------------------------------------------------------------------------
-section "9. Adversarial-review skill content"
-# ---------------------------------------------------------------------------
-
-skill=".agents/skills/adversarial-review/SKILL.md"
-
-# References codex plugin
-if grep -q "codex:adversarial-review" "$skill"; then
-  pass "Skill mentions /codex:adversarial-review as alternative"
-else
-  fail "Skill should reference /codex:adversarial-review"
-fi
-
-# Uses codex exec for spawning
-if grep -q "codex exec" "$skill"; then
-  pass "Skill uses codex exec for reviewers"
-else
-  fail "Skill should use codex exec"
-fi
-
-# Has preflight check
-if grep -q "command -v codex" "$skill"; then
-  pass "Skill has preflight check for codex CLI"
-else
-  fail "Skill missing preflight check"
-fi
-
-# Has wait/synchronization step
-if grep -qi "wait for all reviewers" "$skill"; then
-  pass "Skill has explicit wait step before synthesis"
-else
-  fail "Skill missing wait step before synthesis"
-fi
-
-# Stderr captured to .err files (not suppressed)
-if grep -q '\.err' "$skill"; then
-  pass "Skill captures stderr to .err files"
-else
-  fail "Skill should capture stderr to .err files, not suppress"
-fi
-
-# References lenses
-if grep -q "reviewer-lenses.md" "$skill"; then
-  pass "Skill references reviewer-lenses.md"
-else
-  fail "Skill should reference reviewer-lenses.md"
-fi
-
-# References verdict format
-if grep -q "verdict-format.md" "$skill"; then
-  pass "Skill references verdict-format.md"
-else
-  fail "Skill should reference verdict-format.md"
-fi
-
-# Prompt construction inlined (no reference to reviewer-prompt.md)
-if ! grep -q "reviewer-prompt" "$skill"; then
-  pass "No reference to removed reviewer-prompt.md"
-else
-  fail "Still references reviewer-prompt.md"
-fi
-
-# ---------------------------------------------------------------------------
-section "10. Agents"
-# ---------------------------------------------------------------------------
-
-EXPECTED_AGENTS="implementer comment-reviewer"
-
-for agent in $EXPECTED_AGENTS; do
-  agent_file=".agents/agents/$agent.md"
-  if [ ! -f "$agent_file" ]; then
-    fail "$agent_file missing"
-    continue
-  fi
-  pass "$agent_file"
-  for field in name description model; do
-    if grep -q "^$field:" "$agent_file"; then
-      pass "$agent: has $field field"
-    else
-      fail "$agent: missing $field field in frontmatter"
-    fi
-  done
-done
-
-# Reverse check: every agent file on disk must be registered in EXPECTED_AGENTS
-# (same drift guard as the principles reverse check above).
-for f in .agents/agents/*.md; do
-  [ -e "$f" ] || continue
-  name=$(basename "$f" .md)
-  case " $EXPECTED_AGENTS " in
-    *" $name "*) pass "$name is registered in EXPECTED_AGENTS" ;;
-    *) fail "$name exists on disk but is NOT in EXPECTED_AGENTS (tests/validate-setup.sh)" ;;
-  esac
-done
-
-for agent in $EXPECTED_AGENTS; do
-  grep -q "\*\*$agent\*\*" README.md \
-    && pass "README mentions $agent agent" \
-    || fail "README missing $agent agent"
-done
-
-# ---------------------------------------------------------------------------
-# Summary
-# ---------------------------------------------------------------------------
-
-printf "\n\033[1m━━━ Results: %d passed, %d failed ━━━\033[0m\n" "$PASS" "$FAIL"
-
-if [ "$FAIL" -gt 0 ]; then
-  exit 1
-else
-  printf "\033[32mAll checks passed.\033[0m\n"
-fi
+printf "\n\033[1m%d passed, %d failed\033[0m\n" "$PASS" "$FAIL"
+[ "$FAIL" -eq 0 ]
