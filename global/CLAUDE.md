@@ -12,11 +12,7 @@ I often dictate prompts via voice input, so expect transcription errors: homopho
 ## General
 
 - Search the web before answering about AI tooling, libraries, models, or current best practice, even when the name is familiar — recognizing a name is not knowing its current state. Include the name as written in at least one query.
-- Direction unclear? Confirm scope and present options. Direction set? Proceed on reversible steps and present results — see `never-block-on-the-human`.
-
-## Engineering Principles
-
-Before acting on design or implementation tasks, read the principles index at `~/src/github.com/Chrakimnas6/arche/docs/principles/index.md`. Read its **Always read** baseline, then each principle whose **Apply when** clause matches the task (the index's routing matrix covers common shapes) — not the whole corpus. These govern all decisions — unless the current project has its own `docs/principles/`, in which case use those instead.
+- Direction unclear? Confirm scope and present options. Direction set? Proceed on reversible steps and present results.
 
 ## Code Comments
 

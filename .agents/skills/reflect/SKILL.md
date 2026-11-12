@@ -23,29 +23,13 @@ The scan always ends with an explicit outcome. If it genuinely surfaces nothing,
 
 For each learning, determine where it belongs. Route by `docs/principles/encode-lessons-in-structure.md`.
 
-### Routing priority (highest to lowest):
+Routing priority, highest first:
 
-**1. Structural enforcement** — Can this be a lint rule, script, hook, or automated check?
-- Example: "Agent keeps editing generated files by hand" → add a CI check that fails when generated output drifts from its source
-- Example: "Tests must pass before committing" → add a pre-commit hook
-- If yes, propose the structural change. This is the highest-value outcome.
-
-**2. AGENTS.md** — Project-specific conventions, build commands, gotchas the agent can't infer from code.
-- Example: "Always run `go generate ./...` before testing" → add to Commands section
-- Example: "Never modify files in `contracts/deployed/`" → add to Conventions section
-- Keep it lean — only add things the agent repeatedly gets wrong.
-
-**3. Skill updates** — If a skill's methodology was inadequate, propose an improvement.
-- Example: "Plan skill created phases that were too large for this codebase" → adjust phase sizing guidance
-- Note: use `skill-creator` for significant skill redesigns. Small additions can be edited directly.
-
-**4. Principles** — If a principle needs project-specific elaboration or a new principle emerged.
-- Example: "In this project, idempotency is critical because of the retry queue" → add note to `make-operations-idempotent.md`
-- This should be rare — principles are meant to be general.
-
-**5. docs/** — Architecture decisions, design rationale, context worth persisting.
-- Example: "We chose proxy pattern over diamond for upgradeability because..." → `docs/design/`
-- Example: "The indexer service depends on events from L1, here's the flow..." → `docs/design/`
+1. **Structural enforcement** — a lint rule, script, hook, or automated check. This is the highest-value outcome.
+2. **AGENTS.md** — project conventions, build commands, and gotchas the agent can't infer from code. Add only what the agent repeatedly gets wrong.
+3. **Skill updates** — a skill's method was inadequate.
+4. **Principles** — rare; principles are meant to be general.
+5. **docs/** — architecture decisions and design rationale, in `docs/design/`.
 
 ## Step 3 — Present Proposals
 
@@ -53,12 +37,7 @@ Present each proposal with its target, what changes, why, and a priority. Ask th
 
 ## Step 4 — Apply Approved Changes
 
-For each approved change:
-- **AGENTS.md**: Edit directly
-- **Skills**: Use `skill-creator` for significant redesigns. For small additions (a new line in a rationalization table, a gotcha), edit directly.
-- **Principles**: Edit directly
-- **docs/**: Create or edit files directly
-- **Structural**: Create scripts, hooks, or config changes
+Apply each approved change directly. For a significant skill redesign, use `skill-creator`.
 
 ## Step 5 — Summary
 

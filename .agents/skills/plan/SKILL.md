@@ -1,151 +1,59 @@
 ---
 name: plan
 description: >-
-  Systematic planning for features and projects. Gathers context, explores codebase,
-  writes phased implementation plans to docs/plans/. Two modes: greenfield (from requirements)
-  and feature (incremental changes). Does NOT implement. Use when asked to "plan this",
-  "break this down", "design this", or starting a new feature.
+  Write a phased implementation plan to docs/plans/ from requirements or a decision record.
+  Does NOT implement. Use when asked to "plan this", "break this down", "design this", or
+  when starting a feature that spans several files or has more than one viable approach.
 ---
 
 # Plan
 
-Produce implementation plans grounded in project principles. Write plans to `docs/plans/`.
+Write an implementation plan to `docs/plans/<plan-name>/`. **The plan is the deliverable: no code, no scaffolding. Stop after writing it.** If the change is one or two files with an obvious approach, say it needs no plan and stop.
 
-**Do NOT implement anything. The plan is the deliverable.** This is a hard gate. No code, no scaffolding, no "just this one file." The output is a written plan. Stop after writing it.
+## 1. Load the principles
 
-## Two Modes
+Read every principle in full with one command: `cat docs/principles/*.md`, or `cat ~/src/github.com/Chrakimnas6/arche/docs/principles/*.md` when the project has no `docs/principles/`.
 
-Determine which mode applies before starting:
+## 2. Settle scope
 
-**Greenfield** — Starting from detailed requirements with no existing codebase to integrate into. Design architecture from scratch. Skip the codebase exploration parts of Step 3 that look for existing patterns; instead, focus exploration on understanding the requirements document, researching relevant technologies, and mapping out the system design.
+If a grill-me decision record exists (`docs/design/<topic>-decisions.md`), read it first: its resolved decisions are settled, so don't re-ask them. A question it marks *prototype-resolved* becomes an early throwaway-spike phase that builds the 2-3 sketches and gates dependent phases on the user's pick.
 
-**Feature** — Adding to or changing an existing codebase. Explore the codebase thoroughly before designing. Understand existing patterns, conventions, and architecture so the plan fits naturally into what's already there.
+Resolve what remains open before designing: scope boundaries, constraints, and the definition of done. Ask with concrete options and say what breaks if the choice is wrong.
 
-State the mode in the plan overview.
+## 3. Explore
 
-## Step 0 — Triage Complexity
+Read the code the change touches. Delegate broad exploration to subagents and wait for all of them before writing. Check each factual premise before designing on it: every command, flag, route, or API the plan names exists, and the work isn't already on the base branch. List a premise you couldn't check as unverified under Constraints.
 
-Before running the full planning workflow, assess whether this task actually needs a plan:
-
-**Trivially small (1-2 files, obvious approach):**
-Tell the user this task doesn't need a plan and suggest implementing directly without the plan skill.
-
-**Needs planning (proceed to Step 1):**
-- The change spans 3+ files or introduces new architecture
-- There are multiple valid approaches and the user should weigh in
-- The task has unclear scope or cross-cutting concerns
-- The user explicitly asks for a plan
-
-## Step 1 — Load Principles
-
-Read `docs/principles/index.md`. Read the **Always read** baseline in full, then read in full each principle whose **Apply when** clause matches this task — the index's routing matrix covers common task shapes. Read the whole corpus only when genuinely unsure which apply. These principles govern all plan decisions — cite the ones you read by name in the plan overview and phase files.
-
-Always read the principle files fresh; never work from memorized principle content. The self-check in Step 4b will verify citations exist.
-
-If `docs/principles/index.md` does not exist, note the absence and proceed without principle citations. Do not create the file.
-
-## Step 2 — Define Scope and Constraints
-
-If a grill-me decision record exists for this work (`docs/design/<topic>-decisions.md`), or the user points to one, read it first: its resolved decisions are settled scope — don't re-ask them. Carry its deferred questions into the list below — except questions the record marks as prototype-resolved: don't re-ask those; instead plan an early throwaway-spike phase that builds the 2-3 sketches and gates dependent phases on the user's pick (the plan describes the spike; execute-plan builds it).
-
-Resolve ambiguity before exploring the codebase: scope boundaries, constraints (dependencies, platform, existing patterns to preserve, a reference implementation to follow), and the definition of done.
-
-Frame questions with concrete options, and state the stakes — what breaks or degrades if we pick wrong. If the request is already clear, confirm scope boundaries briefly and move on.
-
-## Step 3 — Explore Context
-
-Explore until you know the existing code in the affected areas, its patterns, conventions, and dependencies, the architecture the change touches, and the tests, types, and infrastructure around it.
-
-Read directly when the change touches a few known files. Delegate to subagents when exploration is broad enough that raw reads would crowd the main context (`docs/principles/guard-the-context-window.md`), one per independent area, run in parallel. Wait for every agent to return before writing the plan: hosts may run subagents in the background by default, so either request a foreground run when the next step depends on the result or wait for each completion notification — never write from partial findings.
-
-**Greenfield mode:** Focus exploration on reading requirements docs, researching technology choices, and exploring reference implementations if any exist.
-
-**Feature mode:** Focus exploration on understanding the existing codebase — file structure, patterns, conventions, test infrastructure, and the specific areas the change will touch. Check each factual premise before designing on it: every command, flag, route, or API the plan names exists (`--help`, the source), and the work isn't already on base (`git log origin/<base> -- <files>`). List a premise you couldn't check as unverified under Constraints.
-
-## Step 4 — Write the Plan
-
-Create the plan using file tools. Output location: `docs/plans/<plan-name>/`.
-
-### Directory Structure
+## 4. Write the plan
 
 ```
 docs/plans/<plan-name>/
   overview.md
   phase-01-<slug>.md
   phase-02-<slug>.md
-  ...
 ```
 
-Non-phase files (like `testing.md`) are fine alongside phases.
+**`overview.md`** has:
 
-### Overview File
+- **Context** — the problem and why it matters
+- **Key decisions** — the decisions a reviewer is most likely to contest (data models, interfaces, user-visible behavior). For each: 2-3 approaches that differ in kind, the one chosen, and why. Decisions settled in a decision record are cited, not re-opened.
+- **Scope** — what is included and what is explicitly excluded
+- **Constraints**
+- **Principles** — only the principles that changed a decision, each with the decision it changed. A principle that changed nothing is not listed.
+- **Phases** — ordered links to the phase files
+- **Verification** — the project-level commands
 
-Must include:
-- **Mode** — greenfield or feature
-- **Context** — what problem this solves and why
-- **Key decisions** — the decisions this plan introduces that a reviewer is most likely to contest (data models, interfaces, user-visible behavior): the chosen approach, the alternatives considered, and why — see the alternatives check below. Decisions already settled in a grill-me decision record are cited, not re-opened.
-- **Scope** — what's included, what's explicitly excluded
-- **Constraints** — technical, platform, dependency, or pattern constraints
-- **Principles** — which project principles apply and how they shaped decisions (if `docs/principles/index.md` exists)
-- **Phases** — ordered list with links to phase files
-- **Verification** — project-level verification commands (e.g. `go test ./...`, `go vet ./...`)
+**Each phase file** has a back-link to the overview, then:
 
-### Phase Files
+- **Goal** — one outcome
+- **Changes** — which files change and how, at a high level
+- **Data structures** — the key types or schemas, each named with a one-line sketch
+- **Verification** — the project's static commands, plus at least one runnable check whose exit code or output decides pass or fail. A manual check states its observable pass condition ("dashboard renders three panels with non-zero counts", not "visual verification"). "It compiles" is not verification.
 
-Each phase file must include:
-- Back-link to the overview
-- **Goal** — what this phase accomplishes
-- **Changes** — which files are affected and what changes, described at a high level
-- **Data structures** — name the key types/schemas before logic, but a one-line sketch is enough — don't write full definitions
-- **Verification** — static and runtime checks for this phase (see verification section below)
+A phase reads like a brief to a senior engineer: what and why, with no code blocks or pseudocode. Verification commands are not code.
 
-**Keep plans high-level.** Describe *what* and *why*, not *how* at the code level. A phase should read like a brief to a senior engineer: goals, boundaries, key types, and verification — not code snippets or pseudocode.
+**Size each phase** as the smallest increment that ships and verifies on its own: its verification passes without any later phase, and the codebase is coherent if the next phase never runs. Split a phase whose Goal needs "and" between unrelated outcomes; merge one that can't be verified without the next.
 
-Order phases so that infrastructure and shared types come first, features after.
+## 5. Present and stop
 
-### Phase Sizing
-
-A phase is the smallest **independently shippable, independently verifiable** increment: implement it, run its verification, and the codebase is coherent even if the next phase never runs. Size by that test, not by counting — file and function counts are smells, not rules (a mechanical 6-file rename can be one phase; a 2-file concurrency change may deserve three).
-
-Apply the test in both directions:
-
-- **Split** when a phase bundles work that could ship and be verified separately — a Goal that needs "and" between unrelated outcomes is the tell.
-- **Merge** when a phase can't be verified without the next one, or when splitting separates logic from the types and tests that only make sense beside it.
-
-Smaller phases keep future options open, but cohesion wins: one phase holding one coherent idea beats fragments that only make sense together.
-
-### Redesign Check
-
-For changes touching existing code, apply `docs/principles/redesign-from-first-principles.md`.
-
-### Alternatives Check
-
-For architectural decisions, sketch 2-3 approaches in the overview's Key decisions section and state which was chosen and why (`docs/principles/exhaust-the-design-space.md`). A second flavor of the first approach does not count as an alternative. Screen each candidate against the red flags in `docs/principles/module-depth.md` (shallow module, information leakage, temporal decomposition, pass-throughs); between viable candidates, prefer the one that hides more complexity behind the smaller interface.
-
-### Verification Strategy
-
-Every phase **must** have a verification section with both:
-
-**Static:** the project's static commands, named — the overview's project-level commands plus any phase-specific ones (e.g. `go vet ./...`, `npx tsc --noEmit`).
-
-**Runtime:** runnable checks whose exit code or observable output decides pass/fail (e.g. `go test ./internal/foo/...` covering the tests this phase writes). A genuinely manual check (a UI flow, a screenshot) must state its concrete observable pass condition — "dashboard renders three panels with non-zero counts", not "visual verification".
-
-"It compiles" is not verification. Every phase must describe how to **prove** the change works.
-
-## Step 4b — Self-Check
-
-After writing all plan files, verify these four constraints before proceeding. Fix any violations before moving on.
-
-**Principles cited (if applicable):** If `docs/principles/index.md` exists, the overview must reference at least 2 principles by name. If not, re-read the principles and add the most relevant ones to the overview's Principles section.
-
-**Phase sizing:** For each phase, check two things: (a) its Verification section can pass without changes from any later phase, and (b) its Goal states a single outcome. A phase failing (a) merges into the phase it depends on; a phase failing (b) splits.
-
-**No code in phases:** Phase files must not contain code blocks. Name types and functions but do not define them. A phase should read like a brief to a senior engineer, not a diff or implementation spec. If you find code blocks, replace them with prose describing the intended shape. Verification commands are not code — naming the runnable check is required, not a violation.
-
-**Deterministic verification:** Every phase's Verification section contains at least one runnable command whose output decides pass/fail, and every manual check states its observable pass condition. A section made only of categories ("test manually", "cover edge cases") is a violation — rewrite it as commands and conditions.
-
-## Step 5 — Present and Stop
-
-Summarize the plan: list the phases, scope boundaries, and verification approach. Point the user to the plan files in `docs/plans/<plan-name>/`.
-
-The user decides when and how to execute the plan.
+Summarize the phases, scope boundaries, and verification approach, and point to the plan files. The user decides when to execute.

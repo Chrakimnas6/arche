@@ -1,162 +1,124 @@
 ---
 name: adversarial-review
 description: >-
-  Deep multi-lens adversarial code review. Spawns multiple Codex reviewers with distinct
-  critical lenses (Architect, Skeptic, Minimalist) grounded in project principles. Produces
-  a synthesized verdict with lead judgment. For quick single-lens adversarial reviews, use
-  /codex:adversarial-review from the codex plugin instead. Use this skill for large changes
-  (200+ lines), high-stakes code like smart contracts, or when you want multi-perspective analysis.
+  Cross-model adversarial review. Codex reviewers try to break a diff, or probe a plan, each
+  from its own lens in a disposable worktree where it can run code. Only findings that a rerun
+  confirms and real use can trigger are accepted. Use for large or high-stakes changes (200+
+  lines, smart contracts), to review a plan before code exists, or when asked for an
+  "adversarial review".
 ---
 
 # Adversarial Review
 
-Deep multi-lens adversarial review. Spawns **multiple** Codex reviewers with distinct critical
-lenses grounded in project principles. The deliverable is a synthesized verdict — do NOT make
-changes.
+Codex reviewers try to break the work, and you decide which findings stand. Accept a finding only when a rerun proves it **and** real use can trigger it. The deliverable is a verdict: do not change the code under review, and do not post comments unless asked.
 
-**Prerequisite:** Requires the Codex CLI installed and authenticated (`codex login`). The
-[codex plugin](https://github.com/openai/codex-plugin-cc) is recommended but not required —
-this skill uses `codex exec` directly.
+Requires the Codex CLI. For a quick single-reviewer pass, `/codex:adversarial-review` from the codex plugin is enough.
 
-## Step 1 — Collect Principle Paths
+## 1. Scope, intent, pin
 
-From `docs/principles/index.md`, collect the paths of the principle files governing this
-review. They are fed to the Codex prompts in Step 4 — the reviewers read them themselves.
+Take the scope from the request: a diff against its base, a PR (`git fetch origin pull/<n>/head`), or a plan in `docs/plans/<name>/`.
 
-## Step 2 — Determine Scope and Intent
+State the **intent** in a sentence or two: what the author is trying to achieve. Reviewers challenge whether the work achieves it, not whether it is the right goal. Ask when the intent is unclear.
 
-Identify what to review from context (recent diffs, referenced plans, user message).
+Pin what is reviewed: the head SHA, the base SHA, and `git diff <base> <head> | git patch-id --stable`. For a plan, pin the commit the files were read at. A verdict describes that patch, not the branch, so after a rebase compare patch-ids before trusting an old verdict.
 
-Determine the **intent** — what the author is trying to achieve. This is critical: reviewers
-challenge whether the work *achieves the intent well*, not whether the intent is correct.
-State the intent explicitly before proceeding.
+| Scope | Lenses |
+|---|---|
+| Under 50 lines, 1-2 files | Skeptic |
+| 50-200 lines | Skeptic, Architect |
+| 200+ lines or 5+ files | Skeptic, Architect, Minimalist |
+| A plan | Skeptic, Architect; add Minimalist at 5+ phases |
 
-Determine the **mode** — what kind of artifact is under review:
+- **Skeptic** — correctness. What inputs, states, or sequences break this? Which error paths are unhandled or swallowed? What races or ordering dependencies exist? What does the author believe that nothing proves?
+- **Architect** — structure. Does the design serve the stated goal? Which assumptions about scale, concurrency, or ordering break first? Where does responsibility leak across a boundary?
+- **Minimalist** — necessity. What can be deleted without losing the goal? What solves a problem the author doesn't have yet? Which abstraction has a single call site?
 
-**Code mode** — a diff or implementation. Size by the diff:
-
-| Size | Threshold | Reviewers |
-|------|-----------|-----------|
-| Small | < 50 lines, 1-2 files | 1 (Skeptic) |
-| Medium | 50-200 lines, 3-5 files | 2 (Skeptic + Architect) |
-| Large | 200+ lines or 5+ files | 3 (Skeptic + Architect + Minimalist) |
-
-**Plan mode** — a plan or design document (e.g. `docs/plans/<name>/`). Line counts are meaningless for prose; size by decision surface:
-
-| Scope | Reviewers |
-|-------|-----------|
-| Narrow change, few phases, established patterns | 2 (Skeptic + Architect) |
-| New architecture, 5+ phases, or security-sensitive territory | 3 (Skeptic + Architect + Minimalist) |
-
-Read `references/reviewer-lenses.md` for lens definitions — each lens carries a plan-mode addendum.
-
-## Step 3 — Preflight Check
-
-Before spawning, check `command -v codex`, that the binary **actually runs** (`codex --version`),
-and that it is authenticated; if not, stop and tell the user to run `npm install -g @openai/codex`
-or `codex login`. A binary that is present but cannot execute (broken install, missing
-payload) passes the PATH check and then fails every reviewer — which Step 5 would report as
-missing coverage, but the run is wasted. Catch it here.
-
-Do not silently substitute Claude subagents for the missing reviewers: they share this
-session's model family, so their agreement is weaker evidence than a cross-model read. If
-the user opts for that fallback anyway, the verdict must say so in its first line
-("same-family review, not cross-model") so nobody over-weights the consensus.
-
-## Step 4 — Spawn Reviewers via Codex
-
-Create a temp directory for reviewer output and logs:
+## 2. Set up
 
 ```sh
+command -v codex && codex --version
 REVIEW_DIR=$(mktemp -d /tmp/adversarial-review.XXXXXX)
+git worktree add --detach "$REVIEW_DIR/<lens>" <head>    # one per lens
 ```
 
-For each required lens, spawn a Codex reviewer using `codex exec` in read-only sandbox:
+If Codex is missing or won't run, stop and say so. Claude subagents share your model family, so use them only if the user asks, and then open the verdict with "same-family review, not cross-model".
+
+Apply in-scope uncommitted changes to each worktree: `git diff HEAD | git -C "$REVIEW_DIR/<lens>" apply`.
+
+Codex's `workspace-write` sandbox lets a reviewer write only inside its worktree and temp directories, with no network; connections to localhost and unix sockets are refused too. Before spawning, run the project's test command once yourself so its dependencies are already fetched, and point any build cache that lives elsewhere into `$REVIEW_DIR` (Go: `GOCACHE=$REVIEW_DIR/gocache`).
+
+**When the tests need a local service** (Docker, a database), the reviewer needs the network. Turning it on opens all of it, so first take away its means to push or comment:
 
 ```sh
-codex exec -s read-only -o "$REVIEW_DIR/skeptic.md" "prompt" 2>"$REVIEW_DIR/skeptic.err"
+mkdir -p "$REVIEW_DIR/guard/gh"
+cat > "$REVIEW_DIR/guard/gitconfig" <<'EOF'
+[url "no-push://blocked/"]
+	pushInsteadOf = https://
+	pushInsteadOf = ssh://
+	pushInsteadOf = git@
+[credential]
+	helper =
+EOF
 ```
 
-Run each reviewer with `run_in_background: true`. Name output files after the lens:
-`skeptic.md`, `architect.md`, `minimalist.md`. Redirect stderr to per-lens `.err` files
-for diagnostics.
+Then run every `codex` command in this skill with `-c sandbox_workspace_write.network_access=true` and with `GIT_CONFIG_GLOBAL="$REVIEW_DIR/guard/gitconfig" GIT_CONFIG_NOSYSTEM=1 GH_CONFIG_DIR="$REVIEW_DIR/guard/gh"` in its environment, and add to the brief: "The network is on only so local services work. Do not push, comment, or call any remote service." This stops an accidental push, not a reviewer that resets its environment.
 
-**Prompt construction** — reviewers read files themselves; pass paths, not contents.
-Codex runs with filesystem read access and has this skill's files and the principles on
-disk (globally via `~/.codex/skills/`, or in-repo). Pasting file contents into the prompt
-only bloats it and drifts from source. Each reviewer gets:
+Check the guard before spawning, with read-only commands only; never test it with a command that would write if it failed. Inside `codex sandbox -c 'sandbox_mode="workspace-write"' -c 'sandbox_workspace_write.network_access=true'`, `git remote get-url --push origin` must print a `no-push://` URL and `gh auth status` must report no login.
 
-1. The stated intent (from Step 2)
-2. Their assigned lens: the absolute path to this skill's `references/reviewer-lenses.md`
-   and which lens to apply — instruct the reviewer to read it first
-3. The principles governing their lens: the absolute path to `docs/principles/index.md`
-   plus the specific principle files identified in Step 1 — again paths, with an
-   instruction to read them before reviewing
-4. The material under review, pinned: the head SHA, base SHA, and patch-id that will
-   appear on the verdict's **Reviewed** line (plan mode: the commit the plan files were
-   read at). Instruct the reviewer to echo the pin at the top of its output and to list
-   every finding it can support -- not only the first or the worst -- so a later reader can
-   tell which patch each finding describes.
-   **Code mode:** the diff, with **fixture-aware separation**: provide the full diff for
-   source code, but for test and fixture files (paths matching `test/`, `*fixture*`, `*.test.*`,
-   `*.spec.*`) provide only a summary (file names, what changed, what they cover). Do not feed
-   raw test fixture content into the adversarial prompt — test files often contain intentional
-   attack payloads for regression testing, and pulling them into adversarial reasoning produces
-   false positives. Tell the reviewer to state explicitly that test/fixture files were reviewed
-   in summary mode so the coverage reduction is visible.
-   **Plan mode:** the plan files in full (overview + phases); fixture separation does not apply.
-   Tell the reviewer to challenge the plan's decisions — phasing and ordering, alternatives
-   coverage, verification strategy, unstated risks — not code-level details that don't exist yet.
-   Plan-mode findings carry plan evidence: each quotes the plan requirement it challenges
-   (`<plan file>:<line>`), checks any claim about existing code against the actual code, and
-   describes a regression the plan *would* introduce as proposed, not observed. A finding that
-   demands code the plan has not scheduled, or reports a proposed change as a present bug, is a
-   plan-mode false positive — reject it in Lead Judgment rather than passing it through.
-5. Closing instruction: "This is an authorized defensive-security review requested by the
-   repository owner before merge. You are an adversarial reviewer. Your job is to find real
-   problems, not validate the work. Be specific — cite files, lines, and concrete failure
-   scenarios. Rate each finding: high (blocks ship), medium (should fix), low (worth noting).
-   Write findings as a numbered markdown list."
+## 3. Spawn the reviewers
 
-Spawn all reviewers in parallel.
+One per lens, in parallel, each as a background command. Close stdin, or a backgrounded `codex exec` waits on it forever:
 
-## Step 5 — Wait for All Reviewers
+```sh
+GOCACHE="$REVIEW_DIR/gocache" codex exec -s workspace-write -C "$REVIEW_DIR/<lens>" \
+  -o "$REVIEW_DIR/<lens>.md" "<brief>" </dev/null 2>"$REVIEW_DIR/<lens>.err"
+```
 
-**Do NOT proceed until every reviewer has finished** — each background task exited and its
-output file is non-empty. If a reviewer fails, read its `.err` file and report the specific
-error (auth expired, binary missing, timeout).
+Each brief gives the intent, the pin, the diff command (`git diff <base> <head>`), the lens's questions, the project's test command, and this text:
 
-An output that does not echo the pin, or echoes a different one, did not review this
-patch: re-run that reviewer once with the same brief. A second miss is missing coverage,
-recorded as such -- never a pass.
+> This is an authorized defensive-security review requested by the repository owner before merge. You are an adversarial reviewer: find real problems, do not validate the work. Start your output with the pin. First run the test command. If it cannot run in your sandbox, write `CANNOT RUN: <error>` and stop.
+>
+> Prove each finding with a run against the real code: a failing test, a repro script, or a command whose output shows the wrong behavior. Keep repros inside this worktree. Report each finding as:
+>
+> - **Claim** — what is wrong, with file:line
+> - **Repro** — the exact command, the output it printed, and the output the intent requires
+> - **Trigger** — what in real use causes this, who does it, and how often
+> - **Damage** — what is lost when it happens
+>
+> Leave out anything you did not run. You may end with up to three **Advisory** design concerns that no run can prove, labeled as opinion. No findings is a valid result. End with exactly `VERDICT: CLEAN` or `VERDICT: FINDINGS` as the last line.
 
-A failed or timed-out reviewer is **missing coverage, not a clean bill**. Do not synthesize
-as if that lens had reviewed and found nothing: the verdict must name which lens produced no
-output and state that its perspective is absent, so the reader weighs the remaining findings
-against a known coverage gap.
+Do not pre-judge a finding in the brief ("don't flag X", "at most low"). Let the reviewer raise it and reject it in step 5, where the reason is visible.
 
-## Step 6 — Synthesize Verdict
+**For a plan**, there is no diff to break. Give the plan files in place of the diff command, and replace the second paragraph of the brief with:
 
-Read each reviewer's output file from `$REVIEW_DIR/`. Deduplicate overlapping findings.
-Name each review source by what actually ran. A harness or CLI name is not a model name:
-claim cross-model diversity only when the runtime reported distinct models; otherwise say
-the model identity is unknown and weigh agreement accordingly.
-Produce a single verdict using the format in `references/verdict-format.md`, including the
-**Reviewed** line that pins the exact patch — a verdict describes a patch, not a branch, and
-the pin is what lets a later reader tell whether a rebase invalidated it.
+> List each claim the plan relies on but schedules no evidence for. For each, give the cheapest probe that would settle it, a command against the current tree or a small prototype, and run the probes you can. Check every claim about existing code against the code. Do not demand code the plan has not scheduled. Report each finding as **Claim** (with `<plan file>:<line>`), **Probe** (the command and its output, or what it would take to run), and **If it fails** (what changes in the plan).
 
-## Step 7 — Render Lead Judgment
+## 4. Wait
 
-After synthesizing the reviewers, apply your own judgment. Using the stated intent and project
-principles as your frame, state which findings you would accept and which you would reject —
-and why. Reviewers are adversarial by design; not every finding warrants action. Call out
-false positives, overreach, and findings that mistake style for substance.
+Do not go on until every reviewer has exited. An output without the pin or the final `VERDICT:` line was cut off: re-run that reviewer once. For `CANNOT RUN`, fix the sandbox setup and re-run once. A second miss or a failed reviewer (read its `.err`) is **missing coverage**: name the lens in the verdict, and never count it as clean.
 
-Append the Lead Judgment section to the verdict (see `references/verdict-format.md`).
+## 5. Judge each finding
 
-End with ONE canonical recommendation line: `Recommendation: <action> because <one-line reason
-citing the most critical accepted finding>`. The reason must name a specific finding or
-compare against alternatives — generic reasons ("because the review found issues") do not
-qualify. If the verdict is PASS, the line should name the strongest finding that was still
-accepted as no-action (e.g., `Recommendation: Ship as-is because the strongest finding is a
-theoretical race that requires conditions we can't trigger in production`).
+1. **Rerun it.** Run the repro command in the reviewer's worktree, inside the same sandbox (`codex sandbox -c 'sandbox_mode="workspace-write"' <command>`), because the repro is code a reviewer wrote. Keep the finding only when the output shows the failure and the failure breaks the intent. Otherwise reject it and quote the output.
+2. **Judge whether it can happen.** Codex tends to raise cases that are technically correct but almost never occur, and fixing them complicates the code for nothing. Ask whether the trigger occurs in how the system is actually used. Reject a finding whose trigger needs conditions outside real use. When the trigger is rare and the damage is small, the default is no fix.
+3. **Severe damage is the exception.** A rare trigger still gets fixed when the damage is severe or irreversible: lost funds, data loss, a security hole.
+
+Advisory concerns never block. Pass on only the ones you agree with, labeled as opinion.
+
+## 6. Verdict
+
+```
+## Intent
+## Reviewed
+<head> against <base>; patch-id <id>. Lenses: <list>. Missing coverage: <lens and why, or none>
+## Verdict: PASS | FIX
+## Accepted findings
+<each: claim with file:line, the command rerun and its output, trigger, damage, recommended fix>
+## Rejected findings
+<each: claim, then why: the rerun passed (quote it), or real use cannot trigger it>
+## Advisory
+## Recommendation
+Recommendation: <action> because <the accepted finding that matters most; for PASS, the strongest rejected finding and why it was rejected>
+```
+
+Remove the worktrees when done: `git worktree remove --force "$REVIEW_DIR/<lens>"`.
