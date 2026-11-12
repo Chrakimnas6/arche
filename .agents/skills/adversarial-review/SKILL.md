@@ -45,7 +45,25 @@ If Codex is missing or won't run, stop and say so. Claude subagents share your m
 
 Apply in-scope uncommitted changes to each worktree: `git diff HEAD | git -C "$REVIEW_DIR/<lens>" apply`.
 
-Codex's `workspace-write` sandbox lets a reviewer write only inside its worktree and temp directories, with no network. Before spawning, run the project's test command once yourself so its dependencies are already fetched, and point any build cache that lives elsewhere into `$REVIEW_DIR` (Go: `GOCACHE=$REVIEW_DIR/gocache`).
+Codex's `workspace-write` sandbox lets a reviewer write only inside its worktree and temp directories, with no network; connections to localhost and unix sockets are refused too. Before spawning, run the project's test command once yourself so its dependencies are already fetched, and point any build cache that lives elsewhere into `$REVIEW_DIR` (Go: `GOCACHE=$REVIEW_DIR/gocache`).
+
+**When the tests need a local service** (Docker, a database), the reviewer needs the network. Turning it on opens all of it, so first take away its means to push or comment:
+
+```sh
+mkdir -p "$REVIEW_DIR/guard/gh"
+cat > "$REVIEW_DIR/guard/gitconfig" <<'EOF'
+[url "no-push://blocked/"]
+	pushInsteadOf = https://
+	pushInsteadOf = ssh://
+	pushInsteadOf = git@
+[credential]
+	helper =
+EOF
+```
+
+Then run every `codex` command in this skill with `-c sandbox_workspace_write.network_access=true` and with `GIT_CONFIG_GLOBAL="$REVIEW_DIR/guard/gitconfig" GIT_CONFIG_NOSYSTEM=1 GH_CONFIG_DIR="$REVIEW_DIR/guard/gh"` in its environment, and add to the brief: "The network is on only so local services work. Do not push, comment, or call any remote service." This stops an accidental push, not a reviewer that resets its environment.
+
+Check the guard before spawning, with read-only commands only; never test it with a command that would write if it failed. Inside `codex sandbox -c 'sandbox_mode="workspace-write"' -c 'sandbox_workspace_write.network_access=true'`, `git remote get-url --push origin` must print a `no-push://` URL and `gh auth status` must report no login.
 
 ## 3. Spawn the reviewers
 
@@ -81,7 +99,7 @@ Do not go on until every reviewer has exited. An output without the pin or the f
 
 ## 5. Judge each finding
 
-1. **Rerun it.** Run the repro command in the reviewer's worktree. Keep the finding only when the output shows the failure and the failure breaks the intent. Otherwise reject it and quote the output.
+1. **Rerun it.** Run the repro command in the reviewer's worktree, inside the same sandbox (`codex sandbox -c 'sandbox_mode="workspace-write"' <command>`), because the repro is code a reviewer wrote. Keep the finding only when the output shows the failure and the failure breaks the intent. Otherwise reject it and quote the output.
 2. **Judge whether it can happen.** Codex tends to raise cases that are technically correct but almost never occur, and fixing them complicates the code for nothing. Ask whether the trigger occurs in how the system is actually used. Reject a finding whose trigger needs conditions outside real use. When the trigger is rare and the damage is small, the default is no fix.
 3. **Severe damage is the exception.** A rare trigger still gets fixed when the damage is severe or irreversible: lost funds, data loss, a security hole.
 
